@@ -30,9 +30,12 @@ export const App = () => {
       rndBars = {
         ...rndBars,
         [key]: {
-          ..._BARS[key],
+          color: _BARS[key].color,
           pos: lastPos,
-          name: key,
+          type: _BARS[key].type,
+          volt: _BARS[key].volt,
+          potIn: _BARS[key].potIn,
+          potOut: _BARS[key].potOut,
         },
       };
 
@@ -59,25 +62,18 @@ export const App = () => {
       //preparar equipamentos conectados à barra
       let nodeEquips = _EQUIPS.filter((equip) => equip.endPointA === key);
       nodeEquips.forEach((nodeEquip) => {
+        let equipName =
+          nodeEquip.name || `LT_${nodeEquip.endPointA + nodeEquip.endPointB}`;
         if (nodeEquip.type === "LT") {
-          let equipName =
-            nodeEquip.name || `LT_${nodeEquip.endPointA + nodeEquip.endPointB}`;
-          let lineN =
-            Object.values(orgEquips).filter((equip) => equip.name === equipName)
-              .length + 1;
-          orgEquips = {
-            ...orgEquips,
-            [equipName + "_" + lineN]: {
-              ...nodeEquip,
-              name: equipName,
-              n: lineN,
-            },
-          };
+          orgEquips.push({
+            ...nodeEquip,
+            name: equipName,
+            n: 1 + orgEquips.filter((equip) => equip.name === equipName).length,
+          });
         } else if (nodeEquip.type === "UG") {
-          let n =
-            Object.values(orgEquips).filter(
-              (equip) => equip.type === "UG" && equip.endPointA === key
-            ).length + 1;
+          let n = orgEquips.filter(
+            (equip) => equip.type === "UG" && equip.endPointA === key
+          ).length;
           let m = n >= 15 ? parseInt(n / 15) * 20 + 40 : 40;
           let degOffSet = 12 * parseInt(n / 15);
           let dx =
@@ -85,62 +81,55 @@ export const App = () => {
           let dy =
             Math.sin(((-90 + 24 * (n - 1) + degOffSet) * Math.PI) / 180) * m;
 
-          orgEquips = {
-            ...orgEquips,
-            [nodeEquip.name]: {
-              ...nodeEquip,
-              pos: {
-                x: rndBars[nodeEquip.endPointA].pos.x + 100 + dx,
-                y: rndBars[nodeEquip.endPointA].pos.y - 100 + dy,
-              },
-              n: n,
-              transformer: nodeEquip.transformer || false,
+          orgEquips.push({
+            ...nodeEquip,
+            pos: {
+              x: rndBars[nodeEquip.endPointA].pos.x + 100 + dx,
+              y: rndBars[nodeEquip.endPointA].pos.y - 100 + dy,
             },
-          };
+            n: 1 + n,
+          });
         }
       });
     }
-    console.log(orgEquips);
-    // preparar transformadores
+
+    //preparar transformadores
     for (let key in _BARS) {
       let nodeTR = _EQUIPS.filter(
         (equip) => equip.type === "TR" && equip.endPointA === key
       );
       nodeTR.forEach((TR) => {
         let n =
-          Object.values(orgEquips).filter(
+          orgEquips.filter(
             (equip) => equip.type === "TR" && equip.endPointA === key
           ).length + 1;
-        let endPointA = rndBars[TR.endPointA] || orgEquips[TR.endPointA];
-        let endPointB = rndBars[TR.endPointB] || orgEquips[TR.endPointB];
-        let x1 = endPointA.pos.x;
-        let y1 = endPointA.pos.y;
-        let x2 = endPointB.pos.x;
-        let y2 = endPointB.pos.y;
+
+        let x1 = rndBars[TR.endPointA].pos.x;
+        let y1 = rndBars[TR.endPointA].pos.y;
+        let x2 = rndBars[TR.endPointB].pos.x;
+        let y2 = rndBars[TR.endPointB].pos.y;
         let newX = (x1 + x2) / 2;
         let newY = (y1 + y2) / 2;
         if (n > 1) {
-          let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
+          let newPos = getLinePoints(x1, y1, x2, y2, n, 15);
           newX = (newPos[2] + newPos[4]) / 2;
           newY = (newPos[3] + newPos[5]) / 2;
         }
-        orgEquips = {
-          ...orgEquips,
-          [TR.name]: {
-            ...TR,
-            pos: {
-              x: newX,
-              y: newY,
-            },
-            n: n,
+
+        orgEquips.push({
+          ...TR,
+          pos: {
+            x: newX,
+            y: newY,
           },
-        };
+          n: n,
+        });
       });
     }
 
     setBars(rndBars);
     setEquips(orgEquips);
-    console.log(orgEquips);
+    console.log(equips);
   }, []);
 
   const stageRef = useRef(null);
@@ -169,9 +158,8 @@ export const App = () => {
 
     //redesenha TRs
     layerRef.current.children
-      .filter((node) => node.attrs.type === "TR")
+      .filter((element) => element.attrs.type === "TR")
       .forEach((TR) => {
-        // console.log(TR);
         let newEndPointA = layerRef.current.children.filter(
           (node) => node.attrs.name === TR.attrs.endPointA
         )[0].attrs;
@@ -179,8 +167,6 @@ export const App = () => {
           (node) => node.attrs.name === TR.attrs.endPointB
         )[0].attrs;
         let n = TR.attrs.n;
-        // console.log(newEndPointA, newEndPointB);
-
         let x1 = newEndPointA.x;
         let y1 = newEndPointA.y;
         let x2 = newEndPointB.x;
@@ -188,13 +174,11 @@ export const App = () => {
         let newX = (x1 + x2) / 2;
         let newY = (y1 + y2) / 2;
         if (n > 1) {
-          let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
+          let newPos = getLinePoints(x1, y1, x2, y2, n, 15);
           newX = (newPos[2] + newPos[4]) / 2;
           newY = (newPos[3] + newPos[5]) / 2;
         }
         getAngle(x2 - x1, y2 - y1);
-        // console.log(newX, newY, n);
-
         TR.rotation(getAngle(x2 - x1, y2 - y1));
         TR.position({
           x: newX,
@@ -202,10 +186,59 @@ export const App = () => {
         });
       });
 
+    // layerRef.current
+    //   .getChildren((node) => node.getClassName() === "Group")
+    //   .forEach((node) => {
+    //     node
+    //       .getChildren((node) => node.getClassName() === "Line")
+    //       .forEach((line) => {
+    //         // console.log(line);
+    //         let newEndPointA = layerRef.current.children.filter(
+    //           (element) => element.attrs.name === line.attrs.endPointA
+    //         )[0].attrs;
+    //         let newEndPointB;
+    //         layerRef.current
+    //           .getChildren((node) => node.getClassName() === "Group")
+    //           .forEach((node) =>
+    //             node
+    //               .getChildren((node) => node.getClassName() === "Group")
+    //               .forEach((equip) => {
+    //                 console.log(equip);
+    //                 if (equip.getAttr("name") === line.attrs.endPointB) {
+    //                   console.log(equip.position());
+    //                   newEndPointB = {
+    //                     x: equip.getAttr("x"),
+    //                     y: equip.getAttr("y"),
+    //                   };
+    //                 }
+    //               })
+    //           );
+
+    //         // console.log(newEndPointB);
+    //         let n = line.attrs.n;
+    //         // line.attrs.points = getLinePoints(
+    //         //   newEndPointA.x,
+    //         //   newEndPointA.y,
+    //         //   line.attrs.points[2],
+    //         //   line.attrs.points[3],
+    //         //   n
+    //         // );
+
+    //         line.attrs.points = getLinePoints(
+    //           newEndPointA.x,
+    //           newEndPointA.y,
+    //           newEndPointB.x,
+    //           newEndPointB.y,
+    //           n
+    //         );
+    //       });
+    //   });
+
     //redesenha todas as linhas
     layerRef.current
       .getChildren((node) => node.getClassName() === "Line")
       .forEach((line) => {
+        // console.log(line);
         let newEndPointA = layerRef.current.children.filter(
           (element) => element.attrs.name === line.attrs.endPointA
         )[0].attrs;
@@ -236,7 +269,7 @@ export const App = () => {
         style={{ border: "5px solid red", width: "100%" }}
       >
         <Layer ref={layerRef}>
-          {Object.values(equips).map((equip, index) => {
+          {equips.map((equip, index) => {
             switch (equip.type) {
               case "LT":
                 return (
@@ -250,16 +283,12 @@ export const App = () => {
                   />
                 );
               case "TR":
-                let endPointA =
-                  bars[equip.endPointA] || equips[equip.endPointA];
-                let endPointB =
-                  bars[equip.endPointB] || equips[equip.endPointB];
                 return (
                   <Transformer
                     key={index}
                     name={equip.name}
-                    endPointA={endPointA}
-                    endPointB={endPointB}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
                     bars={bars}
                     x={equip.pos.x}
                     y={equip.pos.y}
@@ -267,26 +296,25 @@ export const App = () => {
                     handleDrag={handleDrag}
                   />
                 );
-              case "UG":
-                return (
-                  <Generator
-                    key={index}
-                    type={equip.type}
-                    name={equip.name}
-                    endPointA={equip.endPointA}
-                    bars={bars}
-                    x={equip.pos.x}
-                    y={equip.pos.y}
-                    transformer={equip.transformer}
-                    handleDrag={handleDrag}
-                  />
-                );
+              // case "UG":
+              //   return (
+              //     <Generator
+              //       key={index}
+              //       type={equip.type}
+              //       name={equip.name}
+              //       endPointA={equip.endPointA}
+              //       bars={bars}
+              //       x={equip.pos.x}
+              //       y={equip.pos.y}
+              //       handleDrag={handleDrag}
+              //     />
+              //   );
               default:
                 return null;
             }
           })}
 
-          {/* {Object.keys(bars).map((key, index) => (
+          {Object.keys(bars).map((key, index) => (
             <Group
               key={index}
               draggable={true}
@@ -311,7 +339,7 @@ export const App = () => {
                   );
                 })}
             </Group>
-          ))} */}
+          ))}
           {Object.keys(bars).map((key, index) => (
             <Bar
               x={bars[key].pos.x}

@@ -1,0 +1,106 @@
+import React from "react";
+import { Circle, Group, Line } from "react-konva";
+import { _SETTINGS } from "../settings";
+import { useEffect, useRef } from "react";
+import { getAngle } from "../utils";
+
+const Transformer = ({
+  x,
+  y,
+  endPointA,
+  endPointB,
+  name,
+  bars,
+  n,
+  handleDrag,
+}) => {
+  const radius = _SETTINGS.TR.radius || _SETTINGS.default.radius;
+  const stroke = _SETTINGS.TR.stroke || _SETTINGS.default.stroke;
+  const strokeWidth = _SETTINGS.TR.strokeWidth || _SETTINGS.default.strokeWidth;
+  const strokeWidthLT =
+    _SETTINGS.LT.strokeWidth || _SETTINGS.default.strokeWidth;
+
+  // const draggable = _SETTINGS.TR.draggable || _SETTINGS.default.draggable;
+  const refTR = useRef(null);
+  useEffect(() => {
+    // console.log(
+    //   "EFFECT",
+    //   endPointB.pos.x,
+    //   endPointA.pos.x,
+    //   endPointB.pos.y,
+    //   endPointA.pos.y
+    // );
+    refTR.current.rotation(
+      getAngle(
+        endPointB.pos.x - endPointA.pos.x,
+        endPointB.pos.y - endPointA.pos.y
+      )
+    );
+  }, []);
+  // console.log(props.handleDrag);
+  return (
+    <>
+      <Line
+        points={[endPointA.pos.x, endPointA.pos.y, x, y]}
+        stroke={"#00F"}
+        strokeWidth={strokeWidthLT}
+        endPointA={endPointA.name}
+        endPointB={name}
+        n={1}
+        // bezier={n > 1}
+      />
+
+      <Line
+        points={[endPointB.pos.x, endPointB.pos.y, x, y]}
+        stroke={"#0F0"}
+        strokeWidth={strokeWidthLT}
+        endPointA={name}
+        endPointB={endPointB.name}
+        n={1}
+        // bezier={n > 1}
+      />
+
+      <Group
+        // draggable={draggable}
+        endPointA={endPointA.name}
+        endPointB={endPointB.name}
+        name={name}
+        type={"TR"}
+        x={x}
+        y={y}
+        n={n}
+        ref={refTR}
+      >
+        {/* HIGH SIDE */}
+        <Circle
+          x={-radius + radius / 4}
+          y={radius / 4}
+          radius={radius}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+
+          // fill={"#FFF"}
+        />
+        {/* LOW SIDE */}
+        <Circle
+          x={radius - radius / 4}
+          y={radius / 4}
+          radius={radius}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          // fill={"#FFF"}
+        />
+        {/* TERTIARY SIDE */}
+        {/* <Circle
+          y={-radius + radius / 4}
+          radius={radius}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          // fill={"#FFF"}
+        /> */}
+      </Group>
+    </>
+  );
+};
+
+export default Transformer;

@@ -94,13 +94,12 @@ export const App = () => {
                 y: rndBars[nodeEquip.endPointA].pos.y - 100 + dy,
               },
               n: n,
-              transformer: nodeEquip.transformer || false,
             },
           };
         }
       });
     }
-    console.log(orgEquips);
+
     // preparar transformadores
     for (let key in _BARS) {
       let nodeTR = _EQUIPS.filter(
@@ -179,7 +178,7 @@ export const App = () => {
           (node) => node.attrs.name === TR.attrs.endPointB
         )[0].attrs;
         let n = TR.attrs.n;
-        // console.log(newEndPointA, newEndPointB);
+        console.log(newEndPointA, newEndPointB);
 
         let x1 = newEndPointA.x;
         let y1 = newEndPointA.y;
@@ -277,7 +276,6 @@ export const App = () => {
                     bars={bars}
                     x={equip.pos.x}
                     y={equip.pos.y}
-                    transformer={equip.transformer}
                     handleDrag={handleDrag}
                   />
                 );
