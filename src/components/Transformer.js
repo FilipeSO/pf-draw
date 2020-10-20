@@ -24,7 +24,6 @@ const Transformer = ({
   // console.log(endPointA, endPointB);
   const refTR = useRef(null);
   useEffect(() => {
-    console.log("USEEFFECT");
     // console.log(
     //   "EFFECT",
     //   endPointB.pos.x,
@@ -46,7 +45,7 @@ const Transformer = ({
         points={[bars[endPointA].pos.x, bars[endPointA].pos.y, x, y]}
         stroke={"#00F"}
         strokeWidth={strokeWidthLT}
-        endPointA={endPointA.name}
+        endPointA={endPointA}
         endPointB={name}
         n={1}
         // bezier={n > 1}
@@ -57,7 +56,7 @@ const Transformer = ({
         stroke={"#0F0"}
         strokeWidth={strokeWidthLT}
         endPointA={name}
-        endPointB={endPointB.name}
+        endPointB={endPointB}
         n={1}
         // bezier={n > 1}
       />
