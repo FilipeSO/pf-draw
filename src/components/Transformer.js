@@ -21,8 +21,10 @@ const Transformer = ({
     _SETTINGS.LT.strokeWidth || _SETTINGS.default.strokeWidth;
 
   // const draggable = _SETTINGS.TR.draggable || _SETTINGS.default.draggable;
+  // console.log(endPointA, endPointB);
   const refTR = useRef(null);
   useEffect(() => {
+    console.log("USEEFFECT");
     // console.log(
     //   "EFFECT",
     //   endPointB.pos.x,
@@ -32,8 +34,8 @@ const Transformer = ({
     // );
     refTR.current.rotation(
       getAngle(
-        endPointB.pos.x - endPointA.pos.x,
-        endPointB.pos.y - endPointA.pos.y
+        bars[endPointB].pos.x - bars[endPointA].pos.x,
+        bars[endPointB].pos.y - bars[endPointA].pos.y
       )
     );
   }, []);
@@ -41,7 +43,7 @@ const Transformer = ({
   return (
     <>
       <Line
-        points={[endPointA.pos.x, endPointA.pos.y, x, y]}
+        points={[bars[endPointA].pos.x, bars[endPointA].pos.y, x, y]}
         stroke={"#00F"}
         strokeWidth={strokeWidthLT}
         endPointA={endPointA.name}
@@ -51,7 +53,7 @@ const Transformer = ({
       />
 
       <Line
-        points={[endPointB.pos.x, endPointB.pos.y, x, y]}
+        points={[bars[endPointB].pos.x, bars[endPointB].pos.y, x, y]}
         stroke={"#0F0"}
         strokeWidth={strokeWidthLT}
         endPointA={name}
@@ -62,8 +64,8 @@ const Transformer = ({
 
       <Group
         // draggable={draggable}
-        endPointA={endPointA.name}
-        endPointB={endPointB.name}
+        endPointA={endPointA}
+        endPointB={endPointB}
         name={name}
         type={"TR"}
         x={x}

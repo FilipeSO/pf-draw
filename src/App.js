@@ -12,7 +12,7 @@ import Transformer from "./components/Transformer";
 import Generator from "./components/Generator";
 import Bar from "./components/Bar";
 import TransmissionLine from "./components/TransmissionLine";
-import { getLinePoints, getAngle } from "./utils";
+import { getLinePoints, getAngle, parseTextFile } from "./utils";
 
 export const App = () => {
   let rndBars = [];
@@ -21,7 +21,7 @@ export const App = () => {
   const stageHeight = 600;
   const [bars, setBars] = useState(rndBars);
   const [equips, setEquips] = useState(orgEquips);
-  //FALTA TRATAR TR E POSICAO DOS NODOS
+
   useEffect(() => {
     // preparar dados de barras
     let lastPos = {
@@ -173,18 +173,6 @@ export const App = () => {
   const layerRef = useRef(null);
   const handleDrag = (e) => {
     e.evt.preventDefault();
-    // let barState = bars[e.target.attrs.name];
-
-    // let newState = {
-    //   ...bars,
-    //   [e.target.attrs.name]: {
-    //     ...barState,
-    //     pos: e.target.position(),
-    //   },
-    // };
-    // setBars(newState);
-    // console.log(e.target.position());
-
     //redesenha TRs
     layerRef.current.children
       .filter((node) => node.attrs.type === "TR")
@@ -198,21 +186,20 @@ export const App = () => {
         )[0].attrs;
         let n = TR.attrs.n;
         // console.log(newEndPointA, newEndPointB);
-
         let x1 = newEndPointA.x;
         let y1 = newEndPointA.y;
         let x2 = newEndPointB.x;
         let y2 = newEndPointB.y;
         let newX = (x1 + x2) / 2;
         let newY = (y1 + y2) / 2;
+        // console.log(newX, newY, n);
+
         if (n > 1) {
           let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
           newX = (newPos[2] + newPos[4]) / 2;
           newY = (newPos[3] + newPos[5]) / 2;
         }
         getAngle(x2 - x1, y2 - y1);
-        // console.log(newX, newY, n);
-
         TR.rotation(getAngle(x2 - x1, y2 - y1));
         TR.position({
           x: newX,
@@ -224,6 +211,7 @@ export const App = () => {
     layerRef.current
       .getChildren((node) => node.getClassName() === "Line")
       .forEach((line) => {
+        // console.log("linha", line);
         let newEndPointA = layerRef.current.children.filter(
           (element) => element.attrs.name === line.attrs.endPointA
         )[0].attrs;
@@ -251,14 +239,30 @@ export const App = () => {
         pos: e.target.position(),
       },
     };
-    setBars(newState);
+    // setBars(newState);
+    newState = equips;
+    layerRef.current.children
+      .filter((node) => node.attrs.type === "TR")
+      .forEach((TR) => {
+        console.log(TR.attrs.name, TR.position());
+        let equipState = equips[TR.attrs.name];
+        equipState.pos = TR.position();
+        newState = {
+          ...equips,
+          [TR.attrs.name]: {
+            ...equipState,
+          },
+        };
+      });
+    console.log(newState);
+    // setEquips(newState);
   };
 
   const [bar, setBar] = useState(null);
 
   const handleBarSubmit = (e) => {
     e.preventDefault();
-    let lastPos = {
+    let position = {
       x:
         window.innerWidth * 0.2 +
         Math.floor(Math.random() * (window.innerWidth * 0.6)),
@@ -269,7 +273,7 @@ export const App = () => {
       ...bars,
       [bar.numero]: {
         ...bar,
-        pos: lastPos,
+        pos: position,
       },
     };
     setBars(newState);
@@ -282,11 +286,10 @@ export const App = () => {
   };
 
   const [equip, setEquip] = useState(null);
-
   const handleEquipChange = (e) => {
     let newState = { ...equip, [e.target.name]: e.target.value };
     setEquip(newState);
-    console.log(newState);
+    // console.log(newState);
   };
 
   const handleEquipSubmit = (e) => {
@@ -308,23 +311,29 @@ export const App = () => {
     setEquips(newState);
   };
 
-  const [fileEquips, setfileEquips] = useState(null);
+  const [fileEquips, setFileEquips] = useState(null);
   const handleFileChange = (e) => {
     if (e.target.files === undefined) return;
     let file = e.target.files[0];
     var reader = new FileReader();
     reader.onloadend = function () {
-      console.log("arquivo", reader.result);
+      var lines = reader.result.split(/[\r\n]+/g).filter((line) => line !== "");
+      let [title, fileBars, fileEquips] = parseTextFile(lines);
+      setFileEquips({
+        title: title,
+        bars: fileBars,
+        equips: fileEquips,
+      });
     };
-
     reader.readAsText(file);
-
     console.log(file);
   };
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
-    console.log(e.target.files);
+    setBars(fileEquips.bars);
+    setEquips(fileEquips.equips);
+    console.log(fileEquips);
   };
 
   return (
@@ -336,6 +345,26 @@ export const App = () => {
           <label>Arquívo:</label>
           <input type="file" onChange={handleFileChange}></input>
           <br />
+          {fileEquips && (
+            <p>
+              Título:{fileEquips.title}, Barras:
+              {Object.keys(fileEquips.bars).length}, Ramos:
+              {Object.keys(fileEquips.equips).length} (LT:
+              {
+                Object.values(fileEquips.equips).filter(
+                  (equip) => equip.type === "LT"
+                ).length
+              }{" "}
+              TR:
+              {
+                Object.values(fileEquips.equips).filter(
+                  (equip) => equip.type === "TR"
+                ).length
+              }
+              )
+            </p>
+          )}
+
           <input type="submit" value="Adicionar"></input>
         </form>
       </div>
@@ -446,16 +475,12 @@ export const App = () => {
                   />
                 );
               case "TR":
-                let endPointA =
-                  bars[equip.endPointA] || equips[equip.endPointA];
-                let endPointB =
-                  bars[equip.endPointB] || equips[equip.endPointB];
                 return (
                   <Transformer
                     key={index}
                     name={equip.name}
-                    endPointA={endPointA}
-                    endPointB={endPointB}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
                     bars={bars}
                     x={equip.pos.x}
                     y={equip.pos.y}
@@ -463,51 +488,26 @@ export const App = () => {
                     handleDrag={handleDrag}
                   />
                 );
-              case "UG":
-                return (
-                  <Generator
-                    key={index}
-                    type={equip.type}
-                    name={equip.name}
-                    endPointA={equip.endPointA}
-                    bars={bars}
-                    x={equip.pos.x}
-                    y={equip.pos.y}
-                    transformer={equip.transformer}
-                    handleDrag={handleDrag}
-                  />
-                );
+              //REMOVIDO UG POR ENQUANTO
+              // case "UG":
+              //   return (
+              //     <Generator
+              //       key={index}
+              //       type={equip.type}
+              //       name={equip.name}
+              //       endPointA={equip.endPointA}
+              //       bars={bars}
+              //       x={equip.pos.x}
+              //       y={equip.pos.y}
+              //       transformer={equip.transformer}
+              //       handleDrag={handleDrag}
+              //     />
+              //   );
               default:
                 return null;
             }
           })}
 
-          {/* {Object.keys(bars).map((key, index) => (
-            <Group
-              key={index}
-              draggable={true}
-              onDragMove={(e) => handleDrag(e)}
-            >
-              {equips
-                .filter(
-                  (equip) => equip.endPointA === key && equip.type === "UG"
-                )
-                .map((equip, index) => {
-                  return (
-                    <Generator
-                      key={index}
-                      type={equip.type}
-                      name={equip.name}
-                      endPointA={equip.endPointA}
-                      bars={bars}
-                      x={equip.pos.x}
-                      y={equip.pos.y}
-                      handleDrag={handleDrag}
-                    />
-                  );
-                })}
-            </Group>
-          ))} */}
           {Object.keys(bars).map((key, index) => (
             <Bar
               x={bars[key].pos.x}

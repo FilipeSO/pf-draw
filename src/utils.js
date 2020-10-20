@@ -203,3 +203,137 @@ export const getLinePoints = (x1, y1, x2, y2, n, space, lx, ly) => {
         ];
   return points;
 };
+
+export const parseTextFile = (lines) => {
+  let bars = [];
+  let branches = [];
+  let equips = [];
+  let branchesInit = false;
+  let title = "";
+  lines.forEach((line, index) => {
+    if (index === 0) {
+      title = line;
+      return;
+    }
+    if (line === "9999") {
+      branchesInit = true;
+      return;
+    }
+    if (branchesInit) {
+      let newBranch = {
+        endPointA: line.substring(0, 4).trim(),
+        endPointB: line.substring(8, 12).trim(),
+        r_pu: parseFloat(line.substring(17, 23)) / 100,
+        x_pu: parseFloat(line.substring(23, 29)) / 100,
+        bsh_mvar: parseFloat(line.substring(29, 35)),
+        tap: parseFloat(line.substring(36, 40)) / 1000,
+        tap_min: parseFloat(line.substring(41, 45)) / 1000,
+        tap_max: parseFloat(line.substring(46, 50)) / 1000,
+        tap_df_deg: parseFloat(line.substring(50, 55)),
+      };
+      if (isNaN(newBranch.tap)) {
+        newBranch.type = "LT";
+      } else {
+        newBranch.type = "TR";
+      }
+      branches.push(newBranch);
+    } else {
+      bars = {
+        ...bars,
+        [line.substring(0, 4).trim()]: {
+          name: line.substring(0, 4).trim(),
+          tipo: parseInt(line.substring(7, 8)),
+          id: line.substring(9, 21).trim(),
+          v_pu: parseFloat(line.substring(22, 26)) / 1000,
+          theta_deg: parseFloat(line.substring(27, 30)),
+          p_g: parseFloat(line.substring(30, 35)),
+          q_g: parseFloat(line.substring(35, 40)),
+          q_min: parseFloat(line.substring(40, 45)),
+          q_max: parseFloat(line.substring(45, 50)),
+          p_c: parseFloat(line.substring(55, 60)),
+          q_c: parseFloat(line.substring(60, 65)),
+          q_s: parseFloat(line.substring(65, 70)),
+        },
+      };
+    }
+  });
+
+  //adicionar pos as barras
+  let position = {
+    x:
+      (window.innerWidth / 2) * 0.2 +
+      Math.floor(Math.random() * ((window.innerWidth / 2) * 0.6)),
+    y: (600 / 2) * 0.2 + Math.floor(Math.random() * (600 / 2) * 0.6),
+  };
+  let barCount = 1;
+  for (var key in bars) {
+    bars[key].pos = position;
+    let degStep = 360 / Object.keys(bars).length;
+    position = {
+      x: position.x + Math.cos((degStep * barCount * Math.PI) / 180) * 50,
+      y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50,
+    };
+    barCount++;
+  }
+
+  //preparar obj equips
+  branches.forEach((branch) => {
+    if (branch.type === "LT") {
+      let equipName = `LT_${[branch.endPointA] + [branch.endPointB]}`;
+      let lineN =
+        Object.values(equips).filter((equip) => equip.name === equipName)
+          .length + 1;
+      equips = {
+        ...equips,
+        [equipName + "_" + lineN]: {
+          ...branch,
+          type: "LT",
+          name: equipName,
+          n: lineN,
+        },
+      };
+    }
+  });
+
+  for (let key in bars) {
+    let nodeTR = branches.filter(
+      (branch) => branch.type === "TR" && branch.endPointA === key
+    );
+    nodeTR.forEach((TR) => {
+      let n =
+        Object.values(equips).filter(
+          (equip) =>
+            equip.type === "TR" &&
+            equip.endPointA === TR.endPointA &&
+            equip.endPointB === TR.endPointB
+        ).length + 1;
+      let nameTR = `TR_${TR.endPointA + TR.endPointB}_${n}`;
+      let endPointA = bars[TR.endPointA];
+      let endPointB = bars[TR.endPointB];
+      let x1 = endPointA.pos.x;
+      let y1 = endPointA.pos.y;
+      let x2 = endPointB.pos.x;
+      let y2 = endPointB.pos.y;
+      let newX = (x1 + x2) / 2;
+      let newY = (y1 + y2) / 2;
+      if (n > 1) {
+        let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
+        newX = (newPos[2] + newPos[4]) / 2;
+        newY = (newPos[3] + newPos[5]) / 2;
+      }
+      equips = {
+        ...equips,
+        [nameTR]: {
+          ...TR,
+          name: nameTR,
+          pos: {
+            x: newX,
+            y: newY,
+          },
+          n: n,
+        },
+      };
+    });
+  }
+  return [title, bars, equips];
+};
