@@ -4,16 +4,7 @@ import { _SETTINGS } from "../settings";
 import { useEffect, useRef } from "react";
 import { getAngle } from "../utils";
 
-const Transformer = ({
-  x,
-  y,
-  endPointA,
-  endPointB,
-  name,
-  bars,
-  n,
-  handleDrag,
-}) => {
+const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
   const radius = _SETTINGS.TR.radius || _SETTINGS.default.radius;
   const stroke = _SETTINGS.TR.stroke || _SETTINGS.default.stroke;
   const strokeWidth = _SETTINGS.TR.strokeWidth || _SETTINGS.default.strokeWidth;
@@ -37,7 +28,7 @@ const Transformer = ({
         bars[endPointB].pos.y - bars[endPointA].pos.y
       )
     );
-  }, []);
+  }, [bars, endPointA, endPointB]);
   // console.log(props.handleDrag);
   return (
     <>

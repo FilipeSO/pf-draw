@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { getLinePoints, getAngle, parseTextFile } from "../utils";
+import React, { useState } from "react";
+import { parseTextFile } from "../utils";
 
 const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
   const stageHeight = 600;
@@ -69,20 +69,23 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
       });
     };
     reader.readAsText(file);
-    console.log(file);
+    // console.log(file);
   };
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
     updateBars(fileEquips.bars);
     updateEquips(fileEquips.equips);
-    console.log(fileEquips);
+    // console.log(fileEquips);
   };
 
   return (
     <>
       <div>
         <h2>ENTRADA FORMATO IT743A 2S2020</h2>
+        <a target="_blank" rel="noreferrer noopener" href="/ieee30buses.txt">
+          entrada padrão
+        </a>
         <form onSubmit={handleFileSubmit}>
           <label>Arquívo:</label>
           <input type="file" onChange={handleFileChange}></input>

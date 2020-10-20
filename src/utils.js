@@ -212,7 +212,7 @@ export const parseTextFile = (lines) => {
   let title = "";
   lines.forEach((line, index) => {
     if (index === 0) {
-      title = line;
+      title = line.trim();
       return;
     }
     if (line === "9999") {

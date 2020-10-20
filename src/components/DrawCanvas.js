@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Stage, Layer, Group } from "react-konva";
+import React, { useRef } from "react";
+import { Stage, Layer } from "react-konva";
 import Transformer from "./Transformer";
 import Bar from "./Bar";
 import TransmissionLine from "./TransmissionLine";
-import { getLinePoints, getAngle, parseTextFile } from "../utils";
+import { getLinePoints, getAngle } from "../utils";
 
 const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
   const stageHeight = 600;
