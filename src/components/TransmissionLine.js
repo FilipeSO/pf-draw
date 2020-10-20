@@ -10,6 +10,7 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
   // const fill = _SETTINGS.LT.fill || _SETTINGS.default.fill;
   //   console.log(handleDrag);
   //   console.log(endPointA, endPointB, n, color, bars);
+  let lineColor = color || "000";
   return (
     <Line
       points={getLinePoints(
@@ -19,7 +20,7 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
         bars[endPointB].pos.y,
         n
       )}
-      stroke={color}
+      stroke={lineColor}
       strokeWidth={strokeWidth}
       endPointA={endPointA}
       endPointB={endPointB}

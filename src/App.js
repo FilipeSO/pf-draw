@@ -1,8 +1,13 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Group } from "react-konva";
-import { _BARS } from "./bars";
-import { _EQUIPS } from "./equips.js";
+
+import { _BARS } from "./ieee30bars_rev1";
+import { _EQUIPS } from "./ieee30branches_rev1";
+
+// import { _BARS } from "./bars";
+// import { _EQUIPS } from "./equips";
+
 import Transformer from "./components/Transformer";
 import Generator from "./components/Generator";
 import Bar from "./components/Bar";
@@ -21,9 +26,11 @@ export const App = () => {
     // preparar dados de barras
     let lastPos = {
       x:
-        window.innerWidth * 0.2 +
-        Math.floor(Math.random() * (window.innerWidth * 0.6)),
-      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6),
+        (window.innerWidth / 2) * 0.2 +
+        Math.floor(Math.random() * ((window.innerWidth / 2) * 0.6)),
+      y:
+        (stageHeight / 2) * 0.2 +
+        Math.floor(Math.random() * (stageHeight / 2) * 0.6),
     };
 
     for (let key in _BARS) {
@@ -45,7 +52,7 @@ export const App = () => {
               Math.PI) /
               180
           ) *
-            400,
+            50,
         y:
           lastPos.y +
           Math.sin(
@@ -54,7 +61,7 @@ export const App = () => {
               Math.PI) /
               180
           ) *
-            400,
+            50,
       };
       //preparar equipamentos conectados à barra
       let nodeEquips = _EQUIPS.filter((equip) => equip.endPointA === key);
@@ -100,7 +107,7 @@ export const App = () => {
         }
       });
     }
-    console.log(orgEquips);
+    // console.log(orgEquips);
     // preparar transformadores
     for (let key in _BARS) {
       let nodeTR = _EQUIPS.filter(
@@ -140,7 +147,7 @@ export const App = () => {
 
     setBars(rndBars);
     setEquips(orgEquips);
-    console.log(orgEquips);
+    // console.log(orgEquips);
   }, []);
 
   const stageRef = useRef(null);
@@ -166,6 +173,17 @@ export const App = () => {
   const layerRef = useRef(null);
   const handleDrag = (e) => {
     e.evt.preventDefault();
+    // let barState = bars[e.target.attrs.name];
+
+    // let newState = {
+    //   ...bars,
+    //   [e.target.attrs.name]: {
+    //     ...barState,
+    //     pos: e.target.position(),
+    //   },
+    // };
+    // setBars(newState);
+    // console.log(e.target.position());
 
     //redesenha TRs
     layerRef.current.children
@@ -223,17 +241,195 @@ export const App = () => {
       });
     layerRef.current.batchDraw();
   };
+  const handleDragEnd = (e) => {
+    e.evt.preventDefault();
+    let barState = bars[e.target.attrs.name];
+    let newState = {
+      ...bars,
+      [e.target.attrs.name]: {
+        ...barState,
+        pos: e.target.position(),
+      },
+    };
+    setBars(newState);
+  };
+
+  const [bar, setBar] = useState(null);
+
+  const handleBarSubmit = (e) => {
+    e.preventDefault();
+    let lastPos = {
+      x:
+        window.innerWidth * 0.2 +
+        Math.floor(Math.random() * (window.innerWidth * 0.6)),
+      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6),
+    };
+
+    let newState = {
+      ...bars,
+      [bar.numero]: {
+        ...bar,
+        pos: lastPos,
+      },
+    };
+    setBars(newState);
+  };
+
+  const handleBarChange = (e) => {
+    let newState = { ...bar, [e.target.name]: parseFloat(e.target.value) };
+    setBar(newState);
+    console.log(equips);
+  };
+
+  const [equip, setEquip] = useState(null);
+
+  const handleEquipChange = (e) => {
+    let newState = { ...equip, [e.target.name]: e.target.value };
+    setEquip(newState);
+    console.log(newState);
+  };
+
+  const handleEquipSubmit = (e) => {
+    e.preventDefault();
+    let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
+    let lineN =
+      Object.values(equips).filter((equip) => equip.name === equipName).length +
+      1;
+    let newState = {
+      ...equips,
+      [equipName + "_" + lineN]: {
+        ...equip,
+        type: "LT",
+        name: equipName,
+        n: lineN,
+      },
+    };
+    // console.log(newState);
+    setEquips(newState);
+  };
+
+  const [fileEquips, setfileEquips] = useState(null);
+  const handleFileChange = (e) => {
+    if (e.target.files === undefined) return;
+    let file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      console.log("arquivo", reader.result);
+    };
+
+    reader.readAsText(file);
+
+    console.log(file);
+  };
+
+  const handleFileSubmit = (e) => {
+    e.preventDefault();
+    console.log(e.target.files);
+  };
 
   return (
     <>
-      <h1>POWER SYSTEM DRAW</h1>       
+      <h1>POWER SYSTEM DRAW</h1>  
+      <div>
+        <h2>ENTRADA FORMATO IT743A 2S2020</h2>
+        <form onSubmit={handleFileSubmit}>
+          <label>Arquívo:</label>
+          <input type="file" onChange={handleFileChange}></input>
+          <br />
+          <input type="submit" value="Adicionar"></input>
+        </form>
+      </div>
+      <div>
+        <h2>BARRA</h2>
+        <form onSubmit={handleBarSubmit}>
+          <label>Número:</label>
+          <input type="text" name="numero" onChange={handleBarChange}></input>
+          <br />
+          <label>Identificação:</label>
+          <input type="text" name="id" onChange={handleBarChange}></input>
+          <br />
+          <label>Tipo:</label>
+          <select name="tipo" onChange={handleBarChange}>
+            <option value="0">PQ</option>
+            <option value="1">PV</option>
+            <option value="2">Referência</option>
+          </select>
+          <br />
+          <label>V [pu]:</label>
+          <input type="text" name="v_pu" onChange={handleBarChange}></input>
+          <br />
+          <label>&theta; [deg]</label>
+          <input
+            type="text"
+            name="theta_deg"
+            onChange={handleBarChange}
+          ></input>
+          <br />
+          <label>P gerada [MW]:</label>
+          <input type="text" name="p_g" onChange={handleBarChange}></input>
+          <label>Q gerada [MVar]:</label>
+          <input type="text" name="q_g" onChange={handleBarChange}></input>
+          <br />
+          <label>P carga [MW]:</label>
+          <input type="text" name="p_c" onChange={handleBarChange}></input>
+          <label>Q carga [MVar]:</label>
+          <input type="text" name="q_c" onChange={handleBarChange}></input>
+          <br />
+          <label>Q min [MVar]:</label>
+          <input type="text" name="q_min" onChange={handleBarChange}></input>
+          <label>Q max [MVar]:</label>
+          <input type="text" name="q_max" onChange={handleBarChange}></input>
+          <br />
+          <input type="submit" value="Adicionar"></input>
+        </form>
+      </div>
+           
+      <div>
+        <h2>RAMOS</h2>
+        <form onSubmit={handleEquipSubmit}>
+          <label>Origem:</label>
+          <input
+            type="text"
+            name="endPointA"
+            onChange={handleEquipChange}
+          ></input>
+          <br />
+          <label>Destino:</label>
+          <input
+            type="text"
+            name="endPointB"
+            onChange={handleEquipChange}
+          ></input>
+          <br />
+          <label>r [pu]:</label>
+          <input type="text" name="r_pu" onChange={handleEquipChange}></input>
+          <label>x [pu]:</label>
+          <input type="text" name="x_pu" onChange={handleEquipChange}></input>
+          <br />
+          <label>tap linear:</label>
+          <input type="text" name="tap" onChange={handleEquipChange}></input>
+          <label>tap &phi; [deg]:</label>
+          <input
+            type="text"
+            name="tap_def_def"
+            onChange={handleEquipChange}
+          ></input>
+          <br />
+          <label>tap min:</label>
+          <input type="text" name="tap" onChange={handleEquipChange}></input>
+          <label>tap max:</label>
+          <input type="text" name="tap" onChange={handleEquipChange}></input>
+          <br />
+          <input type="submit" value="Adicionar"></input>
+        </form>
+      </div>
       <Stage
-        width={window.innerWidth}
+        width={window.innerWidth / 2}
         height={stageHeight}
         onWheel={handleWheelZoom}
         draggable={true}
         ref={stageRef}
-        style={{ border: "5px solid red", width: "100%" }}
+        style={{ border: "5px solid red", width: window.innerWidth / 2 }}
       >
         <Layer ref={layerRef}>
           {Object.values(equips).map((equip, index) => {
@@ -317,6 +513,7 @@ export const App = () => {
               x={bars[key].pos.x}
               y={bars[key].pos.y}
               handleDrag={handleDrag}
+              handleDragEnd={handleDragEnd}
               color={bars[key].color}
               key={index}
               name={key}

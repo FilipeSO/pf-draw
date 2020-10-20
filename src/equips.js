@@ -426,4 +426,11 @@ export const _EQUIPS = [
     volt_base: 500,
     color: "#00F",
   },
+  {
+    type: "LT",
+    endPointA: "A",
+    endPointB: "B",
+    volt_base: 500,
+    color: "#00F",
+  },
 ];
