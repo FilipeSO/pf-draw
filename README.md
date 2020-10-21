@@ -1,1 +1,1 @@
-Projeto CAE para fluxo de potência
+Ferramenta para estudo interativo de fluxo de potência

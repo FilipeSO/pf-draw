@@ -129,16 +129,15 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
     // console.log(newState);
     updateEquips(newState);
   };
-  const [width, height] = useWindowSize();
+  const size = useWindowSize(); //[width,height]
   return (
-    <div>
+    <div className="border-solid border-4 border-blue-500">
       <Stage
-        width={width - 28}
+        width={size[0] - 25}
         height={stageHeight}
         onWheel={handleWheelZoom}
         draggable={true}
         ref={stageRef}
-        style={{ border: "5px solid red", width: width - 28 }}
       >
         <Layer ref={layerRef}>
           {Object.values(equips).map((equip, index) => {
