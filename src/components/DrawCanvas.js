@@ -133,7 +133,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
   return (
     <div className="border-solid border-4 border-blue-500">
       <Stage
-        width={size[0] - 25}
+        width={size[0] > 728 ? size[0] - 25 : size[0] - 8}
         height={stageHeight}
         onWheel={handleWheelZoom}
         draggable={true}

@@ -86,17 +86,17 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
       </h2>
 
       <form onSubmit={handleFileSubmit}>
-        <div className="flex items-center">
+        <div className="md:flex md:items-center">
           <label className="text-gray-700 text-sm font-bold mr-2">
             Arquívo:
           </label>
           <input
-            className="flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+            className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
             type="file"
             onChange={handleFileChange}
           ></input>
           <a
-            className="ml-2 block text-blue-700 text-sm font-bold"
+            className="text-center ml-2 block text-blue-700 text-sm font-bold"
             target="_blank"
             rel="noreferrer noopener"
             href="/ieee30buses.txt"
