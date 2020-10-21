@@ -32,7 +32,7 @@ export const App = () => {
   };
 
   return (
-    <>
+    <div>
       <h1>POWER FLOW DRAW</h1>  
       <InputForms
         updateBars={updateBars}
@@ -56,7 +56,7 @@ export const App = () => {
         updateEquips={updateEquips}
         equips={equips}
       ></DrawCanvas>
-    </>
+    </div>
   );
 };
 

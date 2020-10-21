@@ -1,9 +1,22 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useLayoutEffect } from "react";
 import { Stage, Layer } from "react-konva";
 import Transformer from "./Transformer";
 import Bar from "./Bar";
 import TransmissionLine from "./TransmissionLine";
 import { getLinePoints, getAngle } from "../utils";
+
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+  return size;
+}
 
 const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
   const stageHeight = 600;
@@ -116,61 +129,64 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
     // console.log(newState);
     updateEquips(newState);
   };
+  const [width, height] = useWindowSize();
   return (
-    <Stage
-      width={window.innerWidth / 2}
-      height={stageHeight}
-      onWheel={handleWheelZoom}
-      draggable={true}
-      ref={stageRef}
-      style={{ border: "5px solid red", width: window.innerWidth / 2 }}
-    >
-      <Layer ref={layerRef}>
-        {Object.values(equips).map((equip, index) => {
-          switch (equip.type) {
-            case "LT":
-              return (
-                <TransmissionLine
-                  key={index}
-                  endPointA={equip.endPointA}
-                  endPointB={equip.endPointB}
-                  n={equip.n}
-                  color={equip.color}
-                  bars={bars}
-                />
-              );
-            case "TR":
-              return (
-                <Transformer
-                  key={index}
-                  name={equip.name}
-                  endPointA={equip.endPointA}
-                  endPointB={equip.endPointB}
-                  bars={bars}
-                  x={equip.pos.x}
-                  y={equip.pos.y}
-                  n={equip.n}
-                  handleDrag={handleDrag}
-                />
-              );
-            default:
-              return null;
-          }
-        })}
+    <div>
+      <Stage
+        width={width - 28}
+        height={stageHeight}
+        onWheel={handleWheelZoom}
+        draggable={true}
+        ref={stageRef}
+        style={{ border: "5px solid red", width: width - 28 }}
+      >
+        <Layer ref={layerRef}>
+          {Object.values(equips).map((equip, index) => {
+            switch (equip.type) {
+              case "LT":
+                return (
+                  <TransmissionLine
+                    key={index}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
+                    n={equip.n}
+                    color={equip.color}
+                    bars={bars}
+                  />
+                );
+              case "TR":
+                return (
+                  <Transformer
+                    key={index}
+                    name={equip.name}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
+                    bars={bars}
+                    x={equip.pos.x}
+                    y={equip.pos.y}
+                    n={equip.n}
+                    handleDrag={handleDrag}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
 
-        {Object.keys(bars).map((key, index) => (
-          <Bar
-            x={bars[key].pos.x}
-            y={bars[key].pos.y}
-            handleDrag={handleDrag}
-            handleDragEnd={handleDragEnd}
-            color={bars[key].color}
-            key={index}
-            name={key}
-          />
-        ))}
-      </Layer>
-    </Stage>
+          {Object.keys(bars).map((key, index) => (
+            <Bar
+              x={bars[key].pos.x}
+              y={bars[key].pos.y}
+              handleDrag={handleDrag}
+              handleDragEnd={handleDragEnd}
+              color={bars[key].color}
+              key={index}
+              name={key}
+            />
+          ))}
+        </Layer>
+      </Stage>
+    </div>
   );
 };
 
