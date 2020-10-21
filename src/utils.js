@@ -299,7 +299,8 @@ export const parseTextFile = (lines) => {
     let nodeTR = branches.filter(
       (branch) => branch.type === "TR" && branch.endPointA === key
     );
-    nodeTR.forEach((TR) => {
+    for (let i = 0; i < nodeTR.length; i++) {
+      let TR = nodeTR[i];
       let n =
         Object.values(equips).filter(
           (equip) =>
@@ -333,7 +334,10 @@ export const parseTextFile = (lines) => {
           n: n,
         },
       };
-    });
+    }
+    // nodeTR.forEach((TR) => {
+
+    // });
   }
   return [title, bars, equips];
 };
