@@ -19200,6 +19200,18 @@ video {
   animation: bounce 1s infinite;
 }
 
+/* @layer utilities {
+  .toggle-checkbox:checked {
+    @apply: right-0 border-blue-500;
+    right: 0;
+    border-color: #68d391;
+  }
+  .toggle-checkbox:checked + .toggle-label {
+    @apply: bg-blue-500;
+    background-color: #68d391;
+  }
+} */
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;

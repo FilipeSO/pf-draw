@@ -204,7 +204,7 @@ export const getLinePoints = (x1, y1, x2, y2, n, space, lx, ly) => {
   return points;
 };
 
-export const parseTextFile = (lines) => {
+export const parseTextFile = (lines, bar_placement = "circle") => {
   let bars = [];
   let branches = [];
   let equips = [];
@@ -267,13 +267,23 @@ export const parseTextFile = (lines) => {
   };
   let barCount = 1;
   for (var key in bars) {
-    bars[key].pos = position;
-    let degStep = 360 / Object.keys(bars).length;
-    position = {
-      x: position.x + Math.cos((degStep * barCount * Math.PI) / 180) * 50,
-      y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50,
-    };
-    barCount++;
+    if (bar_placement === "circle") {
+      bars[key].pos = position;
+      let degStep = 360 / Object.keys(bars).length;
+      position = {
+        x: position.x + Math.cos((degStep * barCount * Math.PI) / 180) * 50,
+        y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50,
+      };
+      barCount++;
+    }
+    if (bar_placement === "random") {
+      bars[key].pos = {
+        x:
+          window.innerWidth * 0.2 +
+          Math.floor(Math.random() * (window.innerWidth * 0.6)),
+        y: 600 * 0.2 + Math.floor(Math.random() * 600 * 0.6),
+      };
+    }
   }
 
   //preparar obj equips

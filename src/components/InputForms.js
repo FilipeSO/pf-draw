@@ -56,56 +56,72 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
 
   const [fileEquips, setFileEquips] = useState(null);
   const handleFileChange = (e) => {
-    if (e.target.files === undefined) return;
-    let file = e.target.files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      var lines = reader.result.split(/[\r\n]+/g).filter((line) => line !== "");
-      let [title, fileBars, fileEquips] = parseTextFile(lines);
-      setFileEquips({
-        title: title,
-        bars: fileBars,
-        equips: fileEquips,
-      });
-    };
-    reader.readAsText(file);
+    if (e.target.files !== undefined) {
+      let file = e.target.files[0];
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        var lines = reader.result
+          .split(/[\r\n]+/g)
+          .filter((line) => line !== "");
+        let [title, fileBars, fileEquips] = parseTextFile(lines);
+        setFileEquips({
+          file: file,
+          title: title,
+          bars: fileBars,
+          equips: fileEquips,
+        });
+      };
+      reader.readAsText(file);
+    }
     // console.log(file);
   };
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
-    updateBars(fileEquips.bars);
-    updateEquips(fileEquips.equips);
+    let bar_placement = e.target[1].value;
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      var lines = reader.result.split(/[\r\n]+/g).filter((line) => line !== "");
+      let [, fileBars, fileEquips] = parseTextFile(lines, bar_placement);
+
+      updateBars(fileBars);
+      updateEquips(fileEquips);
+      setFileEquips(null);
+    };
+    reader.readAsText(fileEquips.file);
+    e.target.reset();
+    //
+
     // console.log(fileEquips);
   };
 
   return (
     <div>
-      <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-        ENTRADA FORMATO IT743A 2S2020
-      </h2>
-
-      <form onSubmit={handleFileSubmit}>
-        <div className="md:flex md:items-center">
-          <label className="text-gray-700 text-sm font-bold mr-2">
-            Arquívo:
-          </label>
-          <input
-            className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-            type="file"
-            onChange={handleFileChange}
-          ></input>
-          <a
-            className="text-center ml-2 block text-blue-700 text-sm font-bold"
-            target="_blank"
-            rel="noreferrer noopener"
-            href="/ieee30buses.txt"
-          >
-            entrada padrão
-          </a>
-        </div>
-        {fileEquips && (
-          <p>
+      <div>
+        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
+          ENTRADA FORMATO IT743A 2S2020
+        </h2>
+        <form onSubmit={handleFileSubmit}>
+          <div className="md:flex md:items-center">
+            <label className="text-gray-700 text-sm font-bold mr-2">
+              Arquívo:
+            </label>
+            <input
+              className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+              type="file"
+              onChange={handleFileChange}
+            ></input>
+            <a
+              className="text-center ml-2 block text-blue-700 text-sm font-bold"
+              target="_blank"
+              rel="noreferrer noopener"
+              href="/ieee30buses.txt"
+            >
+              entrada padrão
+            </a>
+          </div>
+          {/* {fileEquips && (
+          <p class="text-center">
             Título:{fileEquips.title}, Barras:
             {Object.keys(fileEquips.bars).length}, Ramos:
             {Object.keys(fileEquips.equips).length} (LT:
@@ -122,278 +138,315 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
             }
             )
           </p>
-        )}
-        <div className="flex">
-          <input
-            className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-            type="submit"
-            value="Adicionar"
-          ></input>
-        </div>
-      </form>
-      <div>
-        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          BARRA
-        </h2>
-        <form onSubmit={handleBarSubmit}>
-          <div className="flex items-center">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              Número:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="numero"
-              onChange={handleBarChange}
-            ></input>
-          </div>
-
-          <div className="flex items-center mt-2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              Identificação:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="id"
-              onChange={handleBarChange}
-            ></input>
-          </div>
-
-          <div className="flex items-center mt-2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              Tipo:
-            </label>
-            <select
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              name="tipo"
-              onChange={handleBarChange}
-            >
-              <option value="0">PQ</option>
-              <option value="1">PV</option>
-              <option value="2">Referência</option>
-            </select>
-          </div>
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
-              <label className="text-gray-700 text-sm font-bold mr-2">
-                V [pu]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="v_pu"
-                onChange={handleBarChange}
-              ></input>
+        )} */}
+          {fileEquips && (
+            <div>
+              <div className="flex items-center mt-2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  Disposição de Barras:
+                </label>
+                <select
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  name="bar_placement"
+                >
+                  <option value="circle">Circular</option>
+                  <option value="random">Aleatório</option>
+                </select>
+              </div>
+              <div className="flex">
+                <input
+                  className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
+                  type="submit"
+                  value={
+                    fileEquips &&
+                    "Adicionar Título:" +
+                      fileEquips.title +
+                      ", Barras:" +
+                      Object.keys(fileEquips.bars).length +
+                      ", Ramos:" +
+                      Object.keys(fileEquips.equips).length +
+                      " (LT:" +
+                      Object.values(fileEquips.equips).filter(
+                        (equip) => equip.type === "LT"
+                      ).length +
+                      " TR:" +
+                      Object.values(fileEquips.equips).filter(
+                        (equip) => equip.type === "TR"
+                      ).length +
+                      ")"
+                  }
+                ></input>
+              </div>
             </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                &theta; [deg]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="theta_deg"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-          </div>
-
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
-              <label className="text-gray-700 text-sm font-bold mr-2">
-                P gerada [MW]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="p_g"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                Q gerada [MVar]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="q_g"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-          </div>
-
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
-              <label className="text-gray-700 text-sm font-bold mr-2">
-                P carga [MW]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="p_c"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                Q carga [MVar]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="q_c"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-          </div>
-
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
-              <label className="text-gray-700 text-sm font-bold mr-2">
-                Q min [MVar]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="q_min"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                Q max [MVar]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="q_max"
-                onChange={handleBarChange}
-              ></input>
-            </div>
-          </div>
-          <div className="flex">
-            <input
-              className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-              type="submit"
-              value="Adicionar"
-            ></input>
-          </div>
+          )}
         </form>
       </div>
-      <div>
-        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          RAMOS
-        </h2>
-        <form onSubmit={handleEquipSubmit}>
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
-              <label className="text-gray-700 text-sm font-bold mr-2">
-                Origem:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="endPointA"
-                onChange={handleEquipChange}
-              ></input>
-            </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                Destino:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="endPointB"
-                onChange={handleEquipChange}
-              ></input>
-            </div>
-          </div>
 
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
+      <div className="lg:flex lg:space-x-4">
+        <div className="lg:w-1/2">
+          <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
+            ENTRADA MANUAL BARRA
+          </h2>
+          <form onSubmit={handleBarSubmit}>
+            <div className="flex items-center">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                r [pu]:
+                Número:
               </label>
               <input
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 type="text"
-                name="r_pu"
-                onChange={handleEquipChange}
+                name="numero"
+                onChange={handleBarChange}
               ></input>
             </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                x [pu]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="x_pu"
-                onChange={handleEquipChange}
-              ></input>
-            </div>
-          </div>
 
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
+            <div className="flex items-center mt-2">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                tap linear:
+                Identificação:
               </label>
               <input
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 type="text"
-                name="tap"
-                onChange={handleEquipChange}
+                name="id"
+                onChange={handleBarChange}
               ></input>
             </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                tap &phi; [deg]:
-              </label>
-              <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="tap_df_deg"
-                onChange={handleEquipChange}
-              ></input>
-            </div>
-          </div>
 
-          <div className="md:flex md: items-center mt-2">
-            <div className="flex items-center md:w-1/2">
+            <div className="flex items-center mt-2">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                tap min:
+                Tipo:
               </label>
-              <input
+              <select
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="tap_min"
-                onChange={handleEquipChange}
+                name="tipo"
+                onChange={handleBarChange}
+              >
+                <option value="0">PQ</option>
+                <option value="1">PV</option>
+                <option value="2">Referência</option>
+              </select>
+            </div>
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  V [pu]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="v_pu"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  &theta; [deg]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="theta_deg"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  P gerada [MW]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="p_g"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  Q gerada [MVar]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="q_g"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  P carga [MW]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="p_c"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  Q carga [MVar]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="q_c"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  Q min [MVar]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="q_min"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  Q max [MVar]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="q_max"
+                  onChange={handleBarChange}
+                ></input>
+              </div>
+            </div>
+            <div className="flex">
+              <input
+                className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
+                type="submit"
+                value="Adicionar Barra"
               ></input>
             </div>
-            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                tap max:
-              </label>
+          </form>
+        </div>
+        <div className="lg:w-1/2">
+          <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
+            ENTRADA MANUAL RAMOS
+          </h2>
+          <form onSubmit={handleEquipSubmit}>
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  Origem:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="endPointA"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  Destino:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="endPointB"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  r [pu]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="r_pu"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  x [pu]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="x_pu"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  tap linear:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="tap"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  tap &phi; [deg]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="tap_df_deg"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+            </div>
+
+            <div className="md:flex md: items-center mt-2">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  tap min:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="tap_min"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  tap max:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="tap_max"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+            </div>
+            <div className="flex">
               <input
-                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
-                name="tap_max"
-                onChange={handleEquipChange}
+                className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
+                type="submit"
+                value="Adicionar Ramo"
               ></input>
             </div>
-          </div>
-          <div className="flex">
-            <input
-              className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-              type="submit"
-              value="Adicionar"
-            ></input>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

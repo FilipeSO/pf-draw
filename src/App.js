@@ -1,16 +1,22 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import DrawCanvas from "./components/DrawCanvas";
 import InputForms from "./components/InputForms";
+import ConfigForms from "./components/ConfigForms";
+
 import { parseTextFile } from "./utils";
 
 export const App = () => {
-  let rndBars = [];
-  let orgEquips = [];
-  const [bars, setBars] = useState(rndBars);
-  const [equips, setEquips] = useState(orgEquips);
+  const [bars, setBars] = useState([]);
+  const [equips, setEquips] = useState([]);
   const [title, setTitle] = useState("");
+  const [config, setConfig] = useState({
+    bar_placement: "circle",
+    solver: "newton-raphson",
+  });
+
+  const drawCanvasRef = useRef(null);
+
   useEffect(() => {
     fetch("/ieee30buses.txt")
       .then((result) => result.text())
@@ -25,10 +31,16 @@ export const App = () => {
 
   const updateBars = (newState) => {
     setBars(newState);
+    // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
   const updateEquips = (newState) => {
     setEquips(newState);
+    // window.scrollTo(0, drawCanvasRef.current.offsetTop);
+  };
+  const updateConfig = (newState) => {
+    setConfig(newState);
+    // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
   return (
@@ -57,35 +69,8 @@ export const App = () => {
           updateEquips={updateEquips}
           equips={equips}
         ></InputForms>
-        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          CONFIGURAÇÕES
-        </h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert("ainda não implementado");
-          }}
-        >
-          <div className="flex items-center mt-2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              Solver:
-            </label>
-            <select
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              name="solver"
-            >
-              <option value="0">Newton-Raphson</option>
-              <option value="1">Desacoplado Rápido</option>
-            </select>
-          </div>
-          <div className="flex">
-            <input
-              className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-              type="submit"
-              value="Calcular"
-            ></input>
-          </div>
-        </form>
+        <ConfigForms config={config} updateConfig={updateConfig}></ConfigForms>
+
         <h1 className="text-xl font-bold mt-4 text-center text-gray-800">
           Título:{title}, Barras:
           {Object.keys(bars).length}, Ramos:
@@ -97,12 +82,16 @@ export const App = () => {
           {Object.values(equips).filter((equip) => equip.type === "TR").length})
         </h1>
       </div>
-      <DrawCanvas
-        updateBars={updateBars}
-        bars={bars}
-        updateEquips={updateEquips}
-        equips={equips}
-      ></DrawCanvas>
+
+      <div ref={drawCanvasRef}>
+        <DrawCanvas
+          updateBars={updateBars}
+          bars={bars}
+          updateEquips={updateEquips}
+          equips={equips}
+        ></DrawCanvas>
+      </div>
+      <div className="h-64"></div>
     </div>
   );
 };
