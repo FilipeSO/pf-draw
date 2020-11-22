@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { parseTextFile } from "../utils";
+import { parseTextFile, parseCSVFile } from "../utils";
 
-const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
+const InputForms = ({
+  updateBars,
+  updateEquips,
+  bars,
+  equips,
+  updateTitle,
+}) => {
   const stageHeight = 600;
 
   const [bar, setBar] = useState(null);
@@ -63,12 +69,12 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
         var lines = reader.result
           .split(/[\r\n]+/g)
           .filter((line) => line !== "");
-        let [title, fileBars, fileEquips] = parseTextFile(lines);
+        let [title, parsedBars, parsedEquips] = parseTextFile(lines);
         setFileEquips({
           file: file,
           title: title,
-          bars: fileBars,
-          equips: fileEquips,
+          bars: parsedBars,
+          equips: parsedEquips,
         });
       };
       reader.readAsText(file);
@@ -78,17 +84,72 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
 
   const handleFileSubmit = (e) => {
     e.preventDefault();
+    updateBars([]);
+    updateEquips([]);
     let bar_placement = e.target[1].value;
     var reader = new FileReader();
     reader.onloadend = function () {
       var lines = reader.result.split(/[\r\n]+/g).filter((line) => line !== "");
-      let [, fileBars, fileEquips] = parseTextFile(lines, bar_placement);
+      let [title, parsedBars, parsedEquips] = parseTextFile(
+        lines,
+        bar_placement
+      );
 
-      updateBars(fileBars);
-      updateEquips(fileEquips);
+      updateBars(parsedBars);
+      updateEquips(parsedEquips);
+      updateTitle(title);
       setFileEquips(null);
     };
     reader.readAsText(fileEquips.file);
+    e.target.reset();
+    //
+
+    // console.log(fileEquips);
+  };
+
+  const [fileCSVEquips, setFileCSVEquips] = useState(null);
+  const handleCSVChange = (e) => {
+    if (e.target.files !== undefined) {
+      let file = e.target.files[0];
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        var lines = reader.result
+          .split(/[\r\n]+/g)
+          .filter((line) => line.split(";")[0] !== "");
+        let [title, parsedBars, parsedEquips] = parseCSVFile(lines);
+        setFileCSVEquips({
+          file: file,
+          title: title,
+          bars: parsedBars,
+          equips: parsedEquips,
+        });
+      };
+      reader.readAsText(file);
+    }
+    // console.log(file);
+  };
+
+  const handleCSVSubmit = (e) => {
+    e.preventDefault();
+    updateBars([]);
+    updateEquips([]);
+    let bar_placement = e.target[1].value;
+    var reader = new FileReader();
+    reader.onloadend = function () {
+      var lines = reader.result
+        .split(/[\r\n]+/g)
+        .filter((line) => line.split(";")[0] !== "");
+      let [title, parsedBars, parsedEquips] = parseCSVFile(
+        lines,
+        bar_placement
+      );
+      updateBars(parsedBars);
+      updateEquips(parsedEquips);
+      updateTitle(title);
+
+      setFileCSVEquips(null);
+    };
+    reader.readAsText(fileCSVEquips.file);
     e.target.reset();
     //
 
@@ -120,25 +181,6 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
               entrada padrão
             </a>
           </div>
-          {/* {fileEquips && (
-          <p class="text-center">
-            Título:{fileEquips.title}, Barras:
-            {Object.keys(fileEquips.bars).length}, Ramos:
-            {Object.keys(fileEquips.equips).length} (LT:
-            {
-              Object.values(fileEquips.equips).filter(
-                (equip) => equip.type === "LT"
-              ).length
-            }{" "}
-            TR:
-            {
-              Object.values(fileEquips.equips).filter(
-                (equip) => equip.type === "TR"
-              ).length
-            }
-            )
-          </p>
-        )} */}
           {fileEquips && (
             <div>
               <div className="flex items-center mt-2">
@@ -171,6 +213,72 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
                       ).length +
                       " TR:" +
                       Object.values(fileEquips.equips).filter(
+                        (equip) => equip.type === "TR"
+                      ).length +
+                      ")"
+                  }
+                ></input>
+              </div>
+            </div>
+          )}
+        </form>
+      </div>
+
+      <div>
+        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
+          ENTRADA FORMATO CSV
+        </h2>
+        <form onSubmit={handleCSVSubmit}>
+          <div className="md:flex md:items-center">
+            <label className="text-gray-700 text-sm font-bold mr-2">
+              Arquívo:
+            </label>
+            <input
+              className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+              type="file"
+              onChange={handleCSVChange}
+            ></input>
+            <a
+              className="text-center ml-2 block text-blue-700 text-sm font-bold"
+              target="_blank"
+              rel="noreferrer noopener"
+              href="/input.csv"
+            >
+              entrada padrão
+            </a>
+          </div>
+          {fileCSVEquips && (
+            <div>
+              <div className="flex items-center mt-2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  Disposição de Barras:
+                </label>
+                <select
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  name="bar_placement"
+                >
+                  <option value="circle">Circular</option>
+                  <option value="random">Aleatório</option>
+                </select>
+              </div>
+              <div className="flex">
+                <input
+                  className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
+                  type="submit"
+                  value={
+                    fileCSVEquips &&
+                    "Adicionar Título:" +
+                      fileCSVEquips.title +
+                      ", Barras:" +
+                      Object.keys(fileCSVEquips.bars).length +
+                      ", Ramos:" +
+                      Object.keys(fileCSVEquips.equips).length +
+                      " (LT:" +
+                      Object.values(fileCSVEquips.equips).filter(
+                        (equip) => equip.type === "LT"
+                      ).length +
+                      " TR:" +
+                      Object.values(fileCSVEquips.equips).filter(
                         (equip) => equip.type === "TR"
                       ).length +
                       ")"
@@ -364,26 +472,38 @@ const InputForms = ({ updateBars, updateEquips, bars, equips }) => {
               </div>
             </div>
 
-            <div className="md:flex md: items-center mt-2">
-              <div className="flex items-center md:w-1/2">
+            <div className="md:flex items-center mt-2">
+              <div className="flex items-center md:w-1/3">
                 <label className="text-gray-700 text-sm font-bold mr-2">
                   r [pu]:
                 </label>
                 <input
-                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  className="w-full shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                   type="text"
                   name="r_pu"
                   onChange={handleEquipChange}
                 ></input>
               </div>
-              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+              <div className="flex items-center md:w-1/3 md:mt-0 mt-2">
                 <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
                   x [pu]:
                 </label>
                 <input
-                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  className="w-full shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                   type="text"
                   name="x_pu"
+                  onChange={handleEquipChange}
+                ></input>
+              </div>
+
+              <div className="flex items-center md:w-1/3 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  bsh (total) [pu]:
+                </label>
+                <input
+                  className="w-full shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="bsh_pu"
                   onChange={handleEquipChange}
                 ></input>
               </div>

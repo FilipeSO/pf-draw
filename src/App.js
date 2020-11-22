@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import DrawCanvas from "./components/DrawCanvas";
 import InputForms from "./components/InputForms";
 import ConfigForms from "./components/ConfigForms";
+import Solution from "./components/Solution";
+import { parseCSVFile } from "./utils";
 
-import { parseTextFile } from "./utils";
+// import { parseTextFile } from "./utils";
 
 export const App = () => {
   const [bars, setBars] = useState([]);
@@ -18,11 +20,24 @@ export const App = () => {
   const drawCanvasRef = useRef(null);
 
   useEffect(() => {
-    fetch("/ieee30buses.txt")
+    // fetch("/ieee30buses.txt")
+    // fetch("/teste2.txt")
+    //   .then((result) => result.text())
+    //   .then((text) => {
+    //     var lines = text.split(/[\r\n]+/g).filter((line) => line !== "");
+    //     let [title, fileBars, fileEquips] = parseTextFile(lines);
+    //     setTitle(title);
+    //     setBars(fileBars);
+    //     setEquips(fileEquips);
+    //   });
+
+    fetch("/input.csv")
       .then((result) => result.text())
       .then((text) => {
-        var lines = text.split(/[\r\n]+/g).filter((line) => line !== "");
-        let [title, fileBars, fileEquips] = parseTextFile(lines);
+        var lines = text
+          .split(/[\r\n]+/g)
+          .filter((line) => line.split(";")[0] !== "");
+        let [title, fileBars, fileEquips] = parseCSVFile(lines);
         setTitle(title);
         setBars(fileBars);
         setEquips(fileEquips);
@@ -41,6 +56,10 @@ export const App = () => {
   const updateConfig = (newState) => {
     setConfig(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
+  };
+
+  const updateTitle = (newState) => {
+    setTitle(newState);
   };
 
   return (
@@ -68,6 +87,7 @@ export const App = () => {
           bars={bars}
           updateEquips={updateEquips}
           equips={equips}
+          updateTitle={updateTitle}
         ></InputForms>
         <ConfigForms config={config} updateConfig={updateConfig}></ConfigForms>
 
@@ -82,7 +102,6 @@ export const App = () => {
           {Object.values(equips).filter((equip) => equip.type === "TR").length})
         </h1>
       </div>
-
       <div ref={drawCanvasRef}>
         <DrawCanvas
           updateBars={updateBars}
@@ -91,7 +110,10 @@ export const App = () => {
           equips={equips}
         ></DrawCanvas>
       </div>
-      <div className="h-64"></div>
+      <div className="bg-gray-700">
+        <h1 className="text-white text-4xl font-bold text-center">SOLUTION</h1>
+      </div>
+      <Solution bars={bars} equips={equips}></Solution>
     </div>
   );
 };

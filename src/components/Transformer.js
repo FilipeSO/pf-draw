@@ -34,7 +34,7 @@ const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
     <>
       <Line
         points={[bars[endPointA].pos.x, bars[endPointA].pos.y, x, y]}
-        stroke={"#00F"}
+        stroke={"#0F0"}
         strokeWidth={strokeWidthLT}
         endPointA={endPointA}
         endPointB={name}
