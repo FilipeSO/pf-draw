@@ -1,6 +1,40 @@
+import React from "react";
 import * as math from "mathjs";
 
-export const CalcY = (equips, NB, NR) => {
+const DisplayMatrix = ({ matrix }) => {
+  const n_rows = matrix._size[0];
+  const n_cols = matrix._size[1];
+  let td = [];
+  let tr = [];
+
+  for (let i = 0; i < n_rows; i++) {
+    for (let j = 0; j < n_cols; j++) {
+      let value = math.round(matrix._data[i][j], 4);
+      td.push(<td className="px-2">{value.toString()}</td>);
+    }
+    tr.push(<tr className="text-center">{td}</tr>);
+    td = [];
+  }
+  // console.log(tr);
+  // console.log(math.subtract(1, math.complex(1, 1)));
+  return (
+    <div className="flex flex-wrap items-center justify-center">
+      <div className="mr-2" style={{ whiteSpace: "nowrap" }}>
+        Y =
+      </div>
+      <div className="overflow-auto max-w-xl" style={{ maxHeight: "350px" }}>
+        <table
+          className="table-fixed border-solid border-l-2 border-r-2 border-black"
+          style={{ whiteSpace: "nowrap" }}
+        >
+          <tbody>{tr}</tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const CalcY = (equips, NB, NR) => {
   const Y = math.zeros(NB, NB);
 
   for (let i = 0; i < NR; i++) {
@@ -32,4 +66,12 @@ export const CalcY = (equips, NB, NR) => {
     Y._data[m][m] = math.add(math.add(Y._data[m][m], ykm), i_bsh);
   }
   return Y;
+};
+
+export const NewtonRaphsonMethod = (bars, equips, NB, NR, updateSolution) => {
+  const Y = CalcY(equips, NB, NR);
+  updateSolution([
+    <div key={"solver"}>Solução Newton:</div>,
+    <DisplayMatrix matrix={Y} key={1}></DisplayMatrix>,
+  ]);
 };

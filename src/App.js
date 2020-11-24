@@ -30,8 +30,8 @@ export const App = () => {
     //     setBars(fileBars);
     //     setEquips(fileEquips);
     //   });
-
     fetch("/input.csv")
+      // fetch("/input30bar.csv")
       .then((result) => result.text())
       .then((text) => {
         var lines = text
