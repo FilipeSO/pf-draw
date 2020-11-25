@@ -120,15 +120,26 @@ export const NewtonRaphsonMethod = (
   const B = math.im(Y);
   let theta = math.matrix(BARS.map((bar) => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
   let V = math.matrix(BARS.map((bar) => bar.v_pu));
+
   let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
     parseInt(bar.name)
-  ); //%numero barra tipo PQ
+  );
+  //%numero barra tipo PQ
+
   let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
     parseInt(bar.name)
-  ); //%numero barra tipo PV
+  );
+  //%numero barra tipo PV
+
+  let PQ_PV_index = BARS.filter(
+    (bar) => bar.tipo === 0 || bar.tipo === 1
+  ).map((bar) => parseInt(bar.name));
+  //%numero barra tipo PQ ou PV
+
   let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
     parseInt(bar.name)
   ); //%numero barra tipo slack
+
   let Pesp = BARS.map((bar) => bar.p_g - bar.p_c);
 
   let Qesp = BARS.map((bar) => bar.q_g - bar.q_c);
@@ -164,8 +175,38 @@ export const NewtonRaphsonMethod = (
   // let k = 1; //remember matrix zero based
   let Pcalc = P_CALC(V, theta, G, B, NB, equips);
   let Qcalc = Q_CALC(V, theta, G, B, NB, equips);
+  let dP = math.subtract(Pesp, Pcalc);
+  let dQ = math.subtract(Qesp, Qcalc);
+  console.log(Pesp, Pcalc);
+  let g = PQ_PV_index.map((elem) => dP[elem - 1]); //zero based matrix
+  g.push(...PQ_index.map((elem) => dQ[elem - 1]));
+  // console.log(
+  //   "PQ_PV_index",
+  //   PQ_PV_index.map((elem) => dP[elem - 1]),
+  //   "PQ_index",
+  //   PQ_index
+  // );
+  if (math.max(math.abs(g)) < err_tolerance) {
+    // break;
+    console.log("FIM");
+  } else {
+    iteration++;
+    console.log(iteration);
+  }
 
-  console.log(Pcalc, Qcalc);
+  let [H, M, N, L] = J_CALC(V, theta, G, B, NB, Pcalc, Qcalc);
+  console.log(H, M, N, L);
+  // for k=1:NB %ordem importa
+  //     for m=1:NB %ordem importa
+  //         if(k==m)
+  //             H(k,m)=-B(k,k)*V(k)^2-Qcalc(k);
+  //         else
+  //             theta_km=theta(k)-theta(m);
+  //             H(k,m)=V(k)*V(m)*(G(k,m)*sin(theta_km)-B(k,m)*cos(theta_km));
+  //         end
+  //     end
+  // end
+
   // let k_index = k - 1;
 
   // let V_m = math.subset(V, math.index(m));
@@ -205,11 +246,9 @@ const getRelatedEndPoint = (equips, k_index) => {
     let endPointB = parseInt(equip.endPointB) - 1; //matrix is zero based
 
     if (endPointA === k_index && m.indexOf(endPointB) === -1) {
-      console.log("VOU ADD B", m, endPointB);
       m.push(endPointB); //matrix is zero based
     }
     if (endPointB === k_index && m.indexOf(endPointA) === -1) {
-      console.log("VOU ADD A", m, endPointA);
       m.push(endPointA); //-matrix is zero based
     }
   });
@@ -266,4 +305,76 @@ const Q_CALC = (V, theta, G, B, NB, equips) => {
     Qcalc.push(math.multiply(V_k, sum_V_m_G_B));
   }
   return Qcalc;
+};
+
+const J_CALC = (V, theta, G, B, NB, Pcalc, Qcalc) => {
+  let H = math.zeros(NB, NB);
+  for (let k = 0; k < NB; k++) {
+    for (let m = 0; m < NB; m++) {
+      if (k === m)
+        H._data[k][m] = -B._data[k][k] * math.pow(V._data[k], 2) - Qcalc[k];
+      else
+        H._data[k][m] =
+          V._data[k] *
+          V._data[m] *
+          (G._data[k][m] * math.sin(theta._data[k] - theta._data[m]) -
+            B._data[k][m] * math.cos(theta._data[k] - theta._data[m]));
+      // console.log(k, m, H);
+    }
+  }
+
+  let M = math.zeros(NB, NB);
+  for (let k = 0; k < NB; k++) {
+    for (let m = 0; m < NB; m++) {
+      if (k === m)
+        M._data[k][m] = -G._data[k][k] * math.pow(V._data[k], 2) - Pcalc[k];
+      else
+        M._data[k][m] =
+          -V._data[k] *
+          V._data[m] *
+          (G._data[k][m] * math.cos(theta._data[k] - theta._data[m]) +
+            B._data[k][m] * math.sin(theta._data[k] - theta._data[m]));
+      // console.log(k, m, M);
+    }
+  }
+
+  let N = math.zeros(NB, NB);
+  for (let k = 0; k < NB; k++) {
+    for (let m = 0; m < NB; m++) {
+      if (k === m)
+        N._data[k][m] =
+          (G._data[k][k] * math.pow(V._data[k], 2) + Pcalc[k]) / V._data[k];
+      else
+        N._data[k][m] =
+          V._data[k] *
+          (G._data[k][m] * math.cos(theta._data[k] - theta._data[m]) +
+            B._data[k][m] * math.sin(theta._data[k] - theta._data[m]));
+      // console.log(
+      //   k,
+      //   m,
+      //   G._data[k][m] * math.cos(theta._data[k] - theta._data[m]),
+      //   B._data[k][m] * math.sin(theta._data[k] - theta._data[m]),
+      //   G._data[k][m] * math.cos(theta._data[k] - theta._data[m]) +
+      //     B._data[k][m] * math.sin(theta._data[k] - theta._data[m])
+      // );
+      // console.log(N);
+    }
+  }
+
+  let L = math.zeros(NB, NB);
+  for (let k = 0; k < NB; k++) {
+    for (let m = 0; m < NB; m++) {
+      if (k === m)
+        L._data[k][m] =
+          (-B._data[k][k] * math.pow(V._data[k], 2) + Qcalc[k]) / V._data[k];
+      else
+        L._data[k][m] =
+          V._data[k] *
+          (G._data[k][m] * math.sin(theta._data[k] - theta._data[m]) -
+            B._data[k][m] * math.cos(theta._data[k] - theta._data[m]));
+      // console.log(L);
+    }
+  }
+
+  return [H, M, N, L];
 };
