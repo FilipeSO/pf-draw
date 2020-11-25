@@ -10,10 +10,10 @@ const Solution = ({ bars, equips }) => {
   useEffect(() => {
     const NB = bars ? Object.keys(bars).length : 0;
     const NR = equips ? Object.keys(equips).length : 0;
-    if (NB === 0 && NR === 0) {
+    if (NB === 0 || NR === 0) {
       setSolution(<div>Aguardando dados...</div>);
     } else {
-      NewtonRaphsonMethod(bars, equips, NB, NR, updateSolution);
+      NewtonRaphsonMethod(bars, equips, NB, NR, updateSolution, 0.01);
     }
   }, [equips, bars]);
   return (
