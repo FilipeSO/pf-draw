@@ -123,22 +123,24 @@ export const NewtonRaphsonMethod = (
 
   let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
     parseInt(bar.name)
-  );
-  //%numero barra tipo PQ
+  ); //%numero barra tipo PQ
+  let zero_PQ_index = PQ_index.map((elem) => elem - 1); //numero barra tipo PQ base zero
 
   let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
     parseInt(bar.name)
-  );
-  //%numero barra tipo PV
+  ); //%numero barra tipo PV
+  let zero_PV_index = PV_index.map((elem) => elem - 1); //numero barra tipo PV base zero
 
   let PQ_PV_index = BARS.filter(
     (bar) => bar.tipo === 0 || bar.tipo === 1
-  ).map((bar) => parseInt(bar.name));
-  //%numero barra tipo PQ ou PV
+  ).map((bar) => parseInt(bar.name)); //%numero barra tipo PQ ou PV
+  let zero_PQ_PV_index = PQ_PV_index.map((elem) => elem - 1); //%numero barra tipo PQ ou PV base zero
 
   let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
     parseInt(bar.name)
   ); //%numero barra tipo slack
+  let zero_Vtheta_index = Vtheta_index.map((elem) => elem - 1);
+  //%numero barra tipo slack base zero
 
   let Pesp = BARS.map((bar) => bar.p_g - bar.p_c);
 
@@ -178,8 +180,8 @@ export const NewtonRaphsonMethod = (
   let dP = math.subtract(Pesp, Pcalc);
   let dQ = math.subtract(Qesp, Qcalc);
   console.log(Pesp, Pcalc);
-  let g = PQ_PV_index.map((elem) => dP[elem - 1]); //zero based matrix
-  g.push(...PQ_index.map((elem) => dQ[elem - 1]));
+  let g = zero_PQ_PV_index.map((elem) => dP[elem]); //zero based matrix
+  g.push(...zero_PQ_index.map((elem) => dQ[elem]));
   // console.log(
   //   "PQ_PV_index",
   //   PQ_PV_index.map((elem) => dP[elem - 1]),
@@ -195,7 +197,62 @@ export const NewtonRaphsonMethod = (
   }
 
   let [H, M, N, L] = J_CALC(V, theta, G, B, NB, Pcalc, Qcalc);
-  console.log(H, M, N, L);
+  // console.log(H, M, N, L);
+
+  // const a = math.matrix([
+  //   [11, 12, 13],
+  //   [21, 22, 23],
+  //   [31, 32, 33],
+  // ]);
+  // console.log("RANGE", math.range(0, 2, true), zero_PQ_PV_index);
+  // console.log(
+  //   "SUBSET",
+  //   a.subset(math.index(zero_PQ_PV_index, zero_PQ_PV_index))
+  // ); // returns 2
+
+  // console.log("SUBSET", a.subset(math.index([0, 2], 1))); // returns 2
+
+  let Hdisplay = H.subset(math.index(zero_PQ_PV_index, zero_PQ_PV_index));
+  let Mdisplay = M.subset(math.index(zero_PQ_index, zero_PQ_PV_index));
+  let Ndisplay = N.subset(math.index(zero_PQ_PV_index, zero_PQ_index));
+  let Ldisplay = L.subset(math.index(zero_PQ_index, zero_PQ_index));
+  let Jdisplay = math.zeros(
+    2 * PQ_index.length + PV_index.length,
+    2 * PQ_index.length + PV_index.length
+  );
+
+  // console.log(Hdisplay, Mdisplay, Ndisplay, Ldisplay);
+  // const A = [
+  //   [1, 2],
+  //   [5, 6],
+  // ];
+  // const B2 = [
+  //   [3, 4],
+  //   [7, 8],
+  // ];
+  // console.log(math.concat(A, B2)); // returns [[1, 2, 3, 4], [5, 6, 7, 8]]
+  // console.log(math.concat(A, B2, 0)); // returns [[1, 2], [5, 6], [3, 4], [7, 8]]
+  let HN = math.concat(Hdisplay, Ndisplay);
+  console.log(HN);
+
+  console.log(
+    Mdisplay,
+    math.matrix([45]),
+    math.concat(Mdisplay, math.matrix([45]))
+  );
+
+  // let ML = math.concat(Mdisplay, math.matrix(Ldisplay));
+  // console.log(ML);
+  // let Jdisplay = math.concat(HN, ML, 0);
+  // console.log(HN, ML, Jdisplay);
+
+  // Hdisplay=H(PQ_PV_index,PQ_PV_index); %dP/dtheta [NPQ+NPV,NPQ+NPV]
+  // Mdisplay=M(PQ_index,PQ_PV_index); %dQ/dtheta [NPQ,NPQ+NPV]
+
+  // Ndisplay=N(PQ_PV_index,PQ_index); %dP/dV [NPQ+NPV,NPQ]
+  // Ldisplay=L(PQ_index,PQ_index); %dQ/dV [NPQ,NPQ]
+  // Jdisplay=[Hdisplay Ndisplay;Mdisplay Ldisplay] %exibir J formato usual
+
   // for k=1:NB %ordem importa
   //     for m=1:NB %ordem importa
   //         if(k==m)
