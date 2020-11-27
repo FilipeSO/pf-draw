@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { NewtonRaphsonMethod } from "../methods";
 
-const Solution = ({ bars, equips }) => {
-  console.log(bars, equips);
+const Solution = ({ bars, equips, solve }) => {
   const [solution, setSolution] = useState([]);
-  const updateSolution = (newState) => {
-    setSolution(newState);
+
+  const updateSolution = newState => {
+    setSolution(newState, console.log("Atualizou o state"));
   };
   useEffect(() => {
     const NB = bars ? Object.keys(bars).length : 0;
@@ -15,7 +15,7 @@ const Solution = ({ bars, equips }) => {
     } else {
       NewtonRaphsonMethod(bars, equips, NB, NR, updateSolution, 0.01);
     }
-  }, [equips, bars]);
+  }, [solve]);
   return (
     <div className="flex flex-col items-center justify-center">{solution}</div>
   );

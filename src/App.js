@@ -14,8 +14,9 @@ export const App = () => {
   const [title, setTitle] = useState("");
   const [config, setConfig] = useState({
     bar_placement: "circle",
-    solver: "newton-raphson",
+    solver: "newton-raphson"
   });
+  const [solve, setSolve] = useState(false);
 
   const drawCanvasRef = useRef(null);
 
@@ -32,11 +33,11 @@ export const App = () => {
     //   });
     fetch("/input.csv")
       // fetch("/input30bar.csv")
-      .then((result) => result.text())
-      .then((text) => {
+      .then(result => result.text())
+      .then(text => {
         var lines = text
           .split(/[\r\n]+/g)
-          .filter((line) => line.split(";")[0] !== "");
+          .filter(line => line.split(";")[0] !== "");
         let [title, fileBars, fileEquips] = parseCSVFile(lines);
         setTitle(title);
         setBars(fileBars);
@@ -44,24 +45,27 @@ export const App = () => {
       });
   }, []);
 
-  const updateBars = (newState) => {
+  const updateBars = newState => {
     setBars(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
-  const updateEquips = (newState) => {
+  const updateEquips = newState => {
     setEquips(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
-  const updateConfig = (newState) => {
+  const updateConfig = newState => {
     setConfig(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
-  const updateTitle = (newState) => {
+  const updateTitle = newState => {
     setTitle(newState);
   };
 
+  const updateSolve = newState => {
+    setSolve(newState);
+  };
   return (
     <div>
       <a
@@ -89,17 +93,21 @@ export const App = () => {
           equips={equips}
           updateTitle={updateTitle}
         ></InputForms>
-        <ConfigForms config={config} updateConfig={updateConfig}></ConfigForms>
+        <ConfigForms
+          config={config}
+          updateConfig={updateConfig}
+          updateSolve={updateSolve}
+        ></ConfigForms>
 
         <h1 className="text-xl font-bold mt-4 text-center text-gray-800">
           Título:{title}, Barras:
           {Object.keys(bars).length}, Ramos:
           {Object.keys(equips).length} (LT:
           {
-            Object.values(equips).filter((equip) => equip.type === "LT").length
+            Object.values(equips).filter(equip => equip.type === "LT").length
           }{" "}
           TR:
-          {Object.values(equips).filter((equip) => equip.type === "TR").length})
+          {Object.values(equips).filter(equip => equip.type === "TR").length})
         </h1>
       </div>
       <div ref={drawCanvasRef}>
@@ -113,7 +121,7 @@ export const App = () => {
       <div className="bg-gray-700">
         <h1 className="text-white text-4xl font-bold text-center">SOLUTION</h1>
       </div>
-      <Solution bars={bars} equips={equips}></Solution>
+      <Solution bars={bars} equips={equips} solve={solve}></Solution>
     </div>
   );
 };
