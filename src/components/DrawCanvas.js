@@ -23,37 +23,37 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
 
   const stageRef = useRef(null);
   const scaleBy = 1.1;
-  const handleWheelZoom = (e) => {
+  const handleWheelZoom = e => {
     e.evt.preventDefault();
     var oldScale = stageRef.current.scaleX();
     var pointer = stageRef.current.getPointerPosition();
     var mousePointTo = {
       x: (pointer.x - stageRef.current.x()) / oldScale,
-      y: (pointer.y - stageRef.current.y()) / oldScale,
+      y: (pointer.y - stageRef.current.y()) / oldScale
     };
     var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
     stageRef.current.scale({ x: newScale, y: newScale });
     var newPos = {
       x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
+      y: pointer.y - mousePointTo.y * newScale
     };
     stageRef.current.position(newPos);
     stageRef.current.batchDraw();
   };
 
   const layerRef = useRef(null);
-  const handleDrag = (e) => {
+  const handleDrag = e => {
     e.evt.preventDefault();
     //redesenha TRs
     layerRef.current.children
-      .filter((node) => node.attrs.type === "TR")
-      .forEach((TR) => {
+      .filter(node => node.attrs.type === "TR")
+      .forEach(TR => {
         // console.log(TR);
         let newEndPointA = layerRef.current.children.filter(
-          (node) => node.attrs.name === TR.attrs.endPointA
+          node => node.attrs.name === TR.attrs.endPointA
         )[0].attrs;
         let newEndPointB = layerRef.current.children.filter(
-          (node) => node.attrs.name === TR.attrs.endPointB
+          node => node.attrs.name === TR.attrs.endPointB
         )[0].attrs;
         let n = TR.attrs.n;
         // console.log(newEndPointA, newEndPointB);
@@ -74,56 +74,69 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
         TR.rotation(getAngle(x2 - x1, y2 - y1));
         TR.position({
           x: newX,
-          y: newY,
+          y: newY
         });
       });
 
     //redesenha todas as linhas
     layerRef.current
-      .getChildren((node) => node.getClassName() === "Line")
-      .forEach((line) => {
+      .getChildren(node => node.getClassName() === "Line")
+      .forEach(line => {
         // console.log("linha", line);
         let newEndPointA = layerRef.current.children.filter(
-          (element) => element.attrs.name === line.attrs.endPointA
+          element => element.attrs.name === line.attrs.endPointA
         )[0].attrs;
         let newEndPointB = layerRef.current.children.filter(
-          (element) => element.attrs.name === line.attrs.endPointB
+          element => element.attrs.name === line.attrs.endPointB
         )[0].attrs;
         // console.log(newEndPointA, newEndPointB);
         let n = line.attrs.n;
-        line.attrs.points = getLinePoints(
-          newEndPointA.x,
-          newEndPointA.y,
-          newEndPointB.x,
-          newEndPointB.y,
-          n
-        );
+
+        let linePoints = [];
+        if (parseInt(newEndPointA.name) > parseInt(newEndPointB.name)) {
+          linePoints = getLinePoints(
+            newEndPointB.x,
+            newEndPointB.y,
+            newEndPointA.x,
+            newEndPointA.y,
+            n
+          );
+        } else {
+          linePoints = getLinePoints(
+            newEndPointA.x,
+            newEndPointA.y,
+            newEndPointB.x,
+            newEndPointB.y,
+            n
+          );
+        }
+        line.attrs.points = linePoints;
       });
     layerRef.current.batchDraw();
   };
-  const handleDragEnd = (e) => {
+  const handleDragEnd = e => {
     e.evt.preventDefault();
     let barState = bars[e.target.attrs.name];
     let newState = {
       ...bars,
       [e.target.attrs.name]: {
         ...barState,
-        pos: e.target.position(),
-      },
+        pos: e.target.position()
+      }
     };
     updateBars(newState);
     newState = equips;
     layerRef.current.children
-      .filter((node) => node.attrs.type === "TR")
-      .forEach((TR) => {
+      .filter(node => node.attrs.type === "TR")
+      .forEach(TR => {
         // console.log(TR.attrs.name, TR.position());
         let equipState = equips[TR.attrs.name];
         equipState.pos = TR.position();
         newState = {
           ...equips,
           [TR.attrs.name]: {
-            ...equipState,
-          },
+            ...equipState
+          }
         };
       });
     // console.log(newState);

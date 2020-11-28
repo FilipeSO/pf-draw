@@ -11,15 +11,27 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
   //   console.log(handleDrag);
   //   console.log(endPointA, endPointB, n, color, bars);
   let lineColor = color || "000";
+  let linePoints = [];
+  if (parseInt(endPointA) > parseInt(endPointB)) {
+    linePoints = getLinePoints(
+      bars[endPointB].pos.x,
+      bars[endPointB].pos.y,
+      bars[endPointA].pos.x,
+      bars[endPointA].pos.y,
+      n
+    );
+  } else {
+    linePoints = getLinePoints(
+      bars[endPointA].pos.x,
+      bars[endPointA].pos.y,
+      bars[endPointB].pos.x,
+      bars[endPointB].pos.y,
+      n
+    );
+  }
   return (
     <Line
-      points={getLinePoints(
-        bars[endPointA].pos.x,
-        bars[endPointA].pos.y,
-        bars[endPointB].pos.x,
-        bars[endPointB].pos.y,
-        n
-      )}
+      points={linePoints}
       stroke={lineColor}
       strokeWidth={strokeWidth}
       endPointA={endPointA}

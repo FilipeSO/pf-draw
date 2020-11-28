@@ -49,7 +49,7 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   const G = math.re(Y);
   const B = math.im(Y);
   let theta = math.matrix(BARS.map(bar => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
-  let V = math.matrix(BARS.map(bar => bar.v_pu));
+  let V = math.matrix(BARS.map(bar => parseFloat(bar.v_pu)));
 
   let PQ_index = BARS.filter(bar => bar.tipo === 0).map(bar =>
     parseInt(bar.name)

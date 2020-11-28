@@ -9,10 +9,23 @@ const InputForms = ({
   updateTitle
 }) => {
   const stageHeight = 600;
+  const defaultBar = {
+    name: "",
+    id: "",
+    tipo: "",
+    v_pu: "",
+    theta_deg: "",
+    p_c: "",
+    q_c: "",
+    p_g: "",
+    q_g: "",
+    q_min: "",
+    q_max: ""
+  };
+  const [bar, setBar] = useState(defaultBar);
 
-  const [bar, setBar] = useState(null);
   const handleBarChange = e => {
-    let newState = { ...bar, [e.target.name]: parseFloat(e.target.value) };
+    let newState = { ...bar, [e.target.name]: e.target.value };
     setBar(newState);
   };
   const handleBarSubmit = e => {
@@ -23,18 +36,35 @@ const InputForms = ({
         Math.floor(Math.random() * (window.innerWidth * 0.6)),
       y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6)
     };
-
+    let newBar = bar;
+    for (var key in newBar) {
+      if (key === "id" || key === "name") continue;
+      newBar[key] = parseFloat(newBar[key].replace(",", "."));
+    }
     let newState = {
       ...bars,
       [bar.name]: {
-        ...bar,
+        ...newBar,
         pos: position
       }
     };
+    console.log("NOVA BARRA ADD", newState);
     updateBars(newState);
+    setBar(defaultBar);
   };
 
-  const [equip, setEquip] = useState(null);
+  const defaultEquip = {
+    endPointA: "",
+    endPointB: "",
+    r_pu: "",
+    x_pu: "",
+    bsh_pu: "",
+    tap: "",
+    tap_df_deg: "",
+    tap_min: "",
+    tap_max: ""
+  };
+  const [equip, setEquip] = useState(defaultEquip);
   const handleEquipChange = e => {
     let newState = { ...equip, [e.target.name]: e.target.value };
     setEquip(newState);
@@ -43,21 +73,36 @@ const InputForms = ({
 
   const handleEquipSubmit = e => {
     e.preventDefault();
+
     let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
+
+    let equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
+    let lineN_reverse = Object.values(equips).filter(
+      equip => equip.name === equipNameReverse
+    ).length;
+
     let lineN =
+      lineN_reverse +
       Object.values(equips).filter(equip => equip.name === equipName).length +
       1;
+
+    let newEquip = equip;
+    for (var key in newEquip) {
+      if (key === "endPointA" || key === "endPointB") continue;
+      newEquip[key] = parseFloat(newEquip[key].replace(",", "."));
+    }
     let newState = {
       ...equips,
       [equipName + "_" + lineN]: {
-        ...equip,
+        ...newEquip,
         type: "LT",
         name: equipName,
         n: lineN
       }
     };
-    // console.log(newState);
+    console.log("NOVO EQUIP ADD", newState);
     updateEquips(newState);
+    setEquip(defaultEquip);
   };
 
   const [fileEquips, setFileEquips] = useState(null);
@@ -302,7 +347,9 @@ const InputForms = ({
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 type="text"
                 name="name"
+                value={bar.name}
                 onChange={handleBarChange}
+                required
               ></input>
             </div>
 
@@ -314,7 +361,9 @@ const InputForms = ({
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 type="text"
                 name="id"
+                value={bar.id}
                 onChange={handleBarChange}
+                required
               ></input>
             </div>
 
@@ -326,7 +375,12 @@ const InputForms = ({
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 name="tipo"
                 onChange={handleBarChange}
+                value={bar.tipo}
+                required
               >
+                <option disabled value="">
+                  -- select an option --
+                </option>
                 <option value="0">PQ</option>
                 <option value="1">PV</option>
                 <option value="2">Slack</option>
@@ -342,6 +396,8 @@ const InputForms = ({
                   type="text"
                   name="v_pu"
                   onChange={handleBarChange}
+                  value={bar.v_pu}
+                  required
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -353,6 +409,8 @@ const InputForms = ({
                   type="text"
                   name="theta_deg"
                   onChange={handleBarChange}
+                  value={bar.theta_deg}
+                  required
                 ></input>
               </div>
             </div>
@@ -367,6 +425,8 @@ const InputForms = ({
                   type="text"
                   name="p_g"
                   onChange={handleBarChange}
+                  value={bar.p_g}
+                  required
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -378,6 +438,8 @@ const InputForms = ({
                   type="text"
                   name="q_g"
                   onChange={handleBarChange}
+                  value={bar.q_g}
+                  required
                 ></input>
               </div>
             </div>
@@ -392,6 +454,8 @@ const InputForms = ({
                   type="text"
                   name="p_c"
                   onChange={handleBarChange}
+                  value={bar.p_c}
+                  required
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -403,6 +467,8 @@ const InputForms = ({
                   type="text"
                   name="q_c"
                   onChange={handleBarChange}
+                  value={bar.q_c}
+                  required
                 ></input>
               </div>
             </div>
@@ -417,6 +483,7 @@ const InputForms = ({
                   type="text"
                   name="q_min"
                   onChange={handleBarChange}
+                  value={bar.q_min}
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -428,6 +495,7 @@ const InputForms = ({
                   type="text"
                   name="q_max"
                   onChange={handleBarChange}
+                  value={bar.q_max}
                 ></input>
               </div>
             </div>
@@ -455,6 +523,8 @@ const InputForms = ({
                   type="text"
                   name="endPointA"
                   onChange={handleEquipChange}
+                  value={equip.endPointA}
+                  required
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -466,6 +536,8 @@ const InputForms = ({
                   type="text"
                   name="endPointB"
                   onChange={handleEquipChange}
+                  value={equip.endPointB}
+                  required
                 ></input>
               </div>
             </div>
@@ -480,6 +552,8 @@ const InputForms = ({
                   type="text"
                   name="r_pu"
                   onChange={handleEquipChange}
+                  value={equip.r_pu}
+                  required
                 ></input>
               </div>
               <div className="flex items-center md:w-1/3 md:mt-0 mt-2">
@@ -491,6 +565,8 @@ const InputForms = ({
                   type="text"
                   name="x_pu"
                   onChange={handleEquipChange}
+                  value={equip.x_pu}
+                  required
                 ></input>
               </div>
 
@@ -503,6 +579,8 @@ const InputForms = ({
                   type="text"
                   name="bsh_pu"
                   onChange={handleEquipChange}
+                  value={equip.bsh_pu}
+                  required
                 ></input>
               </div>
             </div>
@@ -517,6 +595,7 @@ const InputForms = ({
                   type="text"
                   name="tap"
                   onChange={handleEquipChange}
+                  value={equip.tap}
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -528,6 +607,7 @@ const InputForms = ({
                   type="text"
                   name="tap_df_deg"
                   onChange={handleEquipChange}
+                  value={equip.tap_df_deg}
                 ></input>
               </div>
             </div>
@@ -542,6 +622,7 @@ const InputForms = ({
                   type="text"
                   name="tap_min"
                   onChange={handleEquipChange}
+                  value={equip.tap_min}
                 ></input>
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -553,6 +634,7 @@ const InputForms = ({
                   type="text"
                   name="tap_max"
                   onChange={handleEquipChange}
+                  value={equip.tap_max}
                 ></input>
               </div>
             </div>
