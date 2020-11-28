@@ -15,6 +15,7 @@ export const App = () => {
   const [config, setConfig] = useState({
     bar_placement: "",
     solver: "",
+    err_tolerance: "",
     bars: undefined,
     equips: undefined
   });

@@ -360,7 +360,7 @@ const InputForms = ({
             <div className="md:flex md: items-center mt-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  P gerada [MW]:
+                  P in [MW]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -371,7 +371,7 @@ const InputForms = ({
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
                 <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                  Q gerada [MVar]:
+                  Q in [MVar]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -385,7 +385,7 @@ const InputForms = ({
             <div className="md:flex md: items-center mt-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  P load [MW]:
+                  P out [MW]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -396,7 +396,7 @@ const InputForms = ({
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
                 <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                  Q load [MVar]:
+                  Q out [MVar]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"

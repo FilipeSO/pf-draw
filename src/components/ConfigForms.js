@@ -4,7 +4,7 @@ const ConfigForms = ({ config, updateConfig }) => {
   const [formConfig, setFormConfig] = useState(config);
   const handleConfigChange = e => {
     e.preventDefault();
-    let newState = { ...config, [e.target.name]: e.target.value };
+    let newState = { ...formConfig, [e.target.name]: e.target.value };
     setFormConfig(newState);
   };
   const handleConfigSubmit = e => {
@@ -27,12 +27,36 @@ const ConfigForms = ({ config, updateConfig }) => {
               value={formConfig.solver}
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
               name="solver"
+              required
             >
               <option disabled value="">
                 -- select an option --
               </option>
               <option value="newton-raphson">Newton-Raphson</option>
-              <option value="desacoplado-rapido">Desacoplado Rápido</option>
+              <option value="fast-decoupled">Fast Decoupled</option>
+            </select>
+          </div>
+
+          <div className="flex items-center mt-2">
+            <label className="text-gray-700 text-sm font-bold mr-2">
+              Convergence Tolerance:
+            </label>
+            <select
+              onChange={handleConfigChange}
+              value={formConfig.err_tolerance}
+              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+              name="err_tolerance"
+              required
+            >
+              <option disabled value="">
+                -- select an option --
+              </option>
+              <option value="0.1">0.1</option>
+              <option value="0.01">0.01</option>
+              <option value="0.001">0.001</option>
+              <option value="0.0001">0.0001</option>
+              <option value="0.00001">0.00001</option>
+              <option value="0.000001">0.000001</option>
             </select>
           </div>
           <div className="flex">
