@@ -97,7 +97,7 @@ const Y_CALC = (equips, NB, NR) => {
   return Y;
 };
 
-export const NewtonRaphsonMethod = async (
+export const NewtonRaphsonMethod = (
   bars,
   equips,
   NB,
@@ -114,17 +114,19 @@ export const NewtonRaphsonMethod = async (
   ); //ordernado por numero da barra
 
   const Y = Y_CALC(equips, NB, NR);
-  updateSolution([
-    <h1 key={"solver"} className="text-xl font-bold">
-      Newton-Raphson Method
-    </h1>
-  ]);
+  // updateSolution([
+  //   <h1 key={"solver"} className="text-xl font-bold">
+  //     Newton-Raphson Method
+  //   </h1>
+  // ]);
 
   const G = math.re(Y);
   const B = math.im(Y);
   let theta = math.matrix(BARS.map(bar => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
   let V = math.matrix(BARS.map(bar => bar.v_pu));
-
+  let iterationData = [
+    { count: 0, V: math.squeeze(V), theta: math.squeeze(theta) }
+  ];
   let PQ_index = BARS.filter(bar => bar.tipo === 0).map(bar =>
     parseInt(bar.name)
   ); //%numero barra tipo PQ
@@ -150,34 +152,34 @@ export const NewtonRaphsonMethod = async (
 
   let Qesp = BARS.map(bar => bar.q_g - bar.q_c);
 
-  updateSolution(old => {
-    return [
-      ...old,
-      <h2 key={"definitions header"} className="text-lg">
-        Initial Parameters:
-      </h2>,
-      <div
-        key={"definitions"}
-        className="flex justify-center items-center space-x-4"
-      >
-        <div key={"convergence error"}>
-          {String.fromCharCode(1013)}: {err_tolerance}
-        </div>
-        <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
-        <DisplayMatrix
-          symbol={String.fromCharCode(920)}
-          unit={"rad"}
-          matrix={theta}
-        ></DisplayMatrix>
-      </div>,
-      <DisplayMatrix
-        symbol={"Y"}
-        unit={"pu"}
-        matrix={Y}
-        key={"admitance matrix"}
-      ></DisplayMatrix>
-    ];
-  });
+  // updateSolution(old => {
+  //   return [
+  //     ...old,
+  //     <h2 key={"definitions header"} className="text-lg">
+  //       Initial Parameters:
+  //     </h2>,
+  //     <div
+  //       key={"definitions"}
+  //       className="flex justify-center items-center space-x-4"
+  //     >
+  //       <div key={"convergence error"}>
+  //         {String.fromCharCode(1013)}: {err_tolerance}
+  //       </div>
+  //       <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
+  //       <DisplayMatrix
+  //         symbol={String.fromCharCode(920)}
+  //         unit={"rad"}
+  //         matrix={theta}
+  //       ></DisplayMatrix>
+  //     </div>,
+  //     <DisplayMatrix
+  //       symbol={"Y"}
+  //       unit={"pu"}
+  //       matrix={Y}
+  //       key={"admitance matrix"}
+  //     ></DisplayMatrix>
+  //   ];
+  // });
   let iteration = 0;
 
   while (true) {
@@ -223,20 +225,25 @@ export const NewtonRaphsonMethod = async (
       V._data[elem] = X_next._data[count];
       count++;
     });
-    console.log(V, theta);
-    updateSolution(old => [
-      ...old,
-      <div className="flex justify-center items-center space-x-4 mt-2">
-        <div>Iteration: {iteration}</div>
-        <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
-        <DisplayMatrix
-          symbol={String.fromCharCode(920)}
-          unit={"rad"}
-          matrix={theta}
-        ></DisplayMatrix>
-      </div>
-    ]);
+    iterationData.push({
+      count: iteration,
+      V: math.squeeze(V),
+      theta: math.squeeze(theta)
+    });
+    // updateSolution(old => [
+    //   ...old,
+    //   <div className="flex justify-center items-center space-x-4 mt-2">
+    //     <div>Iteration: {iteration}</div>
+    //     <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
+    //     <DisplayMatrix
+    //       symbol={String.fromCharCode(920)}
+    //       unit={"rad"}
+    //       matrix={theta}
+    //     ></DisplayMatrix>
+    //   </div>
+    // ]);
   }
+  return iterationData;
 };
 
 const getNewtonX = (theta, V, zero_PQ_PV_index, zero_PQ_index) => {

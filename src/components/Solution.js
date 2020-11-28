@@ -13,7 +13,15 @@ const Solution = ({ bars, equips, solve }) => {
     if (NB === 0 || NR === 0) {
       setSolution(<div>Aguardando dados...</div>);
     } else {
-      NewtonRaphsonMethod(bars, equips, NB, NR, updateSolution, 0.01);
+      let data = NewtonRaphsonMethod(
+        bars,
+        equips,
+        NB,
+        NR,
+        updateSolution,
+        0.01
+      );
+      console.log(data);
     }
   }, [solve]);
   return (
