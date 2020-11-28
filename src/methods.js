@@ -1,67 +1,4 @@
-import React, { useEffect, useState } from "react";
 import * as math from "mathjs";
-import { number } from "prop-types";
-
-let DisplayMatrix = ({ symbol, matrix, unit }) => {
-  let td = [];
-  let tr = [];
-
-  console.log("VAI UPDATE");
-
-  const n_rows = matrix._size[0];
-  let n_cols = 0;
-
-  if (matrix._size.length > 1) {
-    n_cols = matrix._size[1];
-    for (let i = 0; i < n_rows; i++) {
-      for (let j = 0; j < n_cols; j++) {
-        let value = math.round(matrix._data[i][j], 4);
-        td.push(
-          <td className="px-2" key={j}>
-            {value.toString()}
-          </td>
-        );
-      }
-      tr.push(
-        <tr className="text-center" key={i}>
-          {td}
-        </tr>
-      );
-      td = [];
-    }
-  } else {
-    for (let i = 0; i < n_rows; i++) {
-      let value = math.round(matrix._data[i], 4);
-      tr.push(
-        <tr className="text-center" key={i}>
-          <td className="px-2" key={i}>
-            {value.toString()}
-          </td>
-        </tr>
-      );
-    }
-  }
-  return (
-    <div className="flex flex-wrap items-center justify-center">
-      <div className="mr-2" style={{ whiteSpace: "nowrap" }}>
-        {symbol} =
-      </div>
-      <div className="overflow-auto max-w-xl" style={{ maxHeight: "350px" }}>
-        <table
-          className="table-fixed border-solid border-l-2 border-r-2 border-black"
-          style={{ whiteSpace: "nowrap" }}
-        >
-          <tbody>{tr}</tbody>
-        </table>
-      </div>
-      {unit && (
-        <div className="ml-2" style={{ whiteSpace: "nowrap" }}>
-          [{unit}]
-        </div>
-      )}
-    </div>
-  );
-};
 
 const Y_CALC = (equips, NB, NR) => {
   const Y = math.zeros(NB, NB);
@@ -97,14 +34,7 @@ const Y_CALC = (equips, NB, NR) => {
   return Y;
 };
 
-export const NewtonRaphsonMethod = (
-  bars,
-  equips,
-  NB,
-  NR,
-  updateSolution,
-  err_tolerance
-) => {
+export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   let BARS = Object.values(bars).sort((a, b) =>
     parseInt(a.name) > parseInt(b.name)
       ? 1
@@ -114,81 +44,55 @@ export const NewtonRaphsonMethod = (
   ); //ordernado por numero da barra
 
   const Y = Y_CALC(equips, NB, NR);
-  // updateSolution([
-  //   <h1 key={"solver"} className="text-xl font-bold">
-  //     Newton-Raphson Method
-  //   </h1>
-  // ]);
 
   const G = math.re(Y);
   const B = math.im(Y);
-  let theta = math.matrix(BARS.map(bar => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
-  let V = math.matrix(BARS.map(bar => bar.v_pu));
-  let iterationData = [
-    { count: 0, V: math.squeeze(V), theta: math.squeeze(theta) }
-  ];
-  let PQ_index = BARS.filter(bar => bar.tipo === 0).map(bar =>
+  let theta = math.matrix(BARS.map((bar) => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
+  let V = math.matrix(BARS.map((bar) => bar.v_pu));
+
+  let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
     parseInt(bar.name)
   ); //%numero barra tipo PQ
-  let zero_PQ_index = PQ_index.map(elem => elem - 1); //numero barra tipo PQ base zero
+  let zero_PQ_index = PQ_index.map((elem) => elem - 1); //numero barra tipo PQ base zero
 
-  let PV_index = BARS.filter(bar => bar.tipo === 1).map(bar =>
-    parseInt(bar.name)
-  ); //%numero barra tipo PV
-  let zero_PV_index = PV_index.map(elem => elem - 1); //numero barra tipo PV base zero
+  // let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
+  //   parseInt(bar.name)
+  // ); //%numero barra tipo PV
+  // let zero_PV_index = PV_index.map((elem) => elem - 1); //numero barra tipo PV base zero
 
   let PQ_PV_index = BARS.filter(
-    bar => bar.tipo === 0 || bar.tipo === 1
-  ).map(bar => parseInt(bar.name)); //%numero barra tipo PQ ou PV
-  let zero_PQ_PV_index = PQ_PV_index.map(elem => elem - 1); //%numero barra tipo PQ ou PV base zero
+    (bar) => bar.tipo === 0 || bar.tipo === 1
+  ).map((bar) => parseInt(bar.name)); //%numero barra tipo PQ ou PV
+  let zero_PQ_PV_index = PQ_PV_index.map((elem) => elem - 1); //%numero barra tipo PQ ou PV base zero
 
-  let Vtheta_index = BARS.filter(bar => bar.tipo === 2).map(bar =>
-    parseInt(bar.name)
-  ); //%numero barra tipo slack
-  let zero_Vtheta_index = Vtheta_index.map(elem => elem - 1);
-  //%numero barra tipo slack base zero
+  // let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
+  //   parseInt(bar.name)
+  // ); //%numero barra tipo slack
+  // let zero_Vtheta_index = Vtheta_index.map((elem) => elem - 1);
+  // //%numero barra tipo slack base zero
 
-  let Pesp = BARS.map(bar => bar.p_g - bar.p_c);
+  let Pesp = BARS.map((bar) => bar.p_g - bar.p_c);
 
-  let Qesp = BARS.map(bar => bar.q_g - bar.q_c);
+  let Qesp = BARS.map((bar) => bar.q_g - bar.q_c);
 
-  // updateSolution(old => {
-  //   return [
-  //     ...old,
-  //     <h2 key={"definitions header"} className="text-lg">
-  //       Initial Parameters:
-  //     </h2>,
-  //     <div
-  //       key={"definitions"}
-  //       className="flex justify-center items-center space-x-4"
-  //     >
-  //       <div key={"convergence error"}>
-  //         {String.fromCharCode(1013)}: {err_tolerance}
-  //       </div>
-  //       <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
-  //       <DisplayMatrix
-  //         symbol={String.fromCharCode(920)}
-  //         unit={"rad"}
-  //         matrix={theta}
-  //       ></DisplayMatrix>
-  //     </div>,
-  //     <DisplayMatrix
-  //       symbol={"Y"}
-  //       unit={"pu"}
-  //       matrix={Y}
-  //       key={"admitance matrix"}
-  //     ></DisplayMatrix>
-  //   ];
-  // });
   let iteration = 0;
+  let iterationData = [];
+  let J = undefined;
 
   while (true) {
     let Pcalc = P_CALC(V, theta, G, B, NB, equips);
     let Qcalc = Q_CALC(V, theta, G, B, NB, equips);
     let dP = math.subtract(Pesp, Pcalc);
     let dQ = math.subtract(Qesp, Qcalc);
-    let g = zero_PQ_PV_index.map(elem => dP[elem]); //zero based matrix
-    g.push(...zero_PQ_index.map(elem => dQ[elem]));
+    let g = zero_PQ_PV_index.map((elem) => dP[elem]); //zero based matrix
+    g.push(...zero_PQ_index.map((elem) => dQ[elem]));
+    iterationData.push({
+      iteration: iteration,
+      V: math.squeeze(V),
+      theta: math.squeeze(theta),
+      g: math.squeeze(g),
+      J: J,
+    });
 
     if (math.max(math.abs(g)) < err_tolerance) {
       console.log("FIM");
@@ -197,7 +101,7 @@ export const NewtonRaphsonMethod = (
       iteration++;
       console.log("ITERATION:", iteration);
     }
-    let J = J_CALC(
+    J = J_CALC(
       V,
       theta,
       G,
@@ -216,34 +120,19 @@ export const NewtonRaphsonMethod = (
     // %X_next=inv(J)*g+X
     let X_next = math.add(math.multiply(math.inv(J), g), X);
     let count = 0;
-    zero_PQ_PV_index.map(elem => {
+    zero_PQ_PV_index.map((elem) => {
       theta._data[elem] = X_next._data[count];
       count++;
+      return 0;
     });
 
-    zero_PQ_index.map(elem => {
+    zero_PQ_index.map((elem) => {
       V._data[elem] = X_next._data[count];
       count++;
+      return 0;
     });
-    iterationData.push({
-      count: iteration,
-      V: math.squeeze(V),
-      theta: math.squeeze(theta)
-    });
-    // updateSolution(old => [
-    //   ...old,
-    //   <div className="flex justify-center items-center space-x-4 mt-2">
-    //     <div>Iteration: {iteration}</div>
-    //     <DisplayMatrix symbol={"V"} unit={"pu"} matrix={V}></DisplayMatrix>
-    //     <DisplayMatrix
-    //       symbol={String.fromCharCode(920)}
-    //       unit={"rad"}
-    //       matrix={theta}
-    //     ></DisplayMatrix>
-    //   </div>
-    // ]);
   }
-  return iterationData;
+  return [Y, iterationData, PQ_PV_index, PQ_index];
 };
 
 const getNewtonX = (theta, V, zero_PQ_PV_index, zero_PQ_index) => {
@@ -262,7 +151,7 @@ const getRelatedEndPoint = (equips, k_index) => {
   let EQUIPS = Object.values(equips);
   // let k_index = k; //matrix is zero based
   let m = [];
-  EQUIPS.forEach(equip => {
+  EQUIPS.forEach((equip) => {
     let endPointA = parseInt(equip.endPointA) - 1; //matrix is zero based
     let endPointB = parseInt(equip.endPointB) - 1; //matrix is zero based
 
