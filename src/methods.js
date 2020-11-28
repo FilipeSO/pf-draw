@@ -47,13 +47,13 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
 
   const G = math.re(Y);
   const B = math.im(Y);
-  let theta = math.matrix(BARS.map((bar) => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
-  let V = math.matrix(BARS.map((bar) => bar.v_pu));
+  let theta = math.matrix(BARS.map(bar => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
+  let V = math.matrix(BARS.map(bar => bar.v_pu));
 
-  let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
+  let PQ_index = BARS.filter(bar => bar.tipo === 0).map(bar =>
     parseInt(bar.name)
   ); //%numero barra tipo PQ
-  let zero_PQ_index = PQ_index.map((elem) => elem - 1); //numero barra tipo PQ base zero
+  let zero_PQ_index = PQ_index.map(elem => elem - 1); //numero barra tipo PQ base zero
 
   // let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
   //   parseInt(bar.name)
@@ -61,9 +61,9 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   // let zero_PV_index = PV_index.map((elem) => elem - 1); //numero barra tipo PV base zero
 
   let PQ_PV_index = BARS.filter(
-    (bar) => bar.tipo === 0 || bar.tipo === 1
-  ).map((bar) => parseInt(bar.name)); //%numero barra tipo PQ ou PV
-  let zero_PQ_PV_index = PQ_PV_index.map((elem) => elem - 1); //%numero barra tipo PQ ou PV base zero
+    bar => bar.tipo === 0 || bar.tipo === 1
+  ).map(bar => parseInt(bar.name)); //%numero barra tipo PQ ou PV
+  let zero_PQ_PV_index = PQ_PV_index.map(elem => elem - 1); //%numero barra tipo PQ ou PV base zero
 
   // let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
   //   parseInt(bar.name)
@@ -71,10 +71,10 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   // let zero_Vtheta_index = Vtheta_index.map((elem) => elem - 1);
   // //%numero barra tipo slack base zero
 
-  let Pesp = BARS.map((bar) => bar.p_g - bar.p_c);
+  let Pesp = BARS.map(bar => bar.p_g - bar.p_c);
 
-  let Qesp = BARS.map((bar) => bar.q_g - bar.q_c);
-
+  let Qesp = BARS.map(bar => bar.q_g - bar.q_c);
+  console.log(BARS, PQ_index, PQ_PV_index);
   let iteration = 0;
   let iterationData = [];
   let J = undefined;
@@ -84,14 +84,14 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
     let Qcalc = Q_CALC(V, theta, G, B, NB, equips);
     let dP = math.subtract(Pesp, Pcalc);
     let dQ = math.subtract(Qesp, Qcalc);
-    let g = zero_PQ_PV_index.map((elem) => dP[elem]); //zero based matrix
-    g.push(...zero_PQ_index.map((elem) => dQ[elem]));
+    let g = zero_PQ_PV_index.map(elem => dP[elem]); //zero based matrix
+    g.push(...zero_PQ_index.map(elem => dQ[elem]));
     iterationData.push({
       iteration: iteration,
       V: math.squeeze(V),
       theta: math.squeeze(theta),
       g: math.squeeze(g),
-      J: J,
+      J: J
     });
 
     if (math.max(math.abs(g)) < err_tolerance) {
@@ -120,13 +120,13 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
     // %X_next=inv(J)*g+X
     let X_next = math.add(math.multiply(math.inv(J), g), X);
     let count = 0;
-    zero_PQ_PV_index.map((elem) => {
+    zero_PQ_PV_index.map(elem => {
       theta._data[elem] = X_next._data[count];
       count++;
       return 0;
     });
 
-    zero_PQ_index.map((elem) => {
+    zero_PQ_index.map(elem => {
       V._data[elem] = X_next._data[count];
       count++;
       return 0;
@@ -151,7 +151,7 @@ const getRelatedEndPoint = (equips, k_index) => {
   let EQUIPS = Object.values(equips);
   // let k_index = k; //matrix is zero based
   let m = [];
-  EQUIPS.forEach((equip) => {
+  EQUIPS.forEach(equip => {
     let endPointA = parseInt(equip.endPointA) - 1; //matrix is zero based
     let endPointB = parseInt(equip.endPointB) - 1; //matrix is zero based
 

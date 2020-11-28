@@ -6,46 +6,46 @@ const InputForms = ({
   updateEquips,
   bars,
   equips,
-  updateTitle,
+  updateTitle
 }) => {
   const stageHeight = 600;
 
   const [bar, setBar] = useState(null);
-  const handleBarChange = (e) => {
+  const handleBarChange = e => {
     let newState = { ...bar, [e.target.name]: parseFloat(e.target.value) };
     setBar(newState);
   };
-  const handleBarSubmit = (e) => {
+  const handleBarSubmit = e => {
     e.preventDefault();
     let position = {
       x:
         window.innerWidth * 0.2 +
         Math.floor(Math.random() * (window.innerWidth * 0.6)),
-      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6),
+      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6)
     };
 
     let newState = {
       ...bars,
-      [bar.numero]: {
+      [bar.name]: {
         ...bar,
-        pos: position,
-      },
+        pos: position
+      }
     };
     updateBars(newState);
   };
 
   const [equip, setEquip] = useState(null);
-  const handleEquipChange = (e) => {
+  const handleEquipChange = e => {
     let newState = { ...equip, [e.target.name]: e.target.value };
     setEquip(newState);
     // console.log(newState);
   };
 
-  const handleEquipSubmit = (e) => {
+  const handleEquipSubmit = e => {
     e.preventDefault();
     let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
     let lineN =
-      Object.values(equips).filter((equip) => equip.name === equipName).length +
+      Object.values(equips).filter(equip => equip.name === equipName).length +
       1;
     let newState = {
       ...equips,
@@ -53,28 +53,26 @@ const InputForms = ({
         ...equip,
         type: "LT",
         name: equipName,
-        n: lineN,
-      },
+        n: lineN
+      }
     };
     // console.log(newState);
     updateEquips(newState);
   };
 
   const [fileEquips, setFileEquips] = useState(null);
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     if (e.target.files !== undefined) {
       let file = e.target.files[0];
       var reader = new FileReader();
-      reader.onloadend = function () {
-        var lines = reader.result
-          .split(/[\r\n]+/g)
-          .filter((line) => line !== "");
+      reader.onloadend = function() {
+        var lines = reader.result.split(/[\r\n]+/g).filter(line => line !== "");
         let [title, parsedBars, parsedEquips] = parseTextFile(lines);
         setFileEquips({
           file: file,
           title: title,
           bars: parsedBars,
-          equips: parsedEquips,
+          equips: parsedEquips
         });
       };
       reader.readAsText(file);
@@ -82,14 +80,14 @@ const InputForms = ({
     // console.log(file);
   };
 
-  const handleFileSubmit = (e) => {
+  const handleFileSubmit = e => {
     e.preventDefault();
     updateBars([]);
     updateEquips([]);
     let bar_placement = e.target[1].value;
     var reader = new FileReader();
-    reader.onloadend = function () {
-      var lines = reader.result.split(/[\r\n]+/g).filter((line) => line !== "");
+    reader.onloadend = function() {
+      var lines = reader.result.split(/[\r\n]+/g).filter(line => line !== "");
       let [title, parsedBars, parsedEquips] = parseTextFile(
         lines,
         bar_placement
@@ -108,20 +106,20 @@ const InputForms = ({
   };
 
   const [fileCSVEquips, setFileCSVEquips] = useState(null);
-  const handleCSVChange = (e) => {
+  const handleCSVChange = e => {
     if (e.target.files !== undefined) {
       let file = e.target.files[0];
       var reader = new FileReader();
-      reader.onloadend = function () {
+      reader.onloadend = function() {
         var lines = reader.result
           .split(/[\r\n]+/g)
-          .filter((line) => line.split(";")[0] !== "");
+          .filter(line => line.split(";")[0] !== "");
         let [title, parsedBars, parsedEquips] = parseCSVFile(lines);
         setFileCSVEquips({
           file: file,
           title: title,
           bars: parsedBars,
-          equips: parsedEquips,
+          equips: parsedEquips
         });
       };
       reader.readAsText(file);
@@ -129,16 +127,16 @@ const InputForms = ({
     // console.log(file);
   };
 
-  const handleCSVSubmit = (e) => {
+  const handleCSVSubmit = e => {
     e.preventDefault();
     updateBars([]);
     updateEquips([]);
     let bar_placement = e.target[1].value;
     var reader = new FileReader();
-    reader.onloadend = function () {
+    reader.onloadend = function() {
       var lines = reader.result
         .split(/[\r\n]+/g)
-        .filter((line) => line.split(";")[0] !== "");
+        .filter(line => line.split(";")[0] !== "");
       let [title, parsedBars, parsedEquips] = parseCSVFile(
         lines,
         bar_placement
@@ -165,7 +163,7 @@ const InputForms = ({
         <form onSubmit={handleFileSubmit}>
           <div className="md:flex md:items-center">
             <label className="text-gray-700 text-sm font-bold mr-2">
-              Arquívo:
+              File:
             </label>
             <input
               className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -178,14 +176,14 @@ const InputForms = ({
               rel="noreferrer noopener"
               href="/ieee30buses.txt"
             >
-              entrada padrão
+              default
             </a>
           </div>
           {fileEquips && (
             <div>
               <div className="flex items-center mt-2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  Disposição de Barras:
+                  Bar placement:
                 </label>
                 <select
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -201,19 +199,19 @@ const InputForms = ({
                   type="submit"
                   value={
                     fileEquips &&
-                    "Adicionar Título:" +
+                    "Add Title:" +
                       fileEquips.title +
-                      ", Barras:" +
+                      ", Bars:" +
                       Object.keys(fileEquips.bars).length +
-                      ", Ramos:" +
+                      ", Branches:" +
                       Object.keys(fileEquips.equips).length +
                       " (LT:" +
                       Object.values(fileEquips.equips).filter(
-                        (equip) => equip.type === "LT"
+                        equip => equip.type === "LT"
                       ).length +
                       " TR:" +
                       Object.values(fileEquips.equips).filter(
-                        (equip) => equip.type === "TR"
+                        equip => equip.type === "TR"
                       ).length +
                       ")"
                   }
@@ -226,12 +224,12 @@ const InputForms = ({
 
       <div>
         <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          ENTRADA FORMATO CSV
+          CSV INPUT
         </h2>
         <form onSubmit={handleCSVSubmit}>
           <div className="md:flex md:items-center">
             <label className="text-gray-700 text-sm font-bold mr-2">
-              Arquívo:
+              File:
             </label>
             <input
               className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -244,21 +242,21 @@ const InputForms = ({
               rel="noreferrer noopener"
               href="/input.csv"
             >
-              entrada padrão
+              default
             </a>
           </div>
           {fileCSVEquips && (
             <div>
               <div className="flex items-center mt-2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  Disposição de Barras:
+                  Bar placement:
                 </label>
                 <select
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                   name="bar_placement"
                 >
-                  <option value="circle">Circular</option>
-                  <option value="random">Aleatório</option>
+                  <option value="circle">Circle</option>
+                  <option value="random">Random</option>
                 </select>
               </div>
               <div className="flex">
@@ -267,19 +265,19 @@ const InputForms = ({
                   type="submit"
                   value={
                     fileCSVEquips &&
-                    "Adicionar Título:" +
+                    "Add Title:" +
                       fileCSVEquips.title +
-                      ", Barras:" +
+                      ", Bars:" +
                       Object.keys(fileCSVEquips.bars).length +
-                      ", Ramos:" +
+                      ", Branches:" +
                       Object.keys(fileCSVEquips.equips).length +
                       " (LT:" +
                       Object.values(fileCSVEquips.equips).filter(
-                        (equip) => equip.type === "LT"
+                        equip => equip.type === "LT"
                       ).length +
                       " TR:" +
                       Object.values(fileCSVEquips.equips).filter(
-                        (equip) => equip.type === "TR"
+                        equip => equip.type === "TR"
                       ).length +
                       ")"
                   }
@@ -293,24 +291,24 @@ const InputForms = ({
       <div className="lg:flex lg:space-x-4">
         <div className="lg:w-1/2">
           <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-            ENTRADA MANUAL BARRA
+            BAR MANUAL INPUT
           </h2>
           <form onSubmit={handleBarSubmit}>
             <div className="flex items-center">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                Número:
+                Number:
               </label>
               <input
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
                 type="text"
-                name="numero"
+                name="name"
                 onChange={handleBarChange}
               ></input>
             </div>
 
             <div className="flex items-center mt-2">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                Identificação:
+                Id:
               </label>
               <input
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -322,7 +320,7 @@ const InputForms = ({
 
             <div className="flex items-center mt-2">
               <label className="text-gray-700 text-sm font-bold mr-2">
-                Tipo:
+                Type:
               </label>
               <select
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -331,7 +329,7 @@ const InputForms = ({
               >
                 <option value="0">PQ</option>
                 <option value="1">PV</option>
-                <option value="2">Referência</option>
+                <option value="2">Slack</option>
               </select>
             </div>
             <div className="md:flex md: items-center mt-2">
@@ -387,7 +385,7 @@ const InputForms = ({
             <div className="md:flex md: items-center mt-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  P carga [MW]:
+                  P load [MW]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -398,7 +396,7 @@ const InputForms = ({
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
                 <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                  Q carga [MVar]:
+                  Q load [MVar]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -437,20 +435,20 @@ const InputForms = ({
               <input
                 className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
                 type="submit"
-                value="Adicionar Barra"
+                value="Add Bar"
               ></input>
             </div>
           </form>
         </div>
         <div className="lg:w-1/2">
           <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-            ENTRADA MANUAL RAMOS
+            BRANCH MANUAL INPUT
           </h2>
           <form onSubmit={handleEquipSubmit}>
             <div className="md:flex md: items-center mt-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  Origem:
+                  From:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -461,7 +459,7 @@ const InputForms = ({
               </div>
               <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
                 <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-                  Destino:
+                  To:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -562,7 +560,7 @@ const InputForms = ({
               <input
                 className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
                 type="submit"
-                value="Adicionar Ramo"
+                value="Add Branch"
               ></input>
             </div>
           </form>

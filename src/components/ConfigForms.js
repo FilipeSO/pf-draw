@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 
-const InputForms = ({ config, updateConfig }) => {
+const ConfigForms = ({ config, updateConfig }) => {
   const [formConfig, setFormConfig] = useState(config);
-  const handleConfigChange = (e) => {
+  const handleConfigChange = e => {
     e.preventDefault();
     let newState = { ...config, [e.target.name]: e.target.value };
     setFormConfig(newState);
   };
-  const handleConfigSubmit = (e) => {
+  const handleConfigSubmit = e => {
     e.preventDefault();
     updateConfig(formConfig);
   };
-
   return (
     <div>
       <div>
         <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          CONFIGURAÇÕES
+          SETTINGS
         </h2>
         <form onSubmit={handleConfigSubmit}>
           <div className="flex items-center mt-2">
@@ -29,15 +28,18 @@ const InputForms = ({ config, updateConfig }) => {
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
               name="solver"
             >
+              <option disabled value="">
+                -- select an option --
+              </option>
               <option value="newton-raphson">Newton-Raphson</option>
-              <option value="desacoplado_rapido">Desacoplado Rápido</option>
+              <option value="desacoplado-rapido">Desacoplado Rápido</option>
             </select>
           </div>
           <div className="flex">
             <input
               className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
               type="submit"
-              value="Calcular"
+              value="Solve"
             ></input>
           </div>
         </form>
@@ -45,4 +47,4 @@ const InputForms = ({ config, updateConfig }) => {
     </div>
   );
 };
-export default InputForms;
+export default ConfigForms;

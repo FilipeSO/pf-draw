@@ -4,13 +4,12 @@ import * as math from "mathjs";
 
 const Solution = ({ bars, equips, solver }) => {
   const [solution, setSolution] = useState([]);
-  console.log(bars, equips);
   useEffect(() => {
-    console.log("EFFECT", solver);
+    console.log("EFFECT", solver, bars, equips);
     const NB = bars ? Object.keys(bars).length : 0;
     const NR = equips ? Object.keys(equips).length : 0;
     if (NB === 0 || NR === 0) {
-      setSolution(<div>Aguardando dados...</div>);
+      setSolution(<div>Waiting for data...</div>);
     } else {
       const err_tolerance = 0.01;
       let [Y, data, PQ_PV_index, PQ_index] = NewtonRaphsonMethod(
@@ -21,20 +20,23 @@ const Solution = ({ bars, equips, solver }) => {
         err_tolerance
       );
       console.log(data);
-      let theta_vector = PQ_PV_index.map((elem) => (
-        <div>
+      let theta_vector = PQ_PV_index.map(elem => (
+        <div key={elem}>
           {String.fromCharCode(952)}
           <sub>{elem}</sub>
         </div>
       ));
-      let v_vector = PQ_index.map((elem) => (
-        <div>
+      let v_vector = PQ_index.map(elem => (
+        <div key={elem}>
           V<sub>{elem}</sub>
         </div>
       ));
 
       let results = [
-        <div className="flex flex-col py-2 items-center justify-center">
+        <div
+          key="method definition"
+          className="flex flex-col py-2 items-center justify-center"
+        >
           <h1>
             <a
               href="https://en.wikipedia.org/wiki/Power-flow_study"
@@ -114,12 +116,15 @@ const Solution = ({ bars, equips, solver }) => {
             matrix={Y}
             key={"admitance matrix"}
           ></DisplayMatrix>
-        </div>,
+        </div>
       ];
       for (let i = 0; i < data.length; i++) {
         if (i === 0) {
           results.push(
-            <div className="flex flex-wrap justify-center items-center space-x-4 px-4 py-2 border-dashed border-solid border-t-2 border-black">
+            <div
+              key={data[i].iteration}
+              className="flex flex-wrap justify-center items-center space-x-4 px-4 py-2 border-dashed border-solid border-t-2 border-black"
+            >
               <div className="text-xs">Iteration {data[i].iteration}:</div>
               <DisplayMatrix
                 symbol={"V"}
@@ -144,7 +149,10 @@ const Solution = ({ bars, equips, solver }) => {
           );
         } else {
           results.push(
-            <div className="flex flex-wrap justify-center items-center px-4 py-2 border-dashed border-solid border-t-2 border-black">
+            <div
+              key={data[i].iteration}
+              className="flex flex-wrap justify-center items-center px-4 py-2 border-dashed border-solid border-t-2 border-black"
+            >
               <div className="text-xs">Iteration {data[i].iteration}:</div>
               <div>
                 <div className="py-1">
@@ -191,9 +199,6 @@ const Solution = ({ bars, equips, solver }) => {
 const DisplayMatrix = ({ symbol, matrix, unit }) => {
   let td = [];
   let tr = [];
-
-  console.log("VAI UPDATE");
-
   const n_rows = matrix._size[0];
   let n_cols = 0;
 
