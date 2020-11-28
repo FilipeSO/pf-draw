@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-const InputForms = ({ config, updateConfig, updateSolve }) => {
+const InputForms = ({ config, updateConfig }) => {
   const [formConfig, setFormConfig] = useState(config);
-  const handleConfigChange = e => {
+  const handleConfigChange = (e) => {
     e.preventDefault();
     let newState = { ...config, [e.target.name]: e.target.value };
     setFormConfig(newState);
   };
-  const handleConfigSubmit = e => {
+  const handleConfigSubmit = (e) => {
     e.preventDefault();
     updateConfig(formConfig);
   };
@@ -36,7 +36,6 @@ const InputForms = ({ config, updateConfig, updateSolve }) => {
           <div className="flex">
             <input
               className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-              onClick={() => updateSolve(true)}
               type="submit"
               value="Calcular"
             ></input>

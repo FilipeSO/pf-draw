@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NewtonRaphsonMethod } from "../methods";
 import * as math from "mathjs";
 
-const Solution = ({ bars, equips, solve }) => {
+const Solution = ({ bars, equips, solver }) => {
   const [solution, setSolution] = useState([]);
-
+  console.log(bars, equips);
   useEffect(() => {
+    console.log("EFFECT", solver);
     const NB = bars ? Object.keys(bars).length : 0;
     const NR = equips ? Object.keys(equips).length : 0;
     if (NB === 0 || NR === 0) {
@@ -181,7 +182,7 @@ const Solution = ({ bars, equips, solve }) => {
       }
       setSolution(results);
     }
-  }, [solve]);
+  }, [bars, equips, solver]);
   return (
     <div className="flex flex-col items-center justify-center">{solution}</div>
   );
