@@ -75,8 +75,8 @@ const InputForms = ({
     e.preventDefault();
 
     let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
-
     let equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
+
     let lineN_reverse = Object.values(equips).filter(
       equip => equip.name === equipNameReverse
     ).length;

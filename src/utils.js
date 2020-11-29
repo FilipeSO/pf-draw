@@ -199,7 +199,7 @@ export const getLinePoints = (x1, y1, x2, y2, n, space, lx, ly) => {
           y1,
           ...getParallelLinePoints(x1, y1, x2, y2, n, space, lx, ly),
           x2,
-          y2,
+          y2
         ];
   return points;
 };
@@ -229,7 +229,7 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
         tap: parseFloat(line.substring(36, 40)) / 1000,
         tap_min: parseFloat(line.substring(41, 45)) / 1000,
         tap_max: parseFloat(line.substring(46, 50)) / 1000,
-        tap_df_deg: parseFloat(line.substring(50, 55)),
+        tap_df_deg: parseFloat(line.substring(50, 55))
       };
       if (isNaN(newBranch.tap)) {
         newBranch.type = "LT";
@@ -252,8 +252,8 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
           q_max: parseFloat(line.substring(45, 50)),
           p_c: parseFloat(line.substring(55, 60)),
           q_c: parseFloat(line.substring(60, 65)),
-          q_s: parseFloat(line.substring(65, 70)),
-        },
+          q_s: parseFloat(line.substring(65, 70))
+        }
       };
     }
   });
@@ -263,7 +263,7 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
     x:
       (window.innerWidth / 2) * 0.2 +
       Math.floor(Math.random() * ((window.innerWidth / 2) * 0.6)),
-    y: (600 / 2) * 0.2 + Math.floor(Math.random() * (600 / 2) * 0.6),
+    y: (600 / 2) * 0.2 + Math.floor(Math.random() * (600 / 2) * 0.6)
   };
   let barCount = 1;
   for (var key in bars) {
@@ -272,7 +272,7 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
       let degStep = 360 / Object.keys(bars).length;
       position = {
         x: position.x + Math.cos((degStep * barCount * Math.PI) / 180) * 50,
-        y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50,
+        y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50
       };
       barCount++;
     }
@@ -281,44 +281,61 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
         x:
           window.innerWidth * 0.2 +
           Math.floor(Math.random() * (window.innerWidth * 0.6)),
-        y: 600 * 0.2 + Math.floor(Math.random() * 600 * 0.6),
+        y: 600 * 0.2 + Math.floor(Math.random() * 600 * 0.6)
       };
     }
   }
 
   //preparar obj equips
-  branches.forEach((branch) => {
+  branches.forEach(branch => {
     if (branch.type === "LT") {
       let equipName = `LT_${[branch.endPointA] + [branch.endPointB]}`;
+
+      let equipNameReverse = `LT_${[branch.endPointB] + [branch.endPointA]}`;
+      let lineN_reverse = Object.values(equips).filter(
+        equip => equip.name === equipNameReverse
+      ).length;
+
       let lineN =
-        Object.values(equips).filter((equip) => equip.name === equipName)
-          .length + 1;
+        lineN_reverse +
+        Object.values(equips).filter(equip => equip.name === equipName).length +
+        1;
+
       equips = {
         ...equips,
         [equipName + "_" + lineN]: {
           ...branch,
           type: "LT",
           name: equipName,
-          n: lineN,
-        },
+          n: lineN
+        }
       };
     }
   });
 
   for (let key in bars) {
     let nodeTR = branches.filter(
-      (branch) => branch.type === "TR" && branch.endPointA === key
+      branch => branch.type === "TR" && branch.endPointA === key
     );
     for (let i = 0; i < nodeTR.length; i++) {
       let TR = nodeTR[i];
-      let n =
+      let equipName = `TR_${TR.endPointA + TR.endPointB}`;
+      let equipNameReverse = `TR_${TR.endPointB + TR.endPointA}`;
+
+      let trN_reverse = Object.values(equips).filter(
+        equip =>
+          equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+          equipNameReverse
+      ).length;
+
+      let trN =
+        trN_reverse +
         Object.values(equips).filter(
-          (equip) =>
-            equip.type === "TR" &&
-            equip.endPointA === TR.endPointA &&
-            equip.endPointB === TR.endPointB
-        ).length + 1;
-      let nameTR = `TR_${TR.endPointA + TR.endPointB}_${n}`;
+          equip =>
+            equip.name.substring(0, equip.name.lastIndexOf("_")) === equipName
+        ).length +
+        1;
+
       let endPointA = bars[TR.endPointA];
       let endPointB = bars[TR.endPointB];
       let x1 = endPointA.pos.x;
@@ -327,27 +344,24 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
       let y2 = endPointB.pos.y;
       let newX = (x1 + x2) / 2;
       let newY = (y1 + y2) / 2;
-      if (n > 1) {
-        let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
+      if (trN > 1) {
+        let newPos = getLinePoints(x1, y1, x2, y2, trN, 5, 100, 100);
         newX = (newPos[2] + newPos[4]) / 2;
         newY = (newPos[3] + newPos[5]) / 2;
       }
       equips = {
         ...equips,
-        [nameTR]: {
+        [equipName + "_" + trN]: {
           ...TR,
-          name: nameTR,
+          name: equipName + "_" + trN,
           pos: {
             x: newX,
-            y: newY,
+            y: newY
           },
-          n: n,
-        },
+          n: trN
+        }
       };
     }
-    // nodeTR.forEach((TR) => {
-
-    // });
   }
   return [title, bars, equips];
 };
@@ -359,11 +373,6 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
   let branchesInit = false;
   let skipNext = false;
   let title = "";
-  // lines.forEach((line, index) => {
-  //   let row = line.split(";");
-  //   console.log(row);
-  // });
-  // console.log(lines);
 
   lines.forEach((line, index) => {
     let row = line.split(";");
@@ -393,7 +402,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
         tap: parseFloat(row[5]),
         tap_min: parseFloat(row[6]),
         tap_max: parseFloat(row[7]),
-        tap_df_deg: parseFloat(row[8]),
+        tap_df_deg: parseFloat(row[8])
       };
       if (isNaN(newBranch.tap)) {
         newBranch.type = "LT";
@@ -416,8 +425,8 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
           q_max: parseFloat(row[8]),
           p_c: parseFloat(row[9]),
           q_c: parseFloat(row[10]),
-          q_s: parseFloat(row[11]),
-        },
+          q_s: parseFloat(row[11])
+        }
       };
     }
   });
@@ -427,7 +436,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
     x:
       (window.innerWidth / 2) * 0.2 +
       Math.floor(Math.random() * ((window.innerWidth / 2) * 0.6)),
-    y: (600 / 2) * 0.2 + Math.floor(Math.random() * (600 / 2) * 0.6),
+    y: (600 / 2) * 0.2 + Math.floor(Math.random() * (600 / 2) * 0.6)
   };
   let barCount = 1;
   for (var key in bars) {
@@ -436,7 +445,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
       let degStep = 360 / Object.keys(bars).length;
       position = {
         x: position.x + Math.cos((degStep * barCount * Math.PI) / 180) * 50,
-        y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50,
+        y: position.y + Math.sin((degStep * barCount * Math.PI) / 180) * 50
       };
       barCount++;
     }
@@ -445,25 +454,24 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
         x:
           window.innerWidth * 0.2 +
           Math.floor(Math.random() * (window.innerWidth * 0.6)),
-        y: 600 * 0.2 + Math.floor(Math.random() * 600 * 0.6),
+        y: 600 * 0.2 + Math.floor(Math.random() * 600 * 0.6)
       };
     }
   }
 
   //preparar obj equips
-  branches.forEach((branch) => {
+  branches.forEach(branch => {
     if (branch.type === "LT") {
       let equipName = `LT_${[branch.endPointA] + [branch.endPointB]}`;
 
       let equipNameReverse = `LT_${[branch.endPointB] + [branch.endPointA]}`;
       let lineN_reverse = Object.values(equips).filter(
-        (equip) => equip.name === equipNameReverse
+        equip => equip.name === equipNameReverse
       ).length;
 
       let lineN =
         lineN_reverse +
-        Object.values(equips).filter((equip) => equip.name === equipName)
-          .length +
+        Object.values(equips).filter(equip => equip.name === equipName).length +
         1;
 
       equips = {
@@ -472,34 +480,34 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
           ...branch,
           type: "LT",
           name: equipName,
-          n: lineN,
-        },
+          n: lineN
+        }
       };
     }
   });
-
   for (let key in bars) {
     let nodeTR = branches.filter(
-      (branch) => branch.type === "TR" && branch.endPointA === key
+      branch => branch.type === "TR" && branch.endPointA === key
     );
     for (let i = 0; i < nodeTR.length; i++) {
       let TR = nodeTR[i];
-      let n_reverse = Object.values(equips).filter(
-        (equip) =>
-          equip.type === "TR" &&
-          equip.endPointA === TR.endPointB &&
-          equip.endPointB === TR.endPointA
+      let equipName = `TR_${TR.endPointA + TR.endPointB}`;
+      let equipNameReverse = `TR_${TR.endPointB + TR.endPointA}`;
+
+      let trN_reverse = Object.values(equips).filter(
+        equip =>
+          equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+          equipNameReverse
       ).length;
-      let n =
-        n_reverse +
+
+      let trN =
+        trN_reverse +
         Object.values(equips).filter(
-          (equip) =>
-            equip.type === "TR" &&
-            equip.endPointA === TR.endPointA &&
-            equip.endPointB === TR.endPointB
+          equip =>
+            equip.name.substring(0, equip.name.lastIndexOf("_")) === equipName
         ).length +
         1;
-      let nameTR = `TR_${TR.endPointA + TR.endPointB}_${n}`;
+
       let endPointA = bars[TR.endPointA];
       let endPointB = bars[TR.endPointB];
       let x1 = endPointA.pos.x;
@@ -508,25 +516,25 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
       let y2 = endPointB.pos.y;
       let newX = (x1 + x2) / 2;
       let newY = (y1 + y2) / 2;
-      if (n > 1) {
-        let newPos = getLinePoints(x1, y1, x2, y2, n, 5, 100, 100);
+      if (trN > 1) {
+        let newPos = getLinePoints(x1, y1, x2, y2, trN, 5, 100, 100);
         newX = (newPos[2] + newPos[4]) / 2;
         newY = (newPos[3] + newPos[5]) / 2;
       }
       equips = {
         ...equips,
-        [nameTR]: {
+        [equipName + "_" + trN]: {
           ...TR,
-          name: nameTR,
+          name: equipName + "_" + trN,
           pos: {
             x: newX,
-            y: newY,
+            y: newY
           },
-          n: n,
-        },
+          n: trN
+        }
       };
     }
-    nodeTR.forEach((TR) => {});
+    nodeTR.forEach(TR => {});
   }
   return [title, bars, equips];
 };

@@ -24,17 +24,18 @@ export const App = () => {
 
   useEffect(() => {
     // fetch("/ieee30buses.txt")
-    // fetch("/teste2.txt")
-    //   .then((result) => result.text())
-    //   .then((text) => {
-    //     var lines = text.split(/[\r\n]+/g).filter((line) => line !== "");
+    //   // fetch("/teste2.txt")
+    //   .then(result => result.text())
+    //   .then(text => {
+    //     var lines = text.split(/[\r\n]+/g).filter(line => line !== "");
     //     let [title, fileBars, fileEquips] = parseTextFile(lines);
     //     setTitle(title);
     //     setBars(fileBars);
     //     setEquips(fileEquips);
     //   });
+
     fetch("/input.csv")
-      // fetch("/input30bar.csv")
+      //   // fetch("/input30bar.csv")
       .then(result => result.text())
       .then(text => {
         var lines = text

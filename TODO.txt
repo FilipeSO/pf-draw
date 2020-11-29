@@ -1,1 +1,6 @@
-adicionar solver fluxo de potência - newton-raphson
+28/11/20
+inserir ramo com transformador com endpoints trocados ocorre a renderização de um sobre o outro
+o reparo feito para linha de transmissão talvez atenda
+
+28/11/20
+inputforms corrigir tipo de entrada para aceitar transformador (type TR)
