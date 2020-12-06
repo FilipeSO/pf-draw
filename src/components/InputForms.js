@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { parseTextFile, parseCSVFile } from "../utils";
-
+import { parseCSVFile } from "../utils";
+import TextFileInput from "./TextFileInput";
 const InputForms = ({
   updateBars,
   updateEquips,
   bars,
   equips,
-  updateTitle
+  updateTitle,
 }) => {
   const stageHeight = 600;
   const defaultBar = {
@@ -20,21 +20,21 @@ const InputForms = ({
     p_g: "",
     q_g: "",
     q_min: "",
-    q_max: ""
+    q_max: "",
   };
   const [bar, setBar] = useState(defaultBar);
 
-  const handleBarChange = e => {
+  const handleBarChange = (e) => {
     let newState = { ...bar, [e.target.name]: e.target.value };
     setBar(newState);
   };
-  const handleBarSubmit = e => {
+  const handleBarSubmit = (e) => {
     e.preventDefault();
     let position = {
       x:
         window.innerWidth * 0.2 +
         Math.floor(Math.random() * (window.innerWidth * 0.6)),
-      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6)
+      y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6),
     };
     let newBar = bar;
     for (var key in newBar) {
@@ -45,8 +45,8 @@ const InputForms = ({
       ...bars,
       [bar.name]: {
         ...newBar,
-        pos: position
-      }
+        pos: position,
+      },
     };
     console.log("NOVA BARRA ADD", newState);
     updateBars(newState);
@@ -62,28 +62,28 @@ const InputForms = ({
     tap: "",
     tap_df_deg: "",
     tap_min: "",
-    tap_max: ""
+    tap_max: "",
   };
   const [equip, setEquip] = useState(defaultEquip);
-  const handleEquipChange = e => {
+  const handleEquipChange = (e) => {
     let newState = { ...equip, [e.target.name]: e.target.value };
     setEquip(newState);
     // console.log(newState);
   };
 
-  const handleEquipSubmit = e => {
+  const handleEquipSubmit = (e) => {
     e.preventDefault();
 
     let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
     let equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
 
     let lineN_reverse = Object.values(equips).filter(
-      equip => equip.name === equipNameReverse
+      (equip) => equip.name === equipNameReverse
     ).length;
 
     let lineN =
       lineN_reverse +
-      Object.values(equips).filter(equip => equip.name === equipName).length +
+      Object.values(equips).filter((equip) => equip.name === equipName).length +
       1;
 
     let newEquip = equip;
@@ -97,74 +97,29 @@ const InputForms = ({
         ...newEquip,
         type: "LT",
         name: equipName,
-        n: lineN
-      }
+        n: lineN,
+      },
     };
     console.log("NOVO EQUIP ADD", newState);
     updateEquips(newState);
     setEquip(defaultEquip);
   };
 
-  const [fileEquips, setFileEquips] = useState(null);
-  const handleFileChange = e => {
-    if (e.target.files !== undefined) {
-      let file = e.target.files[0];
-      var reader = new FileReader();
-      reader.onloadend = function() {
-        var lines = reader.result.split(/[\r\n]+/g).filter(line => line !== "");
-        let [title, parsedBars, parsedEquips] = parseTextFile(lines);
-        setFileEquips({
-          file: file,
-          title: title,
-          bars: parsedBars,
-          equips: parsedEquips
-        });
-      };
-      reader.readAsText(file);
-    }
-    // console.log(file);
-  };
-
-  const handleFileSubmit = e => {
-    e.preventDefault();
-    updateBars([]);
-    updateEquips([]);
-    let bar_placement = e.target[1].value;
-    var reader = new FileReader();
-    reader.onloadend = function() {
-      var lines = reader.result.split(/[\r\n]+/g).filter(line => line !== "");
-      let [title, parsedBars, parsedEquips] = parseTextFile(
-        lines,
-        bar_placement
-      );
-
-      updateBars(parsedBars);
-      updateEquips(parsedEquips);
-      updateTitle(title);
-      setFileEquips(null);
-    };
-    reader.readAsText(fileEquips.file);
-    e.target.reset();
-    //
-
-    // console.log(fileEquips);
-  };
-
   const [fileCSVEquips, setFileCSVEquips] = useState(null);
-  const handleCSVChange = e => {
+  const handleCSVChange = (e) => {
     if (e.target.files !== undefined) {
       let file = e.target.files[0];
       var reader = new FileReader();
-      reader.onloadend = function() {
+      reader.onloadend = function () {
         var lines = reader.result
           .split(/[\r\n]+/g)
-          .filter(line => line.split(";")[0] !== "");
+          .filter((line) => line.split(";")[0] !== "");
         let [title, parsedBars, parsedEquips] = parseCSVFile(lines);
         setFileCSVEquips({
           file: file,
           title: title,
           bars: parsedBars,
-          equips: parsedEquips
+          equips: parsedEquips,
         });
       };
       reader.readAsText(file);
@@ -172,16 +127,16 @@ const InputForms = ({
     // console.log(file);
   };
 
-  const handleCSVSubmit = e => {
+  const handleCSVSubmit = (e) => {
     e.preventDefault();
     updateBars([]);
     updateEquips([]);
     let bar_placement = e.target[1].value;
     var reader = new FileReader();
-    reader.onloadend = function() {
+    reader.onloadend = function () {
       var lines = reader.result
         .split(/[\r\n]+/g)
-        .filter(line => line.split(";")[0] !== "");
+        .filter((line) => line.split(";")[0] !== "");
       let [title, parsedBars, parsedEquips] = parseCSVFile(
         lines,
         bar_placement
@@ -201,72 +156,11 @@ const InputForms = ({
 
   return (
     <div>
-      <div>
-        <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
-          ENTRADA FORMATO IT743A 2S2020
-        </h2>
-        <form onSubmit={handleFileSubmit}>
-          <div className="md:flex md:items-center">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              File:
-            </label>
-            <input
-              className="w-full md:flex-1 cursor-pointer shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="file"
-              onChange={handleFileChange}
-            ></input>
-            <a
-              className="text-center ml-2 block text-blue-700 text-sm font-bold"
-              target="_blank"
-              rel="noreferrer noopener"
-              href="/ieee30buses.txt"
-            >
-              default
-            </a>
-          </div>
-          {fileEquips && (
-            <div>
-              <div className="flex items-center mt-2">
-                <label className="text-gray-700 text-sm font-bold mr-2">
-                  Bar placement:
-                </label>
-                <select
-                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                  name="bar_placement"
-                >
-                  <option value="circle">Circular</option>
-                  <option value="random">Aleatório</option>
-                </select>
-              </div>
-              <div className="flex">
-                <input
-                  className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
-                  type="submit"
-                  value={
-                    fileEquips &&
-                    "Add Title:" +
-                      fileEquips.title +
-                      ", Bars:" +
-                      Object.keys(fileEquips.bars).length +
-                      ", Branches:" +
-                      Object.keys(fileEquips.equips).length +
-                      " (LT:" +
-                      Object.values(fileEquips.equips).filter(
-                        equip => equip.type === "LT"
-                      ).length +
-                      " TR:" +
-                      Object.values(fileEquips.equips).filter(
-                        equip => equip.type === "TR"
-                      ).length +
-                      ")"
-                  }
-                ></input>
-              </div>
-            </div>
-          )}
-        </form>
-      </div>
-
+      <TextFileInput
+        updateBars={updateBars}
+        updateEquips={updateEquips}
+        updateTitle={updateTitle}
+      ></TextFileInput>
       <div>
         <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
           CSV INPUT
@@ -318,11 +212,11 @@ const InputForms = ({
                       Object.keys(fileCSVEquips.equips).length +
                       " (LT:" +
                       Object.values(fileCSVEquips.equips).filter(
-                        equip => equip.type === "LT"
+                        (equip) => equip.type === "LT"
                       ).length +
                       " TR:" +
                       Object.values(fileCSVEquips.equips).filter(
-                        equip => equip.type === "TR"
+                        (equip) => equip.type === "TR"
                       ).length +
                       ")"
                   }
