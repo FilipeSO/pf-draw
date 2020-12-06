@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import DrawCanvas from "./components/DrawCanvas";
-import InputForms from "./components/InputForms";
+import TextFileInput from "./components/TextFileInput";
+import CSVFileInput from "./components/CSVFileInput";
+import BarInput from "./components/BarInput";
+import BranchInput from "./components/BranchInput";
 import ConfigForms from "./components/ConfigForms";
 import Solution from "./components/Solution";
 import { parseCSVFile } from "./utils";
-
-// import { parseTextFile } from "./utils";
 
 export const App = () => {
   const [bars, setBars] = useState([]);
@@ -17,7 +18,7 @@ export const App = () => {
     solver: "",
     err_tolerance: "",
     bars: undefined,
-    equips: undefined
+    equips: undefined,
   });
 
   const drawCanvasRef = useRef(null);
@@ -36,11 +37,11 @@ export const App = () => {
 
     fetch("/input.csv")
       //   // fetch("/input30bar.csv")
-      .then(result => result.text())
-      .then(text => {
+      .then((result) => result.text())
+      .then((text) => {
         var lines = text
           .split(/[\r\n]+/g)
-          .filter(line => line.split(";")[0] !== "");
+          .filter((line) => line.split(";")[0] !== "");
         let [title, fileBars, fileEquips] = parseCSVFile(lines);
         setTitle(title);
         setBars(fileBars);
@@ -48,27 +49,27 @@ export const App = () => {
       });
   }, []);
 
-  const updateBars = newState => {
+  const updateBars = (newState) => {
     setBars(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
-  const updateEquips = newState => {
+  const updateEquips = (newState) => {
     setEquips(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
-  const updateConfig = newState => {
+  const updateConfig = (newState) => {
     let updateState = {
       ...newState,
       bars: bars,
-      equips: equips
+      equips: equips,
     };
     // console.log("UPDATE", updateState);
     setConfig(updateState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
 
-  const updateTitle = newState => {
+  const updateTitle = (newState) => {
     setTitle(newState);
   };
 
@@ -92,21 +93,36 @@ export const App = () => {
         </h1>
       </div>
       <div className="container mx-auto px-2 md:px-0">
-        <InputForms
+        <TextFileInput
           updateBars={updateBars}
-          bars={bars}
           updateEquips={updateEquips}
-          equips={equips}
           updateTitle={updateTitle}
-        ></InputForms>
+        ></TextFileInput>
+        <CSVFileInput
+          updateBars={updateBars}
+          updateEquips={updateEquips}
+          updateTitle={updateTitle}
+        ></CSVFileInput>
+
+        <div className="lg:flex lg:space-x-4">
+          <div className="lg:w-1/2">
+            <BarInput updateBars={updateBars} bars={bars}></BarInput>
+          </div>
+          <div className="lg:w-1/2">
+            <BranchInput
+              updateEquips={updateEquips}
+              equips={equips}
+            ></BranchInput>
+          </div>
+        </div>
         <ConfigForms config={config} updateConfig={updateConfig}></ConfigForms>
 
         <h1 className="text-xl font-bold mt-4 text-center text-gray-800">
           Title: {title}, Bars: {Object.keys(bars).length}, Branches:{" "}
           {Object.keys(equips).length} (LT:{" "}
-          {Object.values(equips).filter(equip => equip.type === "LT").length}{" "}
+          {Object.values(equips).filter((equip) => equip.type === "LT").length}{" "}
           TR:{" "}
-          {Object.values(equips).filter(equip => equip.type === "TR").length})
+          {Object.values(equips).filter((equip) => equip.type === "TR").length})
         </h1>
       </div>
       <div ref={drawCanvasRef}>
