@@ -5,3 +5,5 @@ implementar round = decimal(err_tolerance)
 implementar calculo de potencia por ramo
 
 implementar perdas
+
+

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { NewtonRaphsonMethodResults } from "../methods";
+// import { NewtonRaphsonMethodResults } from "../methods";
+import NewtonRaphsoResults from "./solution/NewtonRaphsoResults";
+
 // import * as math from "mathjs";
 
 const Solution = ({ bars, equips, solver, err_tolerance }) => {
@@ -12,7 +14,7 @@ const Solution = ({ bars, equips, solver, err_tolerance }) => {
       setSolution(<div>Waiting for data...</div>);
     } else {
       if (solver === "newton-raphson") {
-        let results = NewtonRaphsonMethodResults(
+        let results = NewtonRaphsoResults(
           bars,
           equips,
           NB,

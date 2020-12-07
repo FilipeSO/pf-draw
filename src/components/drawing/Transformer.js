@@ -1,8 +1,8 @@
 import React from "react";
 import { Circle, Group, Line } from "react-konva";
-import { _SETTINGS } from "../settings";
+import { _SETTINGS } from "../../settings";
 import { useEffect, useRef } from "react";
-import { getAngle } from "../utils";
+import { getAngle } from "../../utils";
 
 const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
   const radius = _SETTINGS.TR.radius || _SETTINGS.default.radius;

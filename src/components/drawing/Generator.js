@@ -1,6 +1,6 @@
 import React from "react";
 import { Circle, Group, Text, Line } from "react-konva";
-import { _SETTINGS } from "../settings";
+import { _SETTINGS } from "../../settings";
 const Generator = ({
   x,
   y,

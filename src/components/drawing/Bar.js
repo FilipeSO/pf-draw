@@ -1,6 +1,6 @@
 import React from "react";
 import { Group, Circle, Text } from "react-konva";
-import { _SETTINGS } from "../settings";
+import { _SETTINGS } from "../../settings";
 const Bar = ({ x, y, name, handleDrag, color, handleDragEnd }) => {
   const radius = _SETTINGS.BAR.radius || _SETTINGS.default.radius;
   const strokeWidth =

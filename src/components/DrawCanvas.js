@@ -1,8 +1,8 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { Stage, Layer } from "react-konva";
-import Transformer from "./Transformer";
-import Bar from "./Bar";
-import TransmissionLine from "./TransmissionLine";
+import Transformer from "./drawing/Transformer";
+import Bar from "./drawing/Bar";
+import TransmissionLine from "./drawing/TransmissionLine";
 import { getLinePoints, getAngle } from "../utils";
 
 function useWindowSize() {
