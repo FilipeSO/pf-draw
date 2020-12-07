@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { getLinePoints } from "../utils";
 
-const BranchInput = ({ updateEquips, equips }) => {
+const BranchInput = ({ updateEquips, equips, bars }) => {
   const defaultEquip = {
     endPointA: "",
     endPointB: "",
@@ -21,33 +22,75 @@ const BranchInput = ({ updateEquips, equips }) => {
 
   const handleEquipSubmit = (e) => {
     e.preventDefault();
-
-    let equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
-    let equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
-
-    let lineN_reverse = Object.values(equips).filter(
-      (equip) => equip.name === equipNameReverse
-    ).length;
-
-    let lineN =
-      lineN_reverse +
-      Object.values(equips).filter((equip) => equip.name === equipName).length +
-      1;
-
-    let newEquip = equip;
-    for (var key in newEquip) {
+    let equipType = equip.tap === 1 && equip.tap_df_deg === 0 ? "LT" : "TR";
+    // let newEquip = equip;
+    for (var key in equip) {
       if (key === "endPointA" || key === "endPointB") continue;
-      newEquip[key] = parseFloat(newEquip[key].replace(",", "."));
+      equip[key] = parseFloat(equip[key].replace(",", "."));
     }
-    let newState = {
-      ...equips,
-      [equipName + "_" + lineN]: {
-        ...newEquip,
-        type: "LT",
-        name: equipName,
-        n: lineN,
-      },
-    };
+
+    let A = "";
+    let B = "";
+    if (parseInt(equip.endPointA) > parseInt(equip.endPointB)) {
+      A = equip.endPointB; //endpointA é sempre o menor
+      B = equip.endPointA;
+    } else {
+      A = equip.endPointA; //endpointA é sempre o menor
+      B = equip.endPointB;
+    }
+
+    let equipName = "";
+    let newState = [];
+    if (equipType === "LT") {
+      equipName = `LT_${A + B}`;
+      let lineN =
+        Object.values(equips).filter((equip) => equip.name === equipName)
+          .length + 1;
+      newState = {
+        ...equips,
+        [equipName + "_" + lineN]: {
+          ...equip,
+          type: equipType,
+          name: equipName,
+          n: lineN,
+        },
+      };
+    } else {
+      equipName = `TR_${A + B}`;
+      let trN =
+        Object.values(equips).filter(
+          (equip) =>
+            equip.name.substring(0, equip.name.lastIndexOf("_")) === equipName
+        ).length + 1;
+      let endPointA = bars[equip.endPointA];
+      let endPointB = bars[equip.endPointB];
+      let x1 = endPointA.pos.x;
+      let y1 = endPointA.pos.y;
+      let x2 = endPointB.pos.x;
+      let y2 = endPointB.pos.y;
+      let newX = (x1 + x2) / 2;
+      let newY = (y1 + y2) / 2;
+      if (trN > 1) {
+        let newPos = getLinePoints(x1, y1, x2, y2, trN, 5, 100, 100);
+        newX = (newPos[2] + newPos[4]) / 2;
+        newY = (newPos[3] + newPos[5]) / 2;
+      }
+      newState = {
+        ...equips,
+        [equipName + "_" + trN]: {
+          ...equip,
+          endPointA: A,
+          endPointB: B,
+          name: equipName + "_" + trN,
+          type: equipType,
+          pos: {
+            x: newX,
+            y: newY,
+          },
+          n: trN,
+        },
+      };
+    }
     console.log("NOVO EQUIP ADD", newState);
     updateEquips(newState);
     setEquip(defaultEquip);
@@ -142,6 +185,7 @@ const BranchInput = ({ updateEquips, equips }) => {
               name="tap"
               onChange={handleEquipChange}
               value={equip.tap}
+              required
             ></input>
           </div>
           <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
@@ -154,6 +198,7 @@ const BranchInput = ({ updateEquips, equips }) => {
               name="tap_df_deg"
               onChange={handleEquipChange}
               value={equip.tap_df_deg}
+              required
             ></input>
           </div>
         </div>

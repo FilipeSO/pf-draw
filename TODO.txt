@@ -1,2 +1,13 @@
-28/11/20
-inputforms corrigir tipo de entrada para aceitar transformador (type TR)
+06/12/20
+existe um bug que se adicionar um TR em barras que estão paralelas em Y no 5 elemento a adicionar 
+ocorre um erro
+**CORREÇÃO:
+TODA ENTRADA DE EQUIPAMENTOS FORÇAR: ENDPOINTA < ENDPOINTB
+*corrigido em parsetextfile e parsecsvfile
+*corrigido em branchinput
+
+COMO TODOS EQUIPAMENTOS A-B e B-A ficam com nome A-B é possível remover check de nome reverso
+*corrigido em parsetextfile e parsecsvfile
+*corrigido branchinput
+*drawcanvas aparentemente nao checava reversão de nome
+

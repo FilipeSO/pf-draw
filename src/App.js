@@ -112,6 +112,7 @@ export const App = () => {
             <BranchInput
               updateEquips={updateEquips}
               equips={equips}
+              bars={bars}
             ></BranchInput>
           </div>
         </div>
