@@ -1,4 +1,7 @@
-06/12/20
-FALTA CHECAR CONDIÇÕES PARA SER TR OU LT NA INSERÇÃO DE EQUIPAMENTOS
+07/12/20
+implementar round = decimal(err_tolerance)
+*feito
 
+implementar calculo de potencia por ramo
 
+implementar perdas

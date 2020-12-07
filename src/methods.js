@@ -48,13 +48,13 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
 
   const G = math.re(Y);
   const B = math.im(Y);
-  let theta = math.matrix(BARS.map(bar => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
-  let V = math.matrix(BARS.map(bar => parseFloat(bar.v_pu)));
+  let theta = math.matrix(BARS.map((bar) => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
+  let V = math.matrix(BARS.map((bar) => parseFloat(bar.v_pu)));
 
-  let PQ_index = BARS.filter(bar => bar.tipo === 0).map(bar =>
+  let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
     parseInt(bar.name)
   ); //%numero barra tipo PQ
-  let zero_PQ_index = PQ_index.map(elem => elem - 1); //numero barra tipo PQ base zero
+  let zero_PQ_index = PQ_index.map((elem) => elem - 1); //numero barra tipo PQ base zero
 
   // let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
   //   parseInt(bar.name)
@@ -62,9 +62,9 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   // let zero_PV_index = PV_index.map((elem) => elem - 1); //numero barra tipo PV base zero
 
   let PQ_PV_index = BARS.filter(
-    bar => bar.tipo === 0 || bar.tipo === 1
-  ).map(bar => parseInt(bar.name)); //%numero barra tipo PQ ou PV
-  let zero_PQ_PV_index = PQ_PV_index.map(elem => elem - 1); //%numero barra tipo PQ ou PV base zero
+    (bar) => bar.tipo === 0 || bar.tipo === 1
+  ).map((bar) => parseInt(bar.name)); //%numero barra tipo PQ ou PV
+  let zero_PQ_PV_index = PQ_PV_index.map((elem) => elem - 1); //%numero barra tipo PQ ou PV base zero
 
   // let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
   //   parseInt(bar.name)
@@ -72,9 +72,9 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   // let zero_Vtheta_index = Vtheta_index.map((elem) => elem - 1);
   // //%numero barra tipo slack base zero
 
-  let Pesp = BARS.map(bar => bar.p_g - bar.p_c);
+  let Pesp = BARS.map((bar) => bar.p_g - bar.p_c);
 
-  let Qesp = BARS.map(bar => bar.q_g - bar.q_c);
+  let Qesp = BARS.map((bar) => bar.q_g - bar.q_c);
   // console.log(BARS, PQ_index, PQ_PV_index);
   let iteration = 0;
   let iterationData = [];
@@ -85,14 +85,14 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
     let Qcalc = Q_CALC(V, theta, G, B, NB, equips);
     let dP = math.subtract(Pesp, Pcalc);
     let dQ = math.subtract(Qesp, Qcalc);
-    let g = zero_PQ_PV_index.map(elem => dP[elem]); //zero based matrix
-    g.push(...zero_PQ_index.map(elem => dQ[elem]));
+    let g = zero_PQ_PV_index.map((elem) => dP[elem]); //zero based matrix
+    g.push(...zero_PQ_index.map((elem) => dQ[elem]));
     iterationData.push({
       iteration: iteration,
       V: math.squeeze(V),
       theta: math.squeeze(theta),
       g: math.squeeze(g),
-      J: J
+      J: J,
     });
 
     if (math.max(math.abs(g)) < err_tolerance) {
@@ -121,13 +121,13 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
     // %X_next=inv(J)*g+X
     let X_next = math.add(math.multiply(math.inv(J), g), X);
     let count = 0;
-    zero_PQ_PV_index.map(elem => {
+    zero_PQ_PV_index.map((elem) => {
       theta._data[elem] = X_next._data[count];
       count++;
       return 0;
     });
 
-    zero_PQ_index.map(elem => {
+    zero_PQ_index.map((elem) => {
       V._data[elem] = X_next._data[count];
       count++;
       return 0;
@@ -152,7 +152,7 @@ const getRelatedEndPoint = (equips, k_index) => {
   let EQUIPS = Object.values(equips);
   // let k_index = k; //matrix is zero based
   let m = [];
-  EQUIPS.forEach(equip => {
+  EQUIPS.forEach((equip) => {
     let endPointA = parseInt(equip.endPointA) - 1; //matrix is zero based
     let endPointB = parseInt(equip.endPointB) - 1; //matrix is zero based
 
@@ -308,7 +308,7 @@ const J_CALC = (
   return J;
 };
 
-const DisplayMatrix = ({ symbol, matrix, unit }) => {
+const DisplayMatrix = ({ symbol, matrix, unit, roundTo }) => {
   let td = [];
   let tr = [];
   const n_rows = matrix._size[0];
@@ -318,7 +318,7 @@ const DisplayMatrix = ({ symbol, matrix, unit }) => {
     n_cols = matrix._size[1];
     for (let i = 0; i < n_rows; i++) {
       for (let j = 0; j < n_cols; j++) {
-        let value = math.round(matrix._data[i][j], 4);
+        let value = math.round(matrix._data[i][j], roundTo);
         td.push(
           <td className="px-2" key={j}>
             {value.toString()}
@@ -334,7 +334,7 @@ const DisplayMatrix = ({ symbol, matrix, unit }) => {
     }
   } else {
     for (let i = 0; i < n_rows; i++) {
-      let value = math.round(matrix._data[i], 4);
+      let value = math.round(matrix._data[i], roundTo);
       tr.push(
         <tr className="text-center" key={i}>
           <td className="px-2" key={i}>
@@ -388,13 +388,15 @@ export const NewtonRaphsonMethodResults = (
     err_tolerance
   );
   console.log(data);
-  let theta_vector = PQ_PV_index.map(elem => (
+  const roundTo = err_tolerance.toString().split(".")[1].length + 1;
+
+  let theta_vector = PQ_PV_index.map((elem) => (
     <div key={elem}>
       {String.fromCharCode(952)}
       <sub>{elem}</sub>
     </div>
   ));
-  let v_vector = PQ_index.map(elem => (
+  let v_vector = PQ_index.map((elem) => (
     <div key={elem}>
       V<sub>{elem}</sub>
     </div>
@@ -483,8 +485,9 @@ export const NewtonRaphsonMethodResults = (
         unit={"pu"}
         matrix={Y}
         key={"admitance matrix"}
+        roundTo={roundTo}
       ></DisplayMatrix>
-    </div>
+    </div>,
   ];
   for (let i = 0; i < data.length; i++) {
     if (i === 0) {
@@ -498,11 +501,13 @@ export const NewtonRaphsonMethodResults = (
             symbol={"V"}
             unit={"pu"}
             matrix={data[i].V}
+            roundTo={roundTo}
           ></DisplayMatrix>
           <DisplayMatrix
             symbol={String.fromCharCode(952)}
             unit={"rad"}
             matrix={data[i].theta}
+            roundTo={roundTo}
           ></DisplayMatrix>
           <DisplayMatrix
             symbol={
@@ -512,6 +517,7 @@ export const NewtonRaphsonMethodResults = (
               </div>
             }
             matrix={math.matrix(data[i].g)}
+            roundTo={roundTo}
           ></DisplayMatrix>
         </div>
       );
@@ -527,6 +533,7 @@ export const NewtonRaphsonMethodResults = (
               <DisplayMatrix
                 symbol={"J"}
                 matrix={math.matrix(data[i].J)}
+                roundTo={roundTo}
               ></DisplayMatrix>
             </div>
 
@@ -535,11 +542,13 @@ export const NewtonRaphsonMethodResults = (
                 symbol={"V"}
                 unit={"pu"}
                 matrix={data[i].V}
+                roundTo={roundTo}
               ></DisplayMatrix>
               <DisplayMatrix
                 symbol={String.fromCharCode(952)}
                 unit={"rad"}
                 matrix={data[i].theta}
+                roundTo={roundTo}
               ></DisplayMatrix>
               <DisplayMatrix
                 symbol={
@@ -549,6 +558,7 @@ export const NewtonRaphsonMethodResults = (
                   </div>
                 }
                 matrix={math.matrix(data[i].g)}
+                roundTo={roundTo}
               ></DisplayMatrix>
             </div>
           </div>
