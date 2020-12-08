@@ -2,10 +2,12 @@ import React from "react";
 import { NewtonRaphsonMethod } from "../../methods";
 import DisplayMatrix from "./DisplayMatrix";
 import * as math from "mathjs";
+import { tCalc } from "../../methods";
+import { isLT } from "../../utils";
 
 const NewtonRaphsonMethodDefinition = () => {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center py-2">
       <div>
         X<sup>m+1</sup>
       </div>
@@ -24,7 +26,7 @@ const NewtonRaphsonMethodDefinition = () => {
 
 const NewtonRaphsonJacobianDefinition = () => {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center py-2">
       <div>J</div>
       <div className="px-2">=</div>
       <div className="border-solid border-l-2 border-r-2 border-black px-1">
@@ -135,6 +137,135 @@ const Iterations = (data, roundTo) => {
   return results;
 };
 
+const BarStateTable = (data, NB, roundTo) => {
+  const solution = data[data.length - 1];
+  let lines = [];
+  for (let i = 0; i < NB; i++) {
+    lines.push(
+      <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
+        <td className="px-2">{i + 1}</td>
+        <td className="px-2">{math.round(solution["Pcalc"][i], roundTo)}</td>
+        <td className="px-2">{math.round(solution["Qcalc"][i], roundTo)}</td>
+        <td className="px-2">{math.round(solution["V"]._data[i], roundTo)}</td>
+        <td className="px-2">
+          {math.round((solution["theta"]._data[i] * 180) / Math.PI, roundTo)}
+        </td>
+        <td className="px-2">
+          {math.round(solution["theta"]._data[i], roundTo)}
+        </td>
+      </tr>
+    );
+  }
+
+  let result = (
+    <div
+      key={"bar state table"}
+      className="border-dashed border-solid border-t-2 border-black py-2"
+    >
+      <table>
+        <thead>
+          <tr className="border-solid border-b-2 border-black">
+            <th className="px-2">Bar</th>
+            <th className="px-2">P [pu]</th>
+            <th className="px-2">Q [pu]</th>
+            <th className="px-2">V [pu]</th>
+            <th className="px-2">{String.fromCharCode(952)} [deg]</th>
+            <th className="px-2">{String.fromCharCode(952)} [rad]</th>
+          </tr>
+        </thead>
+        <tbody>{lines}</tbody>
+      </table>
+    </div>
+  );
+  return result;
+};
+
+const PowerFlowTable = (data, equips, NR, roundTo) => {
+  const solution = data[data.length - 1];
+
+  let lines = [];
+  Object.values(equips).forEach((equip) => {
+    let k = parseInt(equip.endPointA) - 1;
+    let m = parseInt(equip.endPointB) - 1;
+    let t = undefined;
+    if (isLT(equip)) {
+      //LT
+      t = 1;
+    } else {
+      //TR
+      t = tCalc(equip);
+    }
+    let ykm = math.divide(1, math.complex(equip.r_pu, equip.x_pu));
+    let bsh = equip.bsh_pu / 2;
+
+    let Vk = solution["V"]._data[k];
+    let Vm = solution["V"]._data[m];
+    let thetak = solution["theta"]._data[k];
+    let thetam = solution["theta"]._data[m];
+    let Ek = math.multiply(Vk, math.exp(math.complex(0, thetak)));
+    let Em = math.multiply(Vm, math.exp(math.complex(0, thetam)));
+
+    //USUAL TIPO 5 PAGINA 11:
+    //k|----1:t---p--bsh--ykm--bsh--|m
+    let sqrt_abs_t = math.sqrt(math.abs(t));
+    let i_bsh = math.complex(0, bsh);
+    let sqrt_abs_t_ykm = math.multiply(sqrt_abs_t, ykm);
+    let ibsh_sqrt_abs_t = math.divide(i_bsh, sqrt_abs_t);
+
+    let ikm_Ek = math.multiply(math.add(sqrt_abs_t_ykm, ibsh_sqrt_abs_t), Ek);
+    let n_conj_t_ykm = math.multiply(math.multiply(math.conj(t), -1), ykm);
+    let ikm_Em = math.multiply(n_conj_t_ykm, Em);
+
+    let Ikm = math.add(ikm_Ek, ikm_Em);
+    // console.log(k + 1, m + 1, Ikm);
+    let n_t_ykm_Ek = math.multiply(-1, t, ykm, Ek);
+    let ykm_ibsh_Em = math.multiply(math.add(ykm, i_bsh), Em);
+
+    let Imk = math.add(n_t_ykm_Ek, ykm_ibsh_Em);
+    console.log(k + 1, m + 1, Imk);
+    //Imk = -t * ykm * Ek + (ykm + i * bsh) * Em;
+  });
+  //   for (let i = 0; i < NR; i++) {
+  //     lines.push(
+  //       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
+  //         <td className="px-2">{i + 1}</td>
+  //         <td className="px-2">{math.round(solution["Pcalc"][i], roundTo)}</td>
+  //         <td className="px-2">{math.round(solution["Qcalc"][i], roundTo)}</td>
+  //         <td className="px-2">{math.round(solution["V"]._data[i], roundTo)}</td>
+  //         <td className="px-2">
+  //           {math.round((solution["theta"]._data[i] * 180) / Math.PI, roundTo)}
+  //         </td>
+  //         <td className="px-2">
+  //           {math.round(solution["theta"]._data[i], roundTo)}
+  //         </td>
+  //       </tr>
+  //     );
+  //   }
+
+  //   let result = (
+  //     <div
+  //       key={"bar state table"}
+  //       className="border-dashed border-solid border-t-2 border-black py-2"
+  //     >
+  //       <table>
+  //         <thead>
+  //           <tr className="border-solid border-b-2 border-black">
+  //             <th className="px-2">Bar</th>
+  //             <th className="px-2">P [pu]</th>
+  //             <th className="px-2">Q [pu]</th>
+  //             <th className="px-2">V [pu]</th>
+  //             <th className="px-2">{String.fromCharCode(952)} [deg]</th>
+  //             <th className="px-2">{String.fromCharCode(952)} [rad]</th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>{lines}</tbody>
+  //       </table>
+  //     </div>
+  //   );
+  //   return result;
+  return;
+};
+
 const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
   let [Y, data, PQ_PV_index, PQ_index] = NewtonRaphsonMethod(
     bars,
@@ -158,7 +289,7 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
     </div>
   ));
   const StateVariables = () => (
-    <div className="flex">
+    <div className="flex py-2">
       <div>X</div>
       <div className="px-2">=</div>
       <div className="flex space-x-2 border-solid border-l-2 border-r-2 border-black px-1">
@@ -189,19 +320,21 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
         <NewtonRaphsonJacobianDefinition></NewtonRaphsonJacobianDefinition>
         <NewtonRaphsonMethodDefinition></NewtonRaphsonMethodDefinition>
       </div>
-      <h2 key={"parameters header"} className="text-md">
-        Parameters:
-      </h2>
-      <DisplayMatrix
-        symbol={"Y"}
-        unit={"pu"}
-        matrix={Y}
-        key={"admitance matrix"}
-        roundTo={roundTo}
-      ></DisplayMatrix>
+      <div className="mt-2">
+        <DisplayMatrix
+          symbol={"Y"}
+          unit={"pu"}
+          matrix={Y}
+          key={"admitance matrix"}
+          roundTo={roundTo}
+        ></DisplayMatrix>
+      </div>
     </div>,
   ];
   results.push(Iterations(data, roundTo));
+  results.push(BarStateTable(data, NB, roundTo));
+  PowerFlowTable(data, equips, NR, roundTo);
+  //   console.log(Object.values(equips));
   return results;
 };
 

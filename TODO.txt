@@ -6,4 +6,20 @@ implementar calculo de potencia por ramo
 
 implementar perdas
 
+07/12/20
+ENCONTRADO PROBLEMA EM YCALC
+    if (isNaN(EQUIPS[i].tap) === false) {
+      t = math.multiply(
+        EQUIPS[i].tap,
+        math.exp(math.complex(0, (EQUIPS[i].tap_df_deg * Math.PI) / 180))
+      );
+    }
 
+ALTERADO PARA
+    if (EQUIPS[i].tap !== 1 || EQUIPS[i].tap_df_deg !== 0) {
+      t = math.multiply(
+        EQUIPS[i].tap,
+        math.exp(math.complex(0, (EQUIPS[i].tap_df_deg * Math.PI) / 180))
+      );
+    }
+nao testado

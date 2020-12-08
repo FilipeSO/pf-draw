@@ -204,6 +204,13 @@ export const getLinePoints = (x1, y1, x2, y2, n, space, lx, ly) => {
   return points;
 };
 
+export const isLT = (equip) => {
+  return (
+    (equip.tap === 1 && equip.tap_df_deg === 0) ||
+    (isNaN(equip.tap) && isNaN(equip.tap_df_deg))
+  );
+};
+
 export const parseTextFile = (lines, bar_placement = "circle") => {
   let bars = [];
   let branches = [];
@@ -243,7 +250,7 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
         tap_max: parseFloat(line.substring(46, 50)) / 1000,
         tap_df_deg: parseFloat(line.substring(50, 55)),
       };
-      if (isNaN(newBranch.tap)) {
+      if (isLT(newBranch)) {
         newBranch.type = "LT";
       } else {
         newBranch.type = "TR";
@@ -410,7 +417,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
         tap_max: parseFloat(row[7]),
         tap_df_deg: parseFloat(row[8]),
       };
-      if (isNaN(newBranch.tap)) {
+      if (isLT(newBranch)) {
         newBranch.type = "LT";
       } else {
         newBranch.type = "TR";

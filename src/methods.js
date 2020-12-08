@@ -1,5 +1,15 @@
 import * as math from "mathjs";
+import { isLT } from "./utils";
 // import React from "react";
+
+export const tCalc = (equip) => {
+  let tap_linear = isNaN(equip.tap) ? 1 : equip.tap;
+  let tap_df_deg = isNaN(equip.tap_df_deg) ? 0 : equip.tap_df_deg;
+  return math.multiply(
+    tap_linear,
+    math.exp(math.complex(0, (tap_df_deg * Math.PI) / 180))
+  );
+};
 
 const Y_CALC = (equips, NB, NR) => {
   const Y = math.zeros(NB, NB);
@@ -8,12 +18,14 @@ const Y_CALC = (equips, NB, NR) => {
     let EQUIPS = Object.values(equips);
     let k = parseInt(EQUIPS[i].endPointA) - 1;
     let m = parseInt(EQUIPS[i].endPointB) - 1;
-    let t = 1;
-    if (isNaN(EQUIPS[i].tap) === false) {
-      t = math.multiply(
-        EQUIPS[i].tap,
-        math.exp(math.complex(0, (EQUIPS[i].tap_df_deg * Math.PI) / 180))
-      );
+    let t = undefined;
+
+    if (isLT(EQUIPS[i])) {
+      //LT
+      t = 1;
+    } else {
+      //TR
+      t = tCalc(EQUIPS[i]);
     }
     let ykm = math.divide(1, math.complex(EQUIPS[i].r_pu, EQUIPS[i].x_pu));
     let bsh = EQUIPS[i].bsh_pu / 2;
