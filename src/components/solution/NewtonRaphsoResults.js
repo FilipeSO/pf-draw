@@ -180,11 +180,14 @@ const BarStateTable = (data, NB, roundTo) => {
   return result;
 };
 
-const PowerFlowTable = (data, equips, NR, roundTo) => {
+const PowerFlowStateTable = (data, equips, NR, roundTo) => {
   const solution = data[data.length - 1];
 
   let lines = [];
-  Object.values(equips).forEach((equip) => {
+  let pf_data = [];
+  let totalLoss = math.complex(0, 0);
+  let equips_arr = Object.values(equips);
+  equips_arr.forEach((equip) => {
     let k = parseInt(equip.endPointA) - 1;
     let m = parseInt(equip.endPointB) - 1;
     let t = undefined;
@@ -222,48 +225,100 @@ const PowerFlowTable = (data, equips, NR, roundTo) => {
     let ykm_ibsh_Em = math.multiply(math.add(ykm, i_bsh), Em);
 
     let Imk = math.add(n_t_ykm_Ek, ykm_ibsh_Em);
-    console.log(k + 1, m + 1, Imk);
-    //Imk = -t * ykm * Ek + (ykm + i * bsh) * Em;
-  });
-  //   for (let i = 0; i < NR; i++) {
-  //     lines.push(
-  //       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
-  //         <td className="px-2">{i + 1}</td>
-  //         <td className="px-2">{math.round(solution["Pcalc"][i], roundTo)}</td>
-  //         <td className="px-2">{math.round(solution["Qcalc"][i], roundTo)}</td>
-  //         <td className="px-2">{math.round(solution["V"]._data[i], roundTo)}</td>
-  //         <td className="px-2">
-  //           {math.round((solution["theta"]._data[i] * 180) / Math.PI, roundTo)}
-  //         </td>
-  //         <td className="px-2">
-  //           {math.round(solution["theta"]._data[i], roundTo)}
-  //         </td>
-  //       </tr>
-  //     );
-  //   }
+    // console.log(k + 1, m + 1, Imk);
+    let Skm = math.multiply(Ek, math.conj(Ikm));
+    // console.log(Skm);
 
-  //   let result = (
-  //     <div
-  //       key={"bar state table"}
-  //       className="border-dashed border-solid border-t-2 border-black py-2"
-  //     >
-  //       <table>
-  //         <thead>
-  //           <tr className="border-solid border-b-2 border-black">
-  //             <th className="px-2">Bar</th>
-  //             <th className="px-2">P [pu]</th>
-  //             <th className="px-2">Q [pu]</th>
-  //             <th className="px-2">V [pu]</th>
-  //             <th className="px-2">{String.fromCharCode(952)} [deg]</th>
-  //             <th className="px-2">{String.fromCharCode(952)} [rad]</th>
-  //           </tr>
-  //         </thead>
-  //         <tbody>{lines}</tbody>
-  //       </table>
-  //     </div>
-  //   );
-  //   return result;
-  return;
+    let Smk = math.multiply(Em, math.conj(Imk));
+    let Sloss = math.add(Smk, Skm);
+    totalLoss = math.add(totalLoss, Sloss);
+
+    console.log(Sloss.toString(), totalLoss);
+    pf_data.push({
+      Ikm,
+      Imk,
+      Skm,
+      Smk,
+      Sloss,
+    });
+    console.log(math.round(Smk, roundTo), math.abs(Smk));
+  });
+  console.log(pf_data);
+  for (let i = 0; i < NR; i++) {
+    lines.push(
+      <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
+        <td className="px-2">{equips_arr[i].endPointA}</td>
+        <td className="px-2">{equips_arr[i].endPointB}</td>
+        <td className="px-2">
+          {math.round(pf_data[i]["Ikm"].toPolar()["r"], roundTo)}
+          {"∠"}
+          {math.round(pf_data[i]["Ikm"].toPolar()["phi"], roundTo)}
+          {"°"}
+        </td>
+        <td className="px-2">
+          {math.round(pf_data[i]["Imk"].toPolar()["r"], roundTo)}
+          {"∠"}
+          {math.round(pf_data[i]["Imk"].toPolar()["phi"], roundTo)}
+          {"°"}
+        </td>
+        <td className="px-2">
+          {math.round(pf_data[i]["Skm"], roundTo).toString()}
+        </td>
+        <td className="px-2">
+          {math.round(pf_data[i]["Smk"], roundTo).toString()}
+        </td>
+        <td className="px-2">
+          {math.round(pf_data[i]["Sloss"], roundTo).toString()}
+        </td>
+      </tr>
+    );
+  }
+
+  let result = (
+    <div
+      key={"branch state table"}
+      className="border-dashed border-solid border-t-2 border-black py-2"
+    >
+      <table>
+        <thead>
+          <tr className="border-solid border-b-2 border-black">
+            <th className="px-2">k</th>
+            <th className="px-2">m</th>
+            <th className="px-2">
+              I<sub>km</sub>[pu]
+            </th>
+            <th className="px-2">
+              I<sub>mk</sub>[pu]
+            </th>
+            <th className="px-2">
+              S<sub>km</sub>[pu]
+            </th>
+            <th className="px-2">
+              S<sub>mk</sub>[pu]
+            </th>
+            <th className="px-2">
+              S<sub>loss</sub>[pu]
+            </th>
+          </tr>
+        </thead>
+        <tbody>{lines}</tbody>
+        <thead>
+          <tr className="border-solid border-t-2 border-black">
+            <th className="px-2"></th>
+            <th className="px-2"></th>
+            <th className="px-2"></th>
+            <th className="px-2"></th>
+            <th className="px-2"></th>
+            <th className="px-2">Total Loss</th>
+            <th className="px-2">
+              {math.round(totalLoss, roundTo).toString()}
+            </th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  );
+  return result;
 };
 
 const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
@@ -333,7 +388,7 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
   ];
   results.push(Iterations(data, roundTo));
   results.push(BarStateTable(data, NB, roundTo));
-  PowerFlowTable(data, equips, NR, roundTo);
+  results.push(PowerFlowStateTable(data, equips, NR, roundTo));
   //   console.log(Object.values(equips));
   return results;
 };

@@ -6,6 +6,8 @@ implementar calculo de potencia por ramo
 
 implementar perdas
 
+
+
 07/12/20
 ENCONTRADO PROBLEMA EM YCALC
     if (isNaN(EQUIPS[i].tap) === false) {
@@ -23,3 +25,5 @@ ALTERADO PARA
       );
     }
 nao testado
+
+ANALIZAR QUAIS ALTERAÇÕES ADOTAR PARA CALCULO DE t e Y DEVIDO SEMPRE endPointA<endPointB
