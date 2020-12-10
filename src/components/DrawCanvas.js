@@ -91,15 +91,25 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
         )[0].attrs;
         // console.log(newEndPointA, newEndPointB);
         let n = line.attrs.n;
-
         let linePoints = [];
-        linePoints = getLinePoints(
-          newEndPointA.x,
-          newEndPointA.y,
-          newEndPointB.x,
-          newEndPointB.y,
-          n
-        );
+        //APENAS PARA DRAW A SEMPRE MENOR QUE B
+        if (parseInt(newEndPointA.name) > parseInt(newEndPointB.name)) {
+          linePoints = getLinePoints(
+            newEndPointB.x,
+            newEndPointB.y,
+            newEndPointA.x,
+            newEndPointA.y,
+            n
+          );
+        } else {
+          linePoints = getLinePoints(
+            newEndPointA.x,
+            newEndPointA.y,
+            newEndPointB.x,
+            newEndPointB.y,
+            n
+          );
+        }
         line.attrs.points = linePoints;
       });
     layerRef.current.batchDraw();

@@ -12,6 +12,7 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
   //   console.log(endPointA, endPointB, n, color, bars);
   let lineColor = color || "000";
   let linePoints = [];
+  //APENAS PARA DRAW A SEMPRE MENOR QUE B
   if (parseInt(endPointA) > parseInt(endPointB)) {
     linePoints = getLinePoints(
       bars[endPointB].pos.x,

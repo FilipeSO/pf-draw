@@ -397,18 +397,9 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
       return;
     }
     if (branchesInit) {
-      let A = "";
-      let B = "";
-      if (parseInt(row[0].trim()) > parseInt(row[1].trim())) {
-        A = row[1].trim(); //endpointA é sempre o menor
-        B = row[0].trim();
-      } else {
-        A = row[0].trim(); //endpointA é sempre o menor
-        B = row[1].trim();
-      }
       let newBranch = {
-        endPointA: A,
-        endPointB: B,
+        endPointA: row[0].trim(),
+        endPointB: row[1].trim(),
         r_pu: parseFloat(row[2]),
         x_pu: parseFloat(row[3]),
         bsh_pu: parseFloat(row[4]),
@@ -476,10 +467,12 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
   branches.forEach((branch) => {
     if (branch.type === "LT") {
       let equipName = `LT_${[branch.endPointA] + [branch.endPointB]}`;
+      let equipNameReverse = `LT_${[branch.endPointB] + [branch.endPointA]}`;
 
       let lineN =
-        Object.values(equips).filter((equip) => equip.name === equipName)
-          .length + 1;
+        Object.values(equips).filter(
+          (equip) => equip.name === equipName || equip.name === equipNameReverse
+        ).length + 1;
 
       equips = {
         ...equips,
@@ -498,12 +491,17 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
     );
     for (let i = 0; i < nodeTR.length; i++) {
       let TR = nodeTR[i];
+
       let equipName = `TR_${TR.endPointA + TR.endPointB}`;
+      let equipNameReverse = `TR_${TR.endPointB + TR.endPointA}`;
 
       let trN =
         Object.values(equips).filter(
           (equip) =>
-            equip.name.substring(0, equip.name.lastIndexOf("_")) === equipName
+            equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+              equipName ||
+            equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+              equipNameReverse
         ).length + 1;
 
       let endPointA = bars[TR.endPointA];

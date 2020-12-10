@@ -22,30 +22,25 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
 
   const handleEquipSubmit = (e) => {
     e.preventDefault();
-    let equipType = equip.tap === 1 && equip.tap_df_deg === 0 ? "LT" : "TR";
     // let newEquip = equip;
     for (var key in equip) {
       if (key === "endPointA" || key === "endPointB") continue;
       equip[key] = parseFloat(equip[key].replace(",", "."));
     }
-
-    let A = "";
-    let B = "";
-    if (parseInt(equip.endPointA) > parseInt(equip.endPointB)) {
-      A = equip.endPointB; //endpointA é sempre o menor
-      B = equip.endPointA;
-    } else {
-      A = equip.endPointA; //endpointA é sempre o menor
-      B = equip.endPointB;
-    }
+    let equipType = equip.tap === 1 && equip.tap_df_deg === 0 ? "LT" : "TR";
 
     let equipName = "";
+    let equipNameReverse = "";
     let newState = [];
+
     if (equipType === "LT") {
-      equipName = `LT_${A + B}`;
+      equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
+      equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
+
       let lineN =
-        Object.values(equips).filter((equip) => equip.name === equipName)
-          .length + 1;
+        Object.values(equips).filter(
+          (equip) => equip.name === equipName || equip.name === equipNameReverse
+        ).length + 1;
       newState = {
         ...equips,
         [equipName + "_" + lineN]: {
@@ -56,12 +51,18 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
         },
       };
     } else {
-      equipName = `TR_${A + B}`;
+      equipName = `TR_${equip.endPointA + equip.endPointB}`;
+      equipNameReverse = `TR_${equip.endPointB + equip.endPointA}`;
+
       let trN =
         Object.values(equips).filter(
           (equip) =>
-            equip.name.substring(0, equip.name.lastIndexOf("_")) === equipName
+            equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+              equipName ||
+            equip.name.substring(0, equip.name.lastIndexOf("_")) ===
+              equipNameReverse
         ).length + 1;
+
       let endPointA = bars[equip.endPointA];
       let endPointB = bars[equip.endPointB];
       let x1 = endPointA.pos.x;
@@ -79,8 +80,6 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
         ...equips,
         [equipName + "_" + trN]: {
           ...equip,
-          endPointA: A,
-          endPointB: B,
           name: equipName + "_" + trN,
           type: equipType,
           pos: {
