@@ -23,6 +23,8 @@ const BarInput = ({ updateBars, bars }) => {
   };
   const handleBarSubmit = (e) => {
     e.preventDefault();
+    let name = Object.keys(bars).length + 1;
+
     let position = {
       x:
         window.innerWidth * 0.2 +
@@ -36,8 +38,9 @@ const BarInput = ({ updateBars, bars }) => {
     }
     let newState = {
       ...bars,
-      [bar.name]: {
+      [name]: {
         ...newBar,
+        name: name.toString(),
         pos: position,
       },
     };
@@ -52,7 +55,7 @@ const BarInput = ({ updateBars, bars }) => {
         BAR MANUAL INPUT
       </h2>
       <form onSubmit={handleBarSubmit}>
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <label className="text-gray-700 text-sm font-bold mr-2">
             Number:
           </label>
@@ -64,7 +67,7 @@ const BarInput = ({ updateBars, bars }) => {
             onChange={handleBarChange}
             required
           ></input>
-        </div>
+        </div> */}
 
         <div className="flex items-center mt-2">
           <label className="text-gray-700 text-sm font-bold mr-2">Id:</label>

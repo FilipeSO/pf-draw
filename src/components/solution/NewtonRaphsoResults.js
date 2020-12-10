@@ -233,7 +233,7 @@ const PowerFlowStateTable = (data, equips, NR, roundTo) => {
     let Sloss = math.add(Smk, Skm);
     totalLoss = math.add(totalLoss, Sloss);
 
-    console.log(Sloss.toString(), totalLoss);
+    // console.log(Sloss.toString(), totalLoss);
     pf_data.push({
       Ikm,
       Imk,
@@ -241,9 +241,9 @@ const PowerFlowStateTable = (data, equips, NR, roundTo) => {
       Smk,
       Sloss,
     });
-    console.log(math.round(Smk, roundTo), math.abs(Smk));
+    // console.log(math.round(Smk, roundTo), math.abs(Smk));
   });
-  console.log(pf_data);
+  // console.log(pf_data);
   for (let i = 0; i < NR; i++) {
     lines.push(
       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>

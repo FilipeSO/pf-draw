@@ -46,6 +46,7 @@ export const App = () => {
         setTitle(title);
         setBars(fileBars);
         setEquips(fileEquips);
+        console.log("FILE INPUT", fileBars, fileEquips);
       });
   }, []);
 

@@ -194,6 +194,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
               color={bars[key].color}
               key={index}
               name={key}
+              id={bars[key].id}
             />
           ))}
         </Layer>

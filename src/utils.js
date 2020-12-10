@@ -227,21 +227,9 @@ export const parseTextFile = (lines, bar_placement = "circle") => {
       return;
     }
     if (branchesInit) {
-      let A = "";
-      let B = "";
-      if (
-        parseInt(line.substring(0, 4).trim()) >
-        parseInt(line.substring(8, 12).trim())
-      ) {
-        A = line.substring(8, 12).trim(); //endpointA é sempre o menor
-        B = line.substring(0, 4).trim();
-      } else {
-        A = line.substring(0, 4).trim(); //endpointA é sempre o menor
-        B = line.substring(8, 12).trim();
-      }
       let newBranch = {
-        endPointA: A,
-        endPointB: B,
+        endPointA: line.substring(0, 4).trim(),
+        endPointB: line.substring(8, 12).trim(),
         r_pu: parseFloat(line.substring(17, 23)),
         x_pu: parseFloat(line.substring(23, 29)),
         bsh_pu: parseFloat(line.substring(29, 35)),

@@ -1,0 +1,12 @@
+alterar endpointA para k e endpointb para m
+*cancelada ideia
+
+
+criar exibição exemplo com draw para inserção de ramos e barras
+
+
+remover number de "barinput"
+*adequar solucao para atribuir numero auto incremental para barras adicionadas manualmente
+
+
+adicionar forma de editar dados de barras e ramos ja inseridos
