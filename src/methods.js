@@ -47,6 +47,71 @@ const Y_CALC = (equips, NB, NR) => {
   return Y;
 };
 
+const PF_CALC = (state, equips) => {
+  let pf_data = [];
+  let totalLoss = math.complex(0, 0);
+  let equips_arr = Object.values(equips);
+  equips_arr.forEach((equip) => {
+    let k = parseInt(equip.endPointA) - 1;
+    let m = parseInt(equip.endPointB) - 1;
+    let t = undefined;
+    if (isLT(equip)) {
+      //LT
+      t = 1;
+    } else {
+      //TR
+      t = tCalc(equip);
+    }
+    let ykm = math.divide(1, math.complex(equip.r_pu, equip.x_pu));
+    let bsh = equip.bsh_pu / 2;
+
+    let Vk = state["V"]._data[k];
+    let Vm = state["V"]._data[m];
+    let thetak = state["theta"]._data[k];
+    let thetam = state["theta"]._data[m];
+    let Ek = math.multiply(Vk, math.exp(math.complex(0, thetak)));
+    let Em = math.multiply(Vm, math.exp(math.complex(0, thetam)));
+
+    //USUAL TIPO 5 PAGINA 11:
+    //k|----1:t---p--bsh--ykm--bsh--|m
+    let sqrt_abs_t = math.sqrt(math.abs(t));
+    let i_bsh = math.complex(0, bsh);
+    let sqrt_abs_t_ykm = math.multiply(sqrt_abs_t, ykm);
+    let ibsh_sqrt_abs_t = math.divide(i_bsh, sqrt_abs_t);
+
+    let ikm_Ek = math.multiply(math.add(sqrt_abs_t_ykm, ibsh_sqrt_abs_t), Ek);
+    let n_conj_t_ykm = math.multiply(math.multiply(math.conj(t), -1), ykm);
+    let ikm_Em = math.multiply(n_conj_t_ykm, Em);
+
+    let Ikm = math.add(ikm_Ek, ikm_Em);
+    // console.log(k + 1, m + 1, Ikm);
+    let n_t_ykm_Ek = math.multiply(-1, t, ykm, Ek);
+    let ykm_ibsh_Em = math.multiply(math.add(ykm, i_bsh), Em);
+
+    let Imk = math.add(n_t_ykm_Ek, ykm_ibsh_Em);
+    // console.log(k + 1, m + 1, Imk);
+    let Skm = math.multiply(Ek, math.conj(Ikm));
+    // console.log(Skm);
+
+    let Smk = math.multiply(Em, math.conj(Imk));
+    let Sloss = math.add(Smk, Skm);
+    totalLoss = math.add(totalLoss, Sloss);
+
+    // console.log(Sloss.toString(), totalLoss);
+    pf_data.push({
+      k,
+      m,
+      Ikm,
+      Imk,
+      Skm,
+      Smk,
+      Sloss,
+    });
+    // console.log(math.round(Smk, roundTo), math.abs(Smk));
+  });
+  return [pf_data, totalLoss];
+};
+
 export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   let BARS = Object.values(bars).sort((a, b) =>
     parseInt(a.name) > parseInt(b.name)
@@ -146,6 +211,13 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
       return 0;
     });
   }
+
+  //CALCULO FLUXO ENTRE RAMOS
+  const state = iterationData[iterationData.length - 1];
+  const [pf_data, totalLoss] = PF_CALC(state, equips);
+  iterationData[iterationData.length - 1].pf_data = pf_data;
+  iterationData[iterationData.length - 1].totalLoss = totalLoss;
+
   return [Y, iterationData, PQ_PV_index, PQ_index];
 };
 
