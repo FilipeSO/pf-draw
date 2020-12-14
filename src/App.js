@@ -51,6 +51,7 @@ export const App = () => {
   }, []);
 
   const updateBars = (newState) => {
+    console.log("UPDATE BAR", newState);
     setBars(newState);
     // window.scrollTo(0, drawCanvasRef.current.offsetTop);
   };
@@ -138,7 +139,7 @@ export const App = () => {
       <div className="bg-gray-700">
         <h1 className="text-white text-4xl font-bold text-center">SOLUTION</h1>
       </div>
-      <Solution {...config}></Solution>
+      <Solution {...config} updateBars={updateBars}></Solution>
     </div>
   );
 };

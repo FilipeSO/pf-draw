@@ -322,7 +322,14 @@ const PowerFlowStateTable = (state, NR, roundTo) => {
   return result;
 };
 
-const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
+const NewtonRaphsonResults = (
+  bars,
+  equips,
+  NB,
+  NR,
+  err_tolerance,
+  updateBars
+) => {
   let [Y, data, PQ_PV_index, PQ_index] = NewtonRaphsonMethod(
     bars,
     equips,
@@ -343,10 +350,23 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
     ></SolutionIntro>,
   ];
   const solutionState = data[data.length - 1];
+  console.log("SOL", solutionState);
+
+  for (let i = 0; i < NB; i++) {
+    let barNum = i + 1;
+    let v = math.round(solutionState["V"]._data[i], roundTo);
+    let deg = math.round(
+      (solutionState["theta"]._data[i] * 180) / Math.PI,
+      roundTo
+    );
+    bars[barNum.toString()].result = `${v}∠${deg}°`;
+  }
+  console.log("BAR SOL", bars);
   results.push(Iterations(data, roundTo));
   results.push(BarStateTable(solutionState, NB, roundTo));
   results.push(PowerFlowStateTable(solutionState, NR, roundTo));
   //   console.log(Object.values(equips));
+  updateBars(bars);
   return results;
 };
 

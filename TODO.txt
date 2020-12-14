@@ -6,3 +6,5 @@ adicionar forma de editar dados de barras e ramos ja inseridos
 adicionar exibição dos resultados nas linhas
 *ao obter a solução atualizar o objeto bar e equips com dados da solução
 
+corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
+*talvez alterar branch input com opcao de lt ou tr e filtrar campos

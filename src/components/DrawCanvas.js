@@ -187,14 +187,10 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
 
           {Object.keys(bars).map((key, index) => (
             <Bar
-              x={bars[key].pos.x}
-              y={bars[key].pos.y}
+              bar={bars[key]}
               handleDrag={handleDrag}
               handleDragEnd={handleDragEnd}
-              color={bars[key].color}
               key={index}
-              name={key}
-              id={bars[key].id}
             />
           ))}
         </Layer>

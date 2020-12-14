@@ -4,7 +4,7 @@ import NewtonRaphsoResults from "./solution/NewtonRaphsoResults";
 
 // import * as math from "mathjs";
 
-const Solution = ({ bars, equips, solver, err_tolerance }) => {
+const Solution = ({ bars, equips, solver, err_tolerance, updateBars }) => {
   const [solution, setSolution] = useState([]);
   useEffect(() => {
     console.log("EFFECT", solver, bars, equips);
@@ -19,7 +19,8 @@ const Solution = ({ bars, equips, solver, err_tolerance }) => {
           equips,
           NB,
           NR,
-          parseFloat(err_tolerance)
+          parseFloat(err_tolerance),
+          updateBars
         );
         setSolution(results);
       } else if (solver === "fast-decoupled") {
