@@ -2,6 +2,34 @@ import React from "react";
 import { NewtonRaphsonMethod } from "../../methods";
 import DisplayMatrix from "./DisplayMatrix";
 import * as math from "mathjs";
+
+const StateVariables = ({ PQ_PV_index, PQ_index }) => {
+  const theta_vector = PQ_PV_index.map((elem) => (
+    <div key={elem}>
+      {String.fromCharCode(952)}
+      <sub>{elem}</sub>
+    </div>
+  ));
+  const v_vector = PQ_index.map((elem) => (
+    <div key={elem}>
+      V<sub>{elem}</sub>
+    </div>
+  ));
+  return (
+    <div className="flex py-2">
+      <div>X</div>
+      <div className="px-2">=</div>
+      <div
+        className="flex space-x-2 border-solid border-l-2 border-r-2 border-black px-1 overflow-auto"
+        style={{ maxHeight: "350px", maxWidth: "350px" }}
+      >
+        {theta_vector}
+        {v_vector}
+      </div>
+    </div>
+  );
+};
+
 const NewtonRaphsonMethodDefinition = () => {
   return (
     <div className="flex items-center justify-center py-2">
@@ -47,6 +75,44 @@ const NewtonRaphsonJacobianDefinition = () => {
             <div>&part;V</div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const SolutionIntro = ({ Y, roundTo, PQ_PV_index, PQ_index }) => {
+  return (
+    <div
+      key="method definition"
+      className="flex flex-col py-2 items-center justify-center"
+    >
+      <h1>
+        <a
+          href="https://en.wikipedia.org/wiki/Power-flow_study"
+          target="_blank"
+          rel="noopener noreferrer"
+          key={"definitions header"}
+          className="text-lg"
+        >
+          Newton Raphson Method:
+        </a>
+      </h1>
+      <div className="flex flex-col items-center justify-center border-dashed border-b-2 border-black py-2">
+        <StateVariables
+          PQ_PV_index={PQ_PV_index}
+          PQ_index={PQ_index}
+        ></StateVariables>
+        <NewtonRaphsonJacobianDefinition></NewtonRaphsonJacobianDefinition>
+        <NewtonRaphsonMethodDefinition></NewtonRaphsonMethodDefinition>
+      </div>
+      <div className="mt-2">
+        <DisplayMatrix
+          symbol={"Y"}
+          unit={"pu"}
+          matrix={Y}
+          key={"admitance matrix"}
+          roundTo={roundTo}
+        ></DisplayMatrix>
       </div>
     </div>
   );
@@ -267,59 +333,14 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
   console.log(data);
   const roundTo = err_tolerance.toString().split(".")[1].length + 1;
 
-  const theta_vector = PQ_PV_index.map((elem) => (
-    <div key={elem}>
-      {String.fromCharCode(952)}
-      <sub>{elem}</sub>
-    </div>
-  ));
-  const v_vector = PQ_index.map((elem) => (
-    <div key={elem}>
-      V<sub>{elem}</sub>
-    </div>
-  ));
-  const StateVariables = () => (
-    <div className="flex py-2">
-      <div>X</div>
-      <div className="px-2">=</div>
-      <div className="flex space-x-2 border-solid border-l-2 border-r-2 border-black px-1">
-        {theta_vector}
-        {v_vector}
-      </div>
-    </div>
-  );
-
   let results = [
-    <div
-      key="method definition"
-      className="flex flex-col py-2 items-center justify-center"
-    >
-      <h1>
-        <a
-          href="https://en.wikipedia.org/wiki/Power-flow_study"
-          target="_blank"
-          rel="noopener noreferrer"
-          key={"definitions header"}
-          className="text-lg"
-        >
-          Newton Raphson Method:
-        </a>
-      </h1>
-      <div className="flex flex-col items-center justify-center border-dashed border-b-2 border-black py-2">
-        <StateVariables></StateVariables>
-        <NewtonRaphsonJacobianDefinition></NewtonRaphsonJacobianDefinition>
-        <NewtonRaphsonMethodDefinition></NewtonRaphsonMethodDefinition>
-      </div>
-      <div className="mt-2">
-        <DisplayMatrix
-          symbol={"Y"}
-          unit={"pu"}
-          matrix={Y}
-          key={"admitance matrix"}
-          roundTo={roundTo}
-        ></DisplayMatrix>
-      </div>
-    </div>,
+    <SolutionIntro
+      key={"solution intro"}
+      PQ_PV_index={PQ_PV_index}
+      PQ_index={PQ_index}
+      Y={Y}
+      roundTo={roundTo}
+    ></SolutionIntro>,
   ];
   const solutionState = data[data.length - 1];
   results.push(Iterations(data, roundTo));

@@ -5,3 +5,4 @@ adicionar forma de editar dados de barras e ramos ja inseridos
 
 adicionar exibição dos resultados nas linhas
 *ao obter a solução atualizar o objeto bar e equips com dados da solução
+
