@@ -1,3 +1,15 @@
+import * as math from "mathjs";
+
+export const complexToPolarString = (complex, roundTo) => {
+  let abs = math.round(complex.toPolar()["r"], roundTo);
+  let deg = math.round((complex.toPolar()["phi"] * 180) / Math.PI, roundTo);
+  return `${abs}∠${deg}°`;
+};
+
+export const complexToRecString = (complex, roundTo) => {
+  return math.round(complex, roundTo).toString();
+};
+
 // const evenPositiveOddNegative = (number) => {
 //   if (number % 2 === 0) return 1;
 //   else return -1;
