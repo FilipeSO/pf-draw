@@ -10,5 +10,11 @@ corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 *talvez alterar branch input com opcao de lt ou tr e filtrar campos
 
 
-corrigir problema em que resultado passado para bar não atualiza na interface
-*corrigir dependencia solution.js de updatebars
+adicionar legenda canto inferior esquerdo do drawcanvas
+
+adicionar ribbon ao draw canvas com:
+bool exibir resultados
+tracker transparencia LTs
+bool exibir id
+
+adicionar ribbon inferior com Sloss
