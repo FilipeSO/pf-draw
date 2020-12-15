@@ -8,3 +8,7 @@ adicionar exibição dos resultados nas linhas
 
 corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 *talvez alterar branch input com opcao de lt ou tr e filtrar campos
+
+
+corrigir problema em que resultado passado para bar não atualiza na interface
+*corrigir dependencia solution.js de updatebars

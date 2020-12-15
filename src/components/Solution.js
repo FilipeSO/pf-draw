@@ -14,22 +14,24 @@ const Solution = ({ bars, equips, solver, err_tolerance, updateBars }) => {
       setSolution(<div>Waiting for data...</div>);
     } else {
       if (solver === "newton-raphson") {
-        let results = NewtonRaphsoResults(
+        let [results, newBarState] = NewtonRaphsoResults(
           bars,
           equips,
           NB,
           NR,
-          parseFloat(err_tolerance),
-          updateBars
+          parseFloat(err_tolerance)
         );
         setSolution(results);
+        updateBars(newBarState);
       } else if (solver === "fast-decoupled") {
         setSolution(<div>Fast Decoupled Method is in development...</div>);
       } else {
         setSolution(<div>Waiting for data...</div>);
       }
     }
+    // eslint-disable-next-line
   }, [bars, equips, solver, err_tolerance]);
+
   return (
     <div className="flex flex-col items-center justify-center">{solution}</div>
   );

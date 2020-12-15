@@ -2,8 +2,9 @@ import React from "react";
 import { Group, Circle, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
 const Bar = ({ bar, handleDrag, handleDragEnd }) => {
-  let { pos, name, id, color } = bar;
-
+  let { pos, name, id, color, result } = bar;
+  // console.log(result);
+  result = result || "";
   const radius = _SETTINGS.BAR.radius || _SETTINGS.default.radius;
   const strokeWidth =
     _SETTINGS.BAR.strokeWidth || _SETTINGS.default.strokeWidth;
@@ -23,7 +24,7 @@ const Bar = ({ bar, handleDrag, handleDragEnd }) => {
       <Text
         x={-radius * 6}
         y={-radius * 6}
-        text={id}
+        text={`${id}, ${result}`}
         fontStyle={"bold"}
         fontSize={radius * 4}
       />
