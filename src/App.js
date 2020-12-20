@@ -21,6 +21,7 @@ export const App = () => {
     equips: undefined,
   });
 
+  const [canvasReady, setCanvasReady] = useState(false);
   const drawCanvasRef = useRef(null);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export const App = () => {
         setEquips(fileEquips);
         console.log("FILE INPUT", fileBars, fileEquips);
       });
+    setCanvasReady(true); //necessario para drawcanvasref != undefined
   }, []);
 
   const updateBars = (newState) => {
@@ -128,13 +130,20 @@ export const App = () => {
           {Object.values(equips).filter((equip) => equip.type === "TR").length})
         </h1>
       </div>
-      <div ref={drawCanvasRef}>
-        <DrawCanvas
-          updateBars={updateBars}
-          bars={bars}
-          updateEquips={updateEquips}
-          equips={equips}
-        ></DrawCanvas>
+      <div
+        ref={drawCanvasRef}
+        className="border-solid border-4 border-blue-500 container mx-auto"
+        style={{ height: "600px" }}
+      >
+        {canvasReady && (
+          <DrawCanvas
+            updateBars={updateBars}
+            bars={bars}
+            updateEquips={updateEquips}
+            equips={equips}
+            parentRef={drawCanvasRef}
+          ></DrawCanvas>
+        )}
       </div>
       <div className="bg-gray-700">
         <h1 className="text-white text-4xl font-bold text-center">SOLUTION</h1>

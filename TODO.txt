@@ -18,3 +18,9 @@ tracker transparencia LTs
 bool exibir id
 
 adicionar ribbon inferior com Sloss
+
+drawcanvas receber parametros de tamanho do parent container para ter portabilidade x
+
+adicionar animação de loading enquanto rotina do solver executa, talvez exibindo numero de iterações e convergencia
+
+separar funcoes de drawing de utils.js

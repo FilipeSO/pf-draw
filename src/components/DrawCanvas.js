@@ -1,25 +1,26 @@
-import React, { useRef, useState, useLayoutEffect } from "react";
+import React, { useRef } from "react";
 import { Stage, Layer } from "react-konva";
 import Transformer from "./drawing/Transformer";
 import Bar from "./drawing/Bar";
 import TransmissionLine from "./drawing/TransmissionLine";
 import { getLinePoints, getAngle } from "../utils";
 
-function useWindowSize() {
-  const [size, setSize] = useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-    window.addEventListener("resize", updateSize);
-    updateSize();
-    return () => window.removeEventListener("resize", updateSize);
-  }, []);
-  return size;
-}
+// function useWindowSize() {
+//   const [size, setSize] = useState([0, 0]);
+//   useLayoutEffect(() => {
+//     function updateSize() {
+//       setSize([window.innerWidth, window.innerHeight]);
+//     }
+//     window.addEventListener("resize", updateSize);
+//     updateSize();
+//     return () => window.removeEventListener("resize", updateSize);
+//   }, []);
+//   return size;
+// }
 
-const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
-  const stageHeight = 600;
+const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
+  const stageHeight = parentRef.current.clientHeight;
+  const stageWidth = parentRef.current.clientWidth;
 
   const stageRef = useRef(null);
   const scaleBy = 1.1;
@@ -142,60 +143,58 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips }) => {
     // console.log(newState);
     updateEquips(newState);
   };
-  const size = useWindowSize(); //[width,height]
+  // const size = useWindowSize(); //[width,height]
   return (
-    <div className="border-solid border-4 border-blue-500">
-      <Stage
-        width={size[0] > 728 ? size[0] - 25 : size[0] - 8}
-        height={stageHeight}
-        onWheel={handleWheelZoom}
-        draggable={true}
-        ref={stageRef}
-      >
-        <Layer ref={layerRef}>
-          {Object.values(equips).map((equip, index) => {
-            switch (equip.type) {
-              case "LT":
-                return (
-                  <TransmissionLine
-                    key={index}
-                    endPointA={equip.endPointA}
-                    endPointB={equip.endPointB}
-                    n={equip.n}
-                    color={equip.color}
-                    bars={bars}
-                  />
-                );
-              case "TR":
-                return (
-                  <Transformer
-                    key={index}
-                    name={equip.name}
-                    endPointA={equip.endPointA}
-                    endPointB={equip.endPointB}
-                    bars={bars}
-                    x={equip.pos.x}
-                    y={equip.pos.y}
-                    n={equip.n}
-                    handleDrag={handleDrag}
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
+    <Stage
+      width={stageWidth}
+      height={stageHeight}
+      onWheel={handleWheelZoom}
+      draggable={true}
+      ref={stageRef}
+    >
+      <Layer ref={layerRef}>
+        {Object.values(equips).map((equip, index) => {
+          switch (equip.type) {
+            case "LT":
+              return (
+                <TransmissionLine
+                  key={index}
+                  endPointA={equip.endPointA}
+                  endPointB={equip.endPointB}
+                  n={equip.n}
+                  color={equip.color}
+                  bars={bars}
+                />
+              );
+            case "TR":
+              return (
+                <Transformer
+                  key={index}
+                  name={equip.name}
+                  endPointA={equip.endPointA}
+                  endPointB={equip.endPointB}
+                  bars={bars}
+                  x={equip.pos.x}
+                  y={equip.pos.y}
+                  n={equip.n}
+                  handleDrag={handleDrag}
+                />
+              );
+            default:
+              return null;
+          }
+        })}
 
-          {Object.keys(bars).map((key, index) => (
-            <Bar
-              bar={bars[key]}
-              handleDrag={handleDrag}
-              handleDragEnd={handleDragEnd}
-              key={index}
-            />
-          ))}
-        </Layer>
-      </Stage>
-    </div>
+        {Object.keys(bars).map((key, index) => (
+          <Bar
+            bar={bars[key]}
+            handleDrag={handleDrag}
+            handleDragEnd={handleDragEnd}
+            key={index}
+          />
+        ))}
+      </Layer>
+    </Stage>
   );
 };
 
