@@ -1,9 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Stage, Layer } from "react-konva";
 import Transformer from "./drawing/Transformer";
 import Bar from "./drawing/Bar";
 import TransmissionLine from "./drawing/TransmissionLine";
 import { getLinePoints, getAngle } from "../utils";
+
+import CanvasConfig from "./drawing/CanvasConfig";
 
 // function useWindowSize() {
 //   const [size, setSize] = useState([0, 0]);
@@ -144,57 +146,69 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
     updateEquips(newState);
   };
   // const size = useWindowSize(); //[width,height]
-  return (
-    <Stage
-      width={stageWidth}
-      height={stageHeight}
-      onWheel={handleWheelZoom}
-      draggable={true}
-      ref={stageRef}
-    >
-      <Layer ref={layerRef}>
-        {Object.values(equips).map((equip, index) => {
-          switch (equip.type) {
-            case "LT":
-              return (
-                <TransmissionLine
-                  key={index}
-                  endPointA={equip.endPointA}
-                  endPointB={equip.endPointB}
-                  n={equip.n}
-                  color={equip.color}
-                  bars={bars}
-                />
-              );
-            case "TR":
-              return (
-                <Transformer
-                  key={index}
-                  name={equip.name}
-                  endPointA={equip.endPointA}
-                  endPointB={equip.endPointB}
-                  bars={bars}
-                  x={equip.pos.x}
-                  y={equip.pos.y}
-                  n={equip.n}
-                  handleDrag={handleDrag}
-                />
-              );
-            default:
-              return null;
-          }
-        })}
 
-        {Object.keys(bars).map((key, index) => (
-          <Bar
-            bar={bars[key]}
-            handleDrag={handleDrag}
-            handleDragEnd={handleDragEnd}
-            key={index}
-          />
-        ))}
-      </Layer>
-    </Stage>
+  const [canvasConfig, setCanvasConfig] = useState({
+    show_id: true,
+    show_results: true,
+  });
+  return (
+    <>
+      <CanvasConfig
+        canvasConfig={canvasConfig}
+        setCanvasConfig={setCanvasConfig}
+      ></CanvasConfig>
+      <Stage
+        width={stageWidth}
+        height={stageHeight}
+        onWheel={handleWheelZoom}
+        draggable={true}
+        ref={stageRef}
+      >
+        <Layer ref={layerRef}>
+          {Object.values(equips).map((equip, index) => {
+            switch (equip.type) {
+              case "LT":
+                return (
+                  <TransmissionLine
+                    key={index}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
+                    n={equip.n}
+                    color={equip.color}
+                    bars={bars}
+                  />
+                );
+              case "TR":
+                return (
+                  <Transformer
+                    key={index}
+                    name={equip.name}
+                    endPointA={equip.endPointA}
+                    endPointB={equip.endPointB}
+                    bars={bars}
+                    x={equip.pos.x}
+                    y={equip.pos.y}
+                    n={equip.n}
+                    handleDrag={handleDrag}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
+
+          {Object.keys(bars).map((key, index) => (
+            <Bar
+              bar={bars[key]}
+              handleDrag={handleDrag}
+              handleDragEnd={handleDragEnd}
+              key={index}
+              canvasConfig={canvasConfig}
+            />
+          ))}
+        </Layer>
+      </Stage>
+    </>
   );
 };
 

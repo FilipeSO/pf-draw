@@ -3,8 +3,9 @@ import { Group, Circle, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
 import { complexToPolarString, complexToRecString } from "../../utils";
 
-const Bar = ({ bar, handleDrag, handleDragEnd }) => {
+const Bar = ({ bar, handleDrag, handleDragEnd, canvasConfig }) => {
   let { pos, name, id, color, v_data, pf_data, roundTo } = bar;
+  let { show_id, show_results } = canvasConfig;
   // console.log(result);
   v_data = v_data || false;
   pf_data = pf_data || false;
@@ -25,14 +26,16 @@ const Bar = ({ bar, handleDrag, handleDragEnd }) => {
       onDragMove={(e) => handleDrag(e)}
       onDragEnd={(e) => handleDragEnd(e)}
     >
-      <Text
-        x={-radius * 6}
-        y={-radius * 6}
-        text={id}
-        fontStyle={"bold"}
-        fontSize={radius * 4}
-      />
-      {v_data && (
+      {show_id && (
+        <Text
+          x={-radius * 6}
+          y={-radius * 6}
+          text={id}
+          fontStyle={"bold"}
+          fontSize={radius * 4}
+        />
+      )}
+      {v_data && show_results && (
         <Text
           x={-radius * 6}
           y={-radius * 10}
@@ -44,6 +47,7 @@ const Bar = ({ bar, handleDrag, handleDragEnd }) => {
       )}
 
       {pf_data &&
+        show_results &&
         pf_data.map((equip, index) => {
           let barK = equip.k + 1;
           let barM = equip.m + 1;

@@ -10,7 +10,7 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
   // const fill = _SETTINGS.LT.fill || _SETTINGS.default.fill;
   //   console.log(handleDrag);
   //   console.log(endPointA, endPointB, n, color, bars);
-  let lineColor = color || "000";
+  let lineColor = color || "#000";
   let linePoints = [];
   //APENAS PARA DRAW A SEMPRE MENOR QUE B
   if (parseInt(endPointA) > parseInt(endPointB)) {
