@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getLinePoints } from "../utils";
+import { getLinePoints } from "./drawing/utils";
 
 const BranchInput = ({ updateEquips, equips, bars }) => {
   const defaultEquip = {

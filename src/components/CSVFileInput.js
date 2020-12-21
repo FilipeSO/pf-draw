@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { parseCSVFile } from "../utils";
+import { parseCSVFile } from "../parsers";
 
 const CSVFileInput = ({ updateBars, updateEquips, updateTitle }) => {
   const [fileCSVEquips, setFileCSVEquips] = useState(null);

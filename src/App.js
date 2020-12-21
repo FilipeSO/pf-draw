@@ -7,7 +7,7 @@ import BarInput from "./components/BarInput";
 import BranchInput from "./components/BranchInput";
 import ConfigForms from "./components/ConfigForms";
 import Solution from "./components/Solution";
-import { parseCSVFile } from "./utils";
+import { parseCSVFile } from "./parsers";
 
 export const App = () => {
   const [bars, setBars] = useState([]);

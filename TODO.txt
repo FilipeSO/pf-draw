@@ -11,5 +11,6 @@ adicionar legenda canto inferior direito do drawcanvas
 
 adicionar animação de loading enquanto rotina do solver executa, talvez exibindo numero de iterações e convergencia
 
-separar funcoes de drawing de utils.js
+adicionar limite de iterações - 1000
 
+separar funcoes de drawing de utils.js

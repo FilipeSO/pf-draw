@@ -179,6 +179,7 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
     } else {
       iteration++;
       console.log("ITERATION:", iteration);
+      if (iteration > 1000) break;
     }
     J = J_CALC(
       V,

@@ -1,7 +1,7 @@
 import React from "react";
 import { Line } from "react-konva";
 import { _SETTINGS } from "../../settings";
-import { getLinePoints } from "../../utils";
+import { getLinePoints } from "./utils";
 const TransmissionLine = ({
   endPointA,
   endPointB,

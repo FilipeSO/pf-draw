@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { parseTextFile } from "../utils";
+import { parseTextFile } from "../parsers";
 
 const TextFileInput = ({ updateBars, updateEquips, updateTitle }) => {
   const [fileEquips, setFileEquips] = useState(null);
