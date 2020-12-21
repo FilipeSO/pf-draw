@@ -150,9 +150,10 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
   const [canvasConfig, setCanvasConfig] = useState({
     show_id: true,
     show_results: true,
+    line_opacity: "100",
   });
   return (
-    <>
+    <div className="relative">
       <CanvasConfig
         canvasConfig={canvasConfig}
         setCanvasConfig={setCanvasConfig}
@@ -176,6 +177,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
                     n={equip.n}
                     color={equip.color}
                     bars={bars}
+                    canvasConfig={canvasConfig}
                   />
                 );
               case "TR":
@@ -190,6 +192,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
                     y={equip.pos.y}
                     n={equip.n}
                     handleDrag={handleDrag}
+                    canvasConfig={canvasConfig}
                   />
                 );
               default:
@@ -208,7 +211,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
           ))}
         </Layer>
       </Stage>
-    </>
+    </div>
   );
 };
 

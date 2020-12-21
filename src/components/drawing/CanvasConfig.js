@@ -1,16 +1,33 @@
 import React from "react";
-import Slider from "../utils/Slider";
 export default function CanvasConfig({ canvasConfig, setCanvasConfig }) {
   const handleCanvasChange = (e) => {
-    let newState = {
-      ...canvasConfig,
-      [e.target.name]: !canvasConfig[e.target.name],
-    };
+    let newState = {};
+    if (e.target.name === "show_id" || e.target.name === "show_results") {
+      newState = {
+        ...canvasConfig,
+        [e.target.name]: !canvasConfig[e.target.name],
+      };
+    } else if (e.target.name === "line_opacity") {
+      let input_value = parseInt(e.target.value) > 100 ? "100" : e.target.value;
+      newState = {
+        ...canvasConfig,
+        [e.target.name]: input_value,
+      };
+    } else {
+      newState = {
+        ...canvasConfig,
+        [e.target.name]: e.target.value,
+      };
+    }
+
     setCanvasConfig(newState);
   };
   return (
-    <div className="bg-blue-100">
-      <form className="flex justify-center items-center h-8">
+    <div className="bg-blue-500 absolute w-full z-50">
+      <form
+        className="flex justify-center items-center h-8 text-white"
+        onSubmit={(e) => e.preventDefault()}
+      >
         {/* <Slider></Slider> */}
         <input
           type="checkbox"
@@ -34,6 +51,19 @@ export default function CanvasConfig({ canvasConfig, setCanvasConfig }) {
         ></input>
         <label className="ml-1" htmlFor="show_results">
           Show Results
+        </label>
+        <input
+          className="ml-4 bg-blue-400"
+          type="number"
+          id="line_opacity"
+          name="line_opacity"
+          value={canvasConfig.line_opacity}
+          onChange={handleCanvasChange}
+          min="0"
+          max="100"
+        ></input>
+        <label className="ml-1" htmlFor="line_opacity">
+          % Opacity
         </label>
       </form>
     </div>

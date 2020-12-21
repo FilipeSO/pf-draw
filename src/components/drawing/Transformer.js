@@ -4,12 +4,22 @@ import { _SETTINGS } from "../../settings";
 import { useEffect, useRef } from "react";
 import { getAngle } from "../../utils";
 
-const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
+const Transformer = ({
+  x,
+  y,
+  endPointA,
+  endPointB,
+  name,
+  bars,
+  n,
+  canvasConfig,
+}) => {
   const radius = _SETTINGS.TR.radius || _SETTINGS.default.radius;
   const stroke = _SETTINGS.TR.stroke || _SETTINGS.default.stroke;
   const strokeWidth = _SETTINGS.TR.strokeWidth || _SETTINGS.default.strokeWidth;
   const strokeWidthLT =
     _SETTINGS.LT.strokeWidth || _SETTINGS.default.strokeWidth;
+  let line_opacity = parseInt(canvasConfig.line_opacity) / 100;
 
   // const draggable = _SETTINGS.TR.draggable || _SETTINGS.default.draggable;
   // console.log(endPointA, endPointB);
@@ -39,6 +49,7 @@ const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
         endPointA={endPointA}
         endPointB={name}
         n={1}
+        opacity={line_opacity}
         // bezier={n > 1}
       />
 
@@ -49,6 +60,8 @@ const Transformer = ({ x, y, endPointA, endPointB, name, bars, n }) => {
         endPointA={name}
         endPointB={endPointB}
         n={1}
+        opacity={line_opacity}
+
         // bezier={n > 1}
       />
 

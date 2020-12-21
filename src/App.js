@@ -145,7 +145,7 @@ export const App = () => {
           ></DrawCanvas>
         )}
       </div>
-      <div className="bg-gray-700">
+      <div className="bg-gray-700 mt-4">
         <h1 className="text-white text-4xl font-bold text-center">SOLUTION</h1>
       </div>
       <Solution {...config} updateBars={updateBars}></Solution>

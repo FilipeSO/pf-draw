@@ -2,7 +2,14 @@ import React from "react";
 import { Line } from "react-konva";
 import { _SETTINGS } from "../../settings";
 import { getLinePoints } from "../../utils";
-const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
+const TransmissionLine = ({
+  endPointA,
+  endPointB,
+  n,
+  color,
+  bars,
+  canvasConfig,
+}) => {
   // const radius = _SETTINGS.LT.radius || _SETTINGS.default.radius;
   // const stroke = _SETTINGS.LT.stroke || _SETTINGS.default.stroke;
   const strokeWidth = _SETTINGS.LT.strokeWidth || _SETTINGS.default.strokeWidth;
@@ -12,6 +19,8 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
   //   console.log(endPointA, endPointB, n, color, bars);
   let lineColor = color || "#000";
   let linePoints = [];
+  let line_opacity = parseInt(canvasConfig.line_opacity) / 100;
+
   //APENAS PARA DRAW A SEMPRE MENOR QUE B
   if (parseInt(endPointA) > parseInt(endPointB)) {
     linePoints = getLinePoints(
@@ -38,6 +47,7 @@ const TransmissionLine = ({ endPointA, endPointB, n, color, bars }) => {
       endPointA={endPointA}
       endPointB={endPointB}
       n={n}
+      opacity={line_opacity}
       // bezier={n > 1}
     />
   );
