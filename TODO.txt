@@ -9,7 +9,7 @@ corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 
 adicionar entrada por pu e unidade 
 *adicionado em barinput, falta checar como transferir o estado para bar
-*checar como adequar input por arquivo para atender uso de unidades
+*checar como adequar input por arquivo para atender uso de unidades+
 
 adicionar LTs com cor baseado em Vbase
 
