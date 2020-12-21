@@ -3,28 +3,13 @@ criar exibição exemplo com draw para inserção de ramos e barras
 
 adicionar forma de editar dados de barras e ramos ja inseridos
 
-adicionar exibição dos resultados nas linhas
-*ao obter a solução atualizar o objeto bar e equips com dados da solução
-
 corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 *talvez alterar branch input com opcao de lt ou tr e filtrar campos
 
 
-adicionar legenda canto inferior esquerdo do drawcanvas
-
-adicionar ribbon ao draw canvas com:
-bool exibir resultados x
-tracker transparencia LTs
-bool exibir id x
-
-adicionar ribbon inferior com Sloss
-
+adicionar legenda canto inferior direito do drawcanvas
 
 adicionar animação de loading enquanto rotina do solver executa, talvez exibindo numero de iterações e convergencia
 
 separar funcoes de drawing de utils.js
-
-
-feito 20/12
-drawcanvas receber parametros de tamanho do parent container para ter portabilidade x
 

@@ -130,7 +130,7 @@ const BarInput = ({ updateBars, bars }) => {
         <div className="md:flex md: items-center mt-2">
           <div className="flex items-center md:w-1/2">
             <label className="text-gray-700 text-sm font-bold mr-2">
-              P in [MW]:
+              P in [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -143,7 +143,7 @@ const BarInput = ({ updateBars, bars }) => {
           </div>
           <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
             <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q in [MVar]:
+              Q in [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -159,7 +159,7 @@ const BarInput = ({ updateBars, bars }) => {
         <div className="md:flex md: items-center mt-2">
           <div className="flex items-center md:w-1/2">
             <label className="text-gray-700 text-sm font-bold mr-2">
-              P out [MW]:
+              P out [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -172,7 +172,7 @@ const BarInput = ({ updateBars, bars }) => {
           </div>
           <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
             <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q out [MVar]:
+              Q out [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -188,7 +188,7 @@ const BarInput = ({ updateBars, bars }) => {
         <div className="md:flex md: items-center mt-2">
           <div className="flex items-center md:w-1/2">
             <label className="text-gray-700 text-sm font-bold mr-2">
-              Q min [MVar]:
+              Q min [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
@@ -200,7 +200,7 @@ const BarInput = ({ updateBars, bars }) => {
           </div>
           <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
             <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q max [MVar]:
+              Q max [pu]:
             </label>
             <input
               className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
