@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import BarPreview from "./drawing/BarPreview";
 const BarInput = ({ updateBars, bars }) => {
   const stageHeight = 600;
   const defaultBar = {
@@ -14,12 +14,21 @@ const BarInput = ({ updateBars, bars }) => {
     q_g: "",
     q_min: "",
     q_max: "",
+    use_pu: true,
+    s_base: "",
+    v_base: "",
   };
   const [bar, setBar] = useState(defaultBar);
 
   const handleBarChange = (e) => {
-    let newState = { ...bar, [e.target.name]: e.target.value };
+    let name = e.target.name;
+    let value = e.target.value;
+    if (e.target.name === "use_pu") {
+      value = e.target.value === "Per-Unit" ? true : false;
+    }
+    let newState = { ...bar, [name]: value };
     setBar(newState);
+    console.log(newState);
   };
   const handleBarSubmit = (e) => {
     e.preventDefault();
@@ -54,6 +63,7 @@ const BarInput = ({ updateBars, bars }) => {
       <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
         BAR MANUAL INPUT
       </h2>
+      <BarPreview bar={bar}></BarPreview>
       <form onSubmit={handleBarSubmit}>
         {/* <div className="flex items-center">
           <label className="text-gray-700 text-sm font-bold mr-2">
@@ -98,122 +108,180 @@ const BarInput = ({ updateBars, bars }) => {
             <option value="2">Slack</option>
           </select>
         </div>
-        <div className="md:flex md: items-center mt-2">
-          <div className="flex items-center md:w-1/2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              V [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="v_pu"
-              onChange={handleBarChange}
-              value={bar.v_pu}
-              required
-            ></input>
-          </div>
-          <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-            <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              &theta; [deg]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="theta_deg"
-              onChange={handleBarChange}
-              value={bar.theta_deg}
-              required
-            ></input>
-          </div>
-        </div>
 
-        <div className="md:flex md: items-center mt-2">
-          <div className="flex items-center md:w-1/2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              P in [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="p_g"
-              onChange={handleBarChange}
-              value={bar.p_g}
-              required
-            ></input>
-          </div>
-          <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-            <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q in [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="q_g"
-              onChange={handleBarChange}
-              value={bar.q_g}
-              required
-            ></input>
-          </div>
-        </div>
-
-        <div className="md:flex md: items-center mt-2">
-          <div className="flex items-center md:w-1/2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              P out [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="p_c"
-              onChange={handleBarChange}
-              value={bar.p_c}
-              required
-            ></input>
-          </div>
-          <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-            <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q out [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="q_c"
-              onChange={handleBarChange}
-              value={bar.q_c}
-              required
-            ></input>
-          </div>
-        </div>
-
-        <div className="md:flex md: items-center mt-2">
-          <div className="flex items-center md:w-1/2">
-            <label className="text-gray-700 text-sm font-bold mr-2">
-              Q min [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="q_min"
-              onChange={handleBarChange}
-              value={bar.q_min}
-            ></input>
-          </div>
-          <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
-            <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
-              Q max [pu]:
-            </label>
-            <input
-              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-              type="text"
-              name="q_max"
-              onChange={handleBarChange}
-              value={bar.q_max}
-            ></input>
-          </div>
-        </div>
-        <div className="flex">
+        <div className="flex items-center justify-center mt-2 text-white">
           <input
-            className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"
+            type="button"
+            name="use_pu"
+            className={`focus:outline-none w-1/2 text-center rounded-t-md cursor-pointer ${
+              bar.use_pu ? "bg-blue-400" : "bg-blue-200"
+            }`}
+            onClick={handleBarChange}
+            value={"Per-Unit"}
+          ></input>
+          <input
+            type="button"
+            name="use_pu"
+            className={`focus:outline-none w-1/2 text-center rounded-t-md cursor-pointer ${
+              !bar.use_pu ? "bg-blue-400" : "bg-blue-200"
+            }`}
+            onClick={handleBarChange}
+            value={"Unit"}
+          ></input>
+        </div>
+
+        <div className="border-2 border-blue-400 px-2 py-4 rounded-b-md">
+          {!bar.use_pu && (
+            <div className="md:flex md: items-center">
+              <div className="flex items-center md:w-1/2">
+                <label className="text-gray-700 text-sm font-bold mr-2">
+                  V<sub>base</sub> [Kv]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="v_base"
+                  onChange={handleBarChange}
+                  value={bar.v_base}
+                  required
+                ></input>
+              </div>
+              <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+                <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                  S<sub>base</sub> [MVA]:
+                </label>
+                <input
+                  className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                  type="text"
+                  name="s_base"
+                  onChange={handleBarChange}
+                  value={bar.s_base}
+                  required
+                ></input>
+              </div>
+            </div>
+          )}
+
+          <div className="md:flex md: items-center mt-2">
+            <div className="flex items-center md:w-1/2">
+              <label className="text-gray-700 text-sm font-bold mr-2">
+                V [{bar.use_pu ? "pu" : "kV"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="v_pu"
+                onChange={handleBarChange}
+                value={bar.v_pu}
+                required
+              ></input>
+            </div>
+            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                &theta; [deg]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="theta_deg"
+                onChange={handleBarChange}
+                value={bar.theta_deg}
+                required
+              ></input>
+            </div>
+          </div>
+
+          <div className="md:flex md: items-center mt-2">
+            <div className="flex items-center md:w-1/2">
+              <label className="text-gray-700 text-sm font-bold mr-2">
+                P in [{bar.use_pu ? "pu" : "MW"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="p_g"
+                onChange={handleBarChange}
+                value={bar.p_g}
+                required
+              ></input>
+            </div>
+            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                Q in [{bar.use_pu ? "pu" : "MVar"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="q_g"
+                onChange={handleBarChange}
+                value={bar.q_g}
+                required
+              ></input>
+            </div>
+          </div>
+
+          <div className="md:flex md: items-center mt-2">
+            <div className="flex items-center md:w-1/2">
+              <label className="text-gray-700 text-sm font-bold mr-2">
+                P out [{bar.use_pu ? "pu" : "MW"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="p_c"
+                onChange={handleBarChange}
+                value={bar.p_c}
+                required
+              ></input>
+            </div>
+            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                Q out [{bar.use_pu ? "pu" : "MVar"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="q_c"
+                onChange={handleBarChange}
+                value={bar.q_c}
+                required
+              ></input>
+            </div>
+          </div>
+
+          <div className="md:flex md: items-center mt-2">
+            <div className="flex items-center md:w-1/2">
+              <label className="text-gray-700 text-sm font-bold mr-2">
+                Q max [{bar.use_pu ? "pu" : "MVar"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="q_max"
+                onChange={handleBarChange}
+                value={bar.q_max}
+                required
+              ></input>
+            </div>
+            <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
+              <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
+                Q min [{bar.use_pu ? "pu" : "MVar"}]:
+              </label>
+              <input
+                className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+                type="text"
+                name="q_min"
+                onChange={handleBarChange}
+                value={bar.q_min}
+                required
+              ></input>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex mt-2">
+          <input
+            className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md cursor-pointer"
             type="submit"
             value="Add Bar"
           ></input>

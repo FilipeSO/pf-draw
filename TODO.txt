@@ -1,16 +1,31 @@
 
-criar exibição exemplo com draw para inserção de ramos e barras
+criar exibição exemplo com draw para inserção de ramos e barras x
+*linkar barpreview com state inputbar x
 
 adicionar forma de editar dados de barras e ramos ja inseridos
 
 corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 *talvez alterar branch input com opcao de lt ou tr e filtrar campos
 
+adicionar entrada por pu e unidade 
+*adicionado em barinput, falta checar como transferir o estado para bar
+*checar como adequar input por arquivo para atender uso de unidades
+
+adicionar LTs com cor baseado em Vbase
+
+
+
+
+%%menos importante
+remover stageheight de barinput, passar referencia do container de drawcanvas
 
 adicionar legenda canto inferior direito do drawcanvas
 
+redraw bars em canvas com modo e distancias a serem definidas na ribbon
+
 adicionar animação de loading enquanto rotina do solver executa, talvez exibindo numero de iterações e convergencia
 
-adicionar limite de iterações - 1000
+restringir from e to em branchinput para endpoints disponiveis em bars
 
-separar funcoes de drawing de utils.js
+
+
