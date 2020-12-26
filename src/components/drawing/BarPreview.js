@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Stage, Layer, Arrow } from "react-konva";
 import { Group, Circle, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
+import { typeNumToStr } from "../../utils";
 
 export default function BarPreview({ bar }) {
   const radius = _SETTINGS.BAR.radius || _SETTINGS.default.radius;
@@ -13,13 +14,18 @@ export default function BarPreview({ bar }) {
   const stageHeight = parentRef.current?.clientHeight;
   const stageWidth = parentRef.current?.clientWidth;
 
-  const v_polar = bar.v_pu + "∠" + bar.theta_deg;
-  const p_in = "P_in: " + bar.p_g;
-  const q_in = "Q_in: " + bar.q_g;
-  const p_out = "P_out: " + bar.p_c;
-  const q_out = "Q_out: " + bar.q_c;
-  const q_max = "Q_max: " + bar.q_max;
-  const q_min = "Q_min: " + bar.q_min;
+  // const v_polar = bar.v_pu + "∠" + bar.theta_deg;
+  const v_polar = `[${typeNumToStr(bar.tipo)}] ${bar.v_pu}∠${bar.theta_deg}° ${
+    bar.use_pu ? "pu" : "V"
+  }`;
+  const p_in = `P_in: ${bar.p_g} ${bar.use_pu ? "pu" : "MW"}`;
+  const q_in = `Q_in: ${bar.q_g} ${bar.use_pu ? "pu" : "MVAr"}`;
+
+  const p_out = `P_out: ${bar.p_c} ${bar.use_pu ? "pu" : "MW"}`;
+  const q_out = `Q_out: ${bar.q_c} ${bar.use_pu ? "pu" : "MVAr"}`;
+
+  const q_max = `Q_max: ${bar.q_max} ${bar.use_pu ? "pu" : "MW"}`;
+  const q_min = `Q_min: ${bar.q_min} ${bar.use_pu ? "pu" : "MVAr"}`;
   return (
     <div
       className="border-solid border-4 border-blue-500 container mx-auto relative mt-2"

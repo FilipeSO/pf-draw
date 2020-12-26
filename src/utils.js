@@ -16,3 +16,16 @@ export const isLT = (equip) => {
     (isNaN(equip.tap) && isNaN(equip.tap_df_deg))
   );
 };
+
+export const typeNumToStr = (num) => {
+  switch (num) {
+    case "0":
+      return "PQ";
+    case "1":
+      return "PV";
+    case "2":
+      return "Slack";
+    default:
+      return "";
+  }
+};

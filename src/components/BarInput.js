@@ -23,13 +23,17 @@ const BarInput = ({ updateBars, bars }) => {
   const handleBarChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
+    let newState = {};
     if (e.target.name === "use_pu") {
       value = e.target.value === "Per-Unit" ? true : false;
+      newState = { ...defaultBar, [name]: value };
+    } else {
+      newState = { ...bar, [name]: value };
     }
-    let newState = { ...bar, [name]: value };
     setBar(newState);
     console.log(newState);
   };
+
   const handleBarSubmit = (e) => {
     e.preventDefault();
     let name = Object.keys(bars).length + 1;
@@ -41,9 +45,46 @@ const BarInput = ({ updateBars, bars }) => {
       y: stageHeight * 0.2 + Math.floor(Math.random() * stageHeight * 0.6),
     };
     let newBar = bar;
+    let vb = parseFloat(newBar.v_base.replace(",", ".")); //retorna NaN se ""
+    let sb = parseFloat(newBar.s_base.replace(",", ".")); //retorna NaN se ""
     for (var key in newBar) {
-      if (key === "id" || key === "name") continue;
-      newBar[key] = parseFloat(newBar[key].replace(",", "."));
+      if (newBar.use_pu === false) {
+        switch (key) {
+          case "id":
+            break;
+          case "name":
+            break;
+          case "use_pu":
+            break;
+          case "v_base":
+            newBar[key] = parseFloat(newBar[key].replace(",", "."));
+            break;
+          case "s_base":
+            newBar[key] = parseFloat(newBar[key].replace(",", "."));
+            break;
+          case "v_pu":
+            newBar[key] = parseFloat(newBar[key].replace(",", ".")) / vb;
+            break;
+          case "theta_deg":
+            newBar[key] = parseFloat(newBar[key].replace(",", "."));
+            break;
+          default:
+            newBar[key] = parseFloat(newBar[key].replace(",", ".")) / sb;
+            break;
+        }
+      } else {
+        switch (key) {
+          case "id":
+            break;
+          case "name":
+            break;
+          case "use_pu":
+            break;
+          default:
+            newBar[key] = parseFloat(newBar[key].replace(",", "."));
+            break;
+        }
+      }
     }
     let newState = {
       ...bars,
@@ -59,7 +100,7 @@ const BarInput = ({ updateBars, bars }) => {
   };
 
   return (
-    <div>
+    <div className="">
       <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
         BAR MANUAL INPUT
       </h2>
@@ -113,8 +154,8 @@ const BarInput = ({ updateBars, bars }) => {
           <input
             type="button"
             name="use_pu"
-            className={`focus:outline-none w-1/2 text-center rounded-t-md cursor-pointer ${
-              bar.use_pu ? "bg-blue-400" : "bg-blue-200"
+            className={`focus:outline-none w-1/2 text-center cursor-pointer ${
+              bar.use_pu ? "bg-blue-400 font-bold" : "bg-blue-200"
             }`}
             onClick={handleBarChange}
             value={"Per-Unit"}
@@ -122,17 +163,17 @@ const BarInput = ({ updateBars, bars }) => {
           <input
             type="button"
             name="use_pu"
-            className={`focus:outline-none w-1/2 text-center rounded-t-md cursor-pointer ${
-              !bar.use_pu ? "bg-blue-400" : "bg-blue-200"
+            className={`focus:outline-none w-1/2 text-center cursor-pointer ${
+              !bar.use_pu ? "bg-blue-400 font-bold" : "bg-blue-200"
             }`}
             onClick={handleBarChange}
             value={"Unit"}
           ></input>
         </div>
 
-        <div className="border-2 border-blue-400 px-2 py-4 rounded-b-md">
+        <div className="border-2 border-blue-400 px-2 py-4">
           {!bar.use_pu && (
-            <div className="md:flex md: items-center">
+            <div className="md:flex md:items-center mb-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
                   V<sub>base</sub> [Kv]:
@@ -162,7 +203,7 @@ const BarInput = ({ updateBars, bars }) => {
             </div>
           )}
 
-          <div className="md:flex md: items-center mt-2">
+          <div className="md:flex md:items-center">
             <div className="flex items-center md:w-1/2">
               <label className="text-gray-700 text-sm font-bold mr-2">
                 V [{bar.use_pu ? "pu" : "kV"}]:

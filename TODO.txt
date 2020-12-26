@@ -1,20 +1,17 @@
 
-criar exibição exemplo com draw para inserção de ramos e barras x
-*linkar barpreview com state inputbar x
-
-adicionar forma de editar dados de barras e ramos ja inseridos
+criar exibição exemplo com draw para inserção de ramos
 
 corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
 *talvez alterar branch input com opcao de lt ou tr e filtrar campos
 
-adicionar entrada por pu e unidade 
-*adicionado em barinput, falta checar como transferir o estado para bar
-*checar como adequar input por arquivo para atender uso de unidades+
+adicionar entrada por pu e unidade para ramos
+
+adequar input por arquivo para atender uso de unidades ramo e barras
+*tentar fazer os parses e input passarem pela mesma funcao para converter de texto para numero
+
+adicionar forma de editar dados de barras e ramos ja inseridos
 
 adicionar LTs com cor baseado em Vbase
-
-
-
 
 %%menos importante
 remover stageheight de barinput, passar referencia do container de drawcanvas
