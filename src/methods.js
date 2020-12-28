@@ -127,22 +127,22 @@ export const NewtonRaphsonMethod = (bars, equips, NB, NR, err_tolerance) => {
   let theta = math.matrix(BARS.map((bar) => (bar.theta_deg * Math.PI) / 180)); //theta [rad]
   let V = math.matrix(BARS.map((bar) => parseFloat(bar.v_pu)));
 
-  let PQ_index = BARS.filter((bar) => bar.tipo === 0).map((bar) =>
+  let PQ_index = BARS.filter((bar) => bar.type === 0).map((bar) =>
     parseInt(bar.name)
   ); //%numero barra tipo PQ
   let zero_PQ_index = PQ_index.map((elem) => elem - 1); //numero barra tipo PQ base zero
 
-  // let PV_index = BARS.filter((bar) => bar.tipo === 1).map((bar) =>
+  // let PV_index = BARS.filter((bar) => bar.type === 1).map((bar) =>
   //   parseInt(bar.name)
   // ); //%numero barra tipo PV
   // let zero_PV_index = PV_index.map((elem) => elem - 1); //numero barra tipo PV base zero
 
   let PQ_PV_index = BARS.filter(
-    (bar) => bar.tipo === 0 || bar.tipo === 1
+    (bar) => bar.type === 0 || bar.type === 1
   ).map((bar) => parseInt(bar.name)); //%numero barra tipo PQ ou PV
   let zero_PQ_PV_index = PQ_PV_index.map((elem) => elem - 1); //%numero barra tipo PQ ou PV base zero
 
-  // let Vtheta_index = BARS.filter((bar) => bar.tipo === 2).map((bar) =>
+  // let Vtheta_index = BARS.filter((bar) => bar.type === 2).map((bar) =>
   //   parseInt(bar.name)
   // ); //%numero barra tipo slack
   // let zero_Vtheta_index = Vtheta_index.map((elem) => elem - 1);

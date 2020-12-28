@@ -13,6 +13,9 @@ adicionar forma de editar dados de barras e ramos ja inseridos
 
 adicionar LTs com cor baseado em Vbase
 
+**ATENÇÃO
+parseTextFile está descontinuado; formato de entrada confuso será eliminado
+
 %%menos importante
 remover stageheight de barinput, passar referencia do container de drawcanvas
 

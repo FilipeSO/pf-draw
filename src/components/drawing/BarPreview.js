@@ -12,7 +12,7 @@ export default function BarPreview({ bar }) {
   const fill = "#4299e1";
 
   // const v_polar = bar.v_pu + "∠" + bar.theta_deg;
-  const v_polar = `[${typeNumToStr(bar.tipo)}] ${bar.v_pu}∠${bar.theta_deg}° ${
+  const v_polar = `[${typeNumToStr(bar.type)}] ${bar.v_pu}∠${bar.theta_deg}° ${
     bar.use_pu ? "pu" : "V"
   }`;
   const p_in = `P_in: ${bar.p_g} ${bar.use_pu ? "pu" : "MW"}`;

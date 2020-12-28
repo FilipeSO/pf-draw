@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import DrawCanvas from "./components/DrawCanvas";
-import TextFileInput from "./components/TextFileInput";
+// import TextFileInput from "./components/TextFileInput";
 import CSVFileInput from "./components/CSVFileInput";
 import BarInput from "./components/BarInput";
 import BranchInput from "./components/BranchInput";
@@ -97,11 +97,11 @@ export const App = () => {
         </h1>
       </div>
       <div className="container mx-auto px-2 md:px-0">
-        <TextFileInput
+        {/* <TextFileInput
           updateBars={updateBars}
           updateEquips={updateEquips}
           updateTitle={updateTitle}
-        ></TextFileInput>
+        ></TextFileInput> */}
         <CSVFileInput
           updateBars={updateBars}
           updateEquips={updateEquips}

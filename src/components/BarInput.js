@@ -5,7 +5,7 @@ const BarInput = ({ updateBars, bars }) => {
   const defaultBar = {
     name: "",
     id: "",
-    tipo: "",
+    type: "",
     v_pu: "",
     theta_deg: "",
     p_c: "",
@@ -136,9 +136,9 @@ const BarInput = ({ updateBars, bars }) => {
           <label className="text-gray-700 text-sm font-bold mr-2">Type:</label>
           <select
             className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-            name="tipo"
+            name="type"
             onChange={handleBarChange}
-            value={bar.tipo}
+            value={bar.type}
             required
           >
             <option disabled value="">

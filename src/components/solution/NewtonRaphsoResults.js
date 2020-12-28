@@ -208,7 +208,7 @@ const BarStateTable = (state, bars, NB, roundTo) => {
     lines.push(
       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
         <td className="px-2">{i + 1}</td>
-        <td className="px-2">{typeNumToStr(arr_bars[i].tipo)}</td>
+        <td className="px-2">{typeNumToStr(arr_bars[i].type)}</td>
         <td className="px-2">{math.round(state["Pcalc"][i], roundTo)}</td>
         <td className="px-2">{math.round(state["Qcalc"][i], roundTo)}</td>
         <td className="px-2">{math.round(state["V"]._data[i], roundTo)}</td>
