@@ -2,6 +2,7 @@ import React from "react";
 import { NewtonRaphsonMethod } from "../../methods";
 import DisplayMatrix from "./DisplayMatrix";
 import * as math from "mathjs";
+import { typeNumToStr } from "../../utils";
 
 const StateVariables = ({ PQ_PV_index, PQ_index }) => {
   const theta_vector = PQ_PV_index.map((elem) => (
@@ -200,12 +201,14 @@ const Iterations = (data, roundTo) => {
   return results;
 };
 
-const BarStateTable = (state, NB, roundTo) => {
+const BarStateTable = (state, bars, NB, roundTo) => {
   let lines = [];
+  let arr_bars = Object.values(bars);
   for (let i = 0; i < NB; i++) {
     lines.push(
       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
         <td className="px-2">{i + 1}</td>
+        <td className="px-2">{typeNumToStr(arr_bars[i].tipo)}</td>
         <td className="px-2">{math.round(state["Pcalc"][i], roundTo)}</td>
         <td className="px-2">{math.round(state["Qcalc"][i], roundTo)}</td>
         <td className="px-2">{math.round(state["V"]._data[i], roundTo)}</td>
@@ -226,6 +229,7 @@ const BarStateTable = (state, NB, roundTo) => {
         <thead>
           <tr className="border-solid border-b-2 border-black">
             <th className="px-2">Bar</th>
+            <th className="px-2">Type</th>
             <th className="px-2">P [pu]</th>
             <th className="px-2">Q [pu]</th>
             <th className="px-2">V [pu]</th>
@@ -371,7 +375,7 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
   }
   // console.log("BAR SOL", bars);
   results.push(Iterations(data, roundTo));
-  results.push(BarStateTable(solutionState, NB, roundTo));
+  results.push(BarStateTable(solutionState, bars, NB, roundTo));
   results.push(PowerFlowStateTable(solutionState, NR, roundTo));
   //   console.log(Object.values(equips));
   return [results, bars];

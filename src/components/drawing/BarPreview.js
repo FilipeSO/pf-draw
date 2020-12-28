@@ -29,7 +29,6 @@ export default function BarPreview({ bar }) {
 
   const stageHeight = drawCanvasRef.current?.clientHeight;
   const stageWidth = drawCanvasRef.current?.clientWidth;
-  console.log(stageHeight, stageWidth);
   useEffect(() => {
     setCanvasReady(true); //necessario para drawcanvasref != undefined
   }, []);

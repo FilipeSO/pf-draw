@@ -18,12 +18,12 @@ export const isLT = (equip) => {
 };
 
 export const typeNumToStr = (num) => {
-  switch (num) {
-    case "0":
+  switch (parseInt(num)) {
+    case 0:
       return "PQ";
-    case "1":
+    case 1:
       return "PV";
-    case "2":
+    case 2:
       return "Slack";
     default:
       return "";
