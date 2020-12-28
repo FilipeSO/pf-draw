@@ -31,7 +31,7 @@ const BarInput = ({ updateBars, bars }) => {
       newState = { ...bar, [name]: value };
     }
     setBar(newState);
-    console.log(newState);
+    // console.log(newState);
   };
 
   const handleBarSubmit = (e) => {
