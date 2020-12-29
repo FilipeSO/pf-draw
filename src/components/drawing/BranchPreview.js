@@ -3,7 +3,8 @@ import { Stage, Layer, Line } from "react-konva";
 import { Group, Circle, Rect, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
 
-export default function BranchPreview({ equip }) {
+export default function BranchPreview({ equip, bars }) {
+  console.log(equip);
   const radius = _SETTINGS.BAR.radius || _SETTINGS.default.radius;
   const strokeWidth =
     _SETTINGS.BAR.strokeWidth || _SETTINGS.default.strokeWidth;
@@ -87,21 +88,21 @@ export default function BranchPreview({ equip }) {
                 <Text
                   x={-6 * radius}
                   y={-radius * 8}
-                  text={`1:${"10"}∠${"4"}°`}
+                  text={`1:${equip.tap}∠${equip.tap_df_deg}°`}
                   fontSize={radius * 4}
                   fill={fill}
                 />
                 <Text
                   x={-14 * radius}
                   y={radius * 8}
-                  text={`max_linear=${"10"}`}
+                  text={`max_linear=${equip.tap_max}`}
                   fontSize={radius * 4}
                   fill={fill}
                 />
                 <Text
                   x={-14 * radius}
                   y={radius * 12}
-                  text={`min_linear=${"10"}`}
+                  text={`min_linear=${equip.tap_min}`}
                   fontSize={radius * 4}
                   fill={fill}
                 />
@@ -140,7 +141,11 @@ export default function BranchPreview({ equip }) {
               <Text
                 x={radius * 5}
                 y={stageHeight / 10}
-                text={`bsh=j${"10"}pu`}
+                text={`bsh=j${
+                  equip.bsh_pu.length > 0
+                    ? parseFloat(equip.bsh_pu.replace(",", ".")) / 2
+                    : ""
+                }pu`}
                 fontSize={radius * 4}
                 fill={fill}
               />
@@ -204,7 +209,7 @@ export default function BranchPreview({ equip }) {
               <Text
                 x={-4 * radius}
                 y={-radius * 6}
-                text={`${"0.05"}+j${"0.01"}pu`}
+                text={`${equip.r_pu}+j${equip.x_pu}pu`}
                 fontSize={radius * 4}
                 fill={fill}
               />
@@ -227,7 +232,11 @@ export default function BranchPreview({ equip }) {
               <Text
                 x={radius * 5}
                 y={stageHeight / 10}
-                text={`bsh=j${"10"}pu`}
+                text={`bsh=j${
+                  equip.bsh_pu.length > 0
+                    ? parseFloat(equip.bsh_pu.replace(",", ".")) / 2
+                    : ""
+                }pu`}
                 fontSize={radius * 4}
                 fill={fill}
               />

@@ -18,7 +18,13 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
   };
   const [equip, setEquip] = useState(defaultEquip);
   const handleEquipChange = (e) => {
-    let newState = { ...equip, [e.target.name]: e.target.value };
+    let name = e.target.name;
+    let value = e.target.value;
+    let newState = {
+      ...equip,
+      [name]: value,
+    };
+
     setEquip(newState);
     // console.log(newState);
   };
@@ -27,16 +33,18 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
     e.preventDefault();
     // let newEquip = equip;
     for (var key in equip) {
-      if (key === "endPointA" || key === "endPointB") continue;
-      equip[key] = parseFloat(equip[key].replace(",", "."));
+      if (key === "endPointA" || key === "endPointB" || key === "type") {
+        continue;
+      } else {
+        equip[key] = parseFloat(equip[key].replace(",", "."));
+      }
     }
-    let equipType = equip.tap === 1 && equip.tap_df_deg === 0 ? "LT" : "TR";
 
     let equipName = "";
     let equipNameReverse = "";
     let newState = [];
 
-    if (equipType === "LT") {
+    if (equip.type === "LT") {
       equipName = `LT_${[equip.endPointA] + [equip.endPointB]}`;
       equipNameReverse = `LT_${[equip.endPointB] + [equip.endPointA]}`;
 
@@ -48,7 +56,7 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
         ...equips,
         [equipName + "_" + lineN]: {
           ...equip,
-          type: equipType,
+          type: equip.type,
           name: equipName,
           n: lineN,
         },
@@ -84,7 +92,7 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
         [equipName + "_" + trN]: {
           ...equip,
           name: equipName + "_" + trN,
-          type: equipType,
+          type: equip.type,
           pos: {
             x: newX,
             y: newY,
@@ -103,7 +111,7 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
       <h2 className="text-lg font-bold mt-4 text-center text-gray-800">
         BRANCH MANUAL INPUT
       </h2>
-      <BranchPreview equip={equip}></BranchPreview>
+      <BranchPreview equip={equip} bars={bars}></BranchPreview>
       <form onSubmit={handleEquipSubmit}>
         <div className="flex items-center justify-center mt-2 text-white">
           <input

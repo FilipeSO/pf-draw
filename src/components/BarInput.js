@@ -24,7 +24,7 @@ const BarInput = ({ updateBars, bars }) => {
     let name = e.target.name;
     let value = e.target.value;
     let newState = {};
-    if (e.target.name === "use_pu") {
+    if (name === "use_pu") {
       value = e.target.value === "Per-Unit" ? true : false;
       newState = { ...defaultBar, [name]: value };
     } else {
