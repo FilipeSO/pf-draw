@@ -191,25 +191,49 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
       };
       branches.push(newBranch);
     } else {
-      bars = {
-        ...bars,
-        [row[0].trim()]: {
-          name: row[0].trim(),
-          type: parseInt(row[1].replace(",", ".")),
-          id: row[2].trim(),
-          v_pu: parseFloat(row[3].replace(",", ".")),
-          theta_deg: parseFloat(row[4].replace(",", ".")),
-          p_g: parseFloat(row[5].replace(",", ".")),
-          q_g: parseFloat(row[6].replace(",", ".")),
-          q_min: parseFloat(row[7].replace(",", ".")),
-          q_max: parseFloat(row[8].replace(",", ".")),
-          p_c: parseFloat(row[9].replace(",", ".")),
-          q_c: parseFloat(row[10].replace(",", ".")),
-          v_base: parseFloat(row[11].replace(",", ".")),
-          s_base: s_base,
-          use_pu: use_pu,
-        },
-      };
+      if (use_pu) {
+        bars = {
+          ...bars,
+          [row[0].trim()]: {
+            name: row[0].trim(),
+            type: parseInt(row[1].replace(",", ".")),
+            id: row[2].trim(),
+            v_pu: parseFloat(row[3].replace(",", ".")),
+            theta_deg: parseFloat(row[4].replace(",", ".")),
+            p_g: parseFloat(row[5].replace(",", ".")),
+            q_g: parseFloat(row[6].replace(",", ".")),
+            q_min: parseFloat(row[7].replace(",", ".")),
+            q_max: parseFloat(row[8].replace(",", ".")),
+            p_c: parseFloat(row[9].replace(",", ".")),
+            q_c: parseFloat(row[10].replace(",", ".")),
+            v_base: parseFloat(row[11].replace(",", ".")),
+            s_base: s_base,
+            use_pu: use_pu,
+          },
+        };
+      } else {
+        bars = {
+          ...bars,
+          [row[0].trim()]: {
+            name: row[0].trim(),
+            type: parseInt(row[1].replace(",", ".")),
+            id: row[2].trim(),
+            v_pu:
+              parseFloat(row[3].replace(",", ".")) /
+              parseFloat(row[11].replace(",", ".")),
+            theta_deg: parseFloat(row[4].replace(",", ".")),
+            p_g: parseFloat(row[5].replace(",", ".")) / s_base,
+            q_g: parseFloat(row[6].replace(",", ".")) / s_base,
+            q_min: parseFloat(row[7].replace(",", ".")) / s_base,
+            q_max: parseFloat(row[8].replace(",", ".")) / s_base,
+            p_c: parseFloat(row[9].replace(",", ".")) / s_base,
+            q_c: parseFloat(row[10].replace(",", ".")) / s_base,
+            v_base: parseFloat(row[11].replace(",", ".")),
+            s_base: s_base,
+            use_pu: use_pu,
+          },
+        };
+      }
     }
   });
   // console.log(bars, branches);

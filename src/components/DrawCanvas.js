@@ -6,6 +6,7 @@ import TransmissionLine from "./drawing/TransmissionLine";
 import { getLinePoints, getAngle } from "./drawing/utils";
 
 import CanvasConfig from "./drawing/CanvasConfig";
+import CanvasLegend from "./drawing/CanvasLegend";
 
 // function useWindowSize() {
 //   const [size, setSize] = useState([0, 0]);
@@ -158,6 +159,7 @@ const DrawCanvas = ({ bars, equips, updateBars, updateEquips, parentRef }) => {
         canvasConfig={canvasConfig}
         setCanvasConfig={setCanvasConfig}
       ></CanvasConfig>
+      <CanvasLegend></CanvasLegend>
       <Stage
         width={stageWidth}
         height={stageHeight}

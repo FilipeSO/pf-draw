@@ -20,10 +20,12 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
   const handleEquipChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    let newState = {
-      ...equip,
-      [name]: value,
-    };
+    let newState = {};
+    if (name === "type") {
+      newState = { ...defaultEquip, [name]: value };
+    } else {
+      newState = { ...equip, [name]: value };
+    }
 
     setEquip(newState);
     // console.log(newState);

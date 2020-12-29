@@ -1,21 +1,16 @@
 
 adicionar forma de editar dados de barras e ramos ja inseridos
 
-adicionar LTs com cor baseado em Vbase
-
 **ATENÇÃO
 parseTextFile está descontinuado; formato de entrada confuso será eliminado
 
 %%menos importante
 remover stageheight de barinput, passar referencia do container de drawcanvas
 
-adicionar legenda canto inferior direito do drawcanvas
-
 redraw bars em canvas com modo e distancias a serem definidas na ribbon
 
 adicionar animação de loading enquanto rotina do solver executa, talvez exibindo numero de iterações e convergencia
 
-restringir from e to em branchinput para endpoints disponiveis em bars
 
 
 

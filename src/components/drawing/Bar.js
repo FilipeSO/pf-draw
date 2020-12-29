@@ -1,10 +1,14 @@
 import React from "react";
 import { Group, Circle, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
-import { complexToPolarString, complexToRecString } from "../../utils";
+import {
+  complexToPolarString,
+  complexToRecString,
+  getBarColor,
+} from "../../utils";
 
 const Bar = ({ bar, handleDrag, handleDragEnd, canvasConfig }) => {
-  let { pos, name, id, color, v_data, pf_data, roundTo } = bar;
+  let { pos, name, id, v_data, pf_data, roundTo } = bar;
   let { show_id, show_results } = canvasConfig;
   // console.log(result);
   v_data = v_data || false;
@@ -13,7 +17,7 @@ const Bar = ({ bar, handleDrag, handleDragEnd, canvasConfig }) => {
   const strokeWidth =
     _SETTINGS.BAR.strokeWidth || _SETTINGS.default.strokeWidth;
   const draggable = _SETTINGS.BAR.draggable || _SETTINGS.default.draggable;
-  const barColor = color || "000";
+  const barColor = getBarColor(bar.v_base);
   const resultColor = _SETTINGS.default.resultColor || "#4299e1"; //"#63b3ed";
 
   // console.log(x, y);

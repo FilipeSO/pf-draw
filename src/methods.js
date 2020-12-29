@@ -1,5 +1,4 @@
 import * as math from "mathjs";
-import { isLT } from "./utils";
 // import React from "react";
 
 export const tCalc = (equip) => {
@@ -19,8 +18,7 @@ const Y_CALC = (equips, NB, NR) => {
     let k = parseInt(EQUIPS[i].endPointA) - 1;
     let m = parseInt(EQUIPS[i].endPointB) - 1;
     let t = undefined;
-
-    if (isLT(EQUIPS[i])) {
+    if (EQUIPS[i].type === "LT") {
       //LT
       t = 1;
     } else {
@@ -55,7 +53,7 @@ const PF_CALC = (state, equips) => {
     let k = parseInt(equip.endPointA) - 1;
     let m = parseInt(equip.endPointB) - 1;
     let t = undefined;
-    if (isLT(equip)) {
+    if (equip.type === "LT") {
       //LT
       t = 1;
     } else {

@@ -180,7 +180,7 @@ const BarInput = ({ updateBars, bars }) => {
             <div className="md:flex md:items-center mb-2">
               <div className="flex items-center md:w-1/2">
                 <label className="text-gray-700 text-sm font-bold mr-2">
-                  V<sub>base</sub> [Kv]:
+                  V<sub>base</sub> [kV]:
                 </label>
                 <input
                   className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"

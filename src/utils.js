@@ -10,13 +10,6 @@ export const complexToRecString = (complex, roundTo) => {
   return math.round(complex, roundTo).toString();
 };
 
-export const isLT = (equip) => {
-  return (
-    (equip.tap === 1 && equip.tap_df_deg === 0) ||
-    (isNaN(equip.tap) && isNaN(equip.tap_df_deg))
-  );
-};
-
 export const typeNumToStr = (num) => {
   switch (parseInt(num)) {
     case 0:
@@ -27,5 +20,24 @@ export const typeNumToStr = (num) => {
       return "Slack";
     default:
       return "";
+  }
+};
+
+export const getBarColor = (v_base) => {
+  switch (true) {
+    case v_base >= 138 && v_base < 230:
+      return "red";
+    case v_base >= 230 && v_base < 345:
+      return "green";
+    case v_base >= 345 && v_base < 440:
+      return "yellow";
+    case v_base >= 440 && v_base < 500:
+      return "orange";
+    case v_base >= 500 && v_base < 750:
+      return "blue";
+    case v_base >= 750:
+      return "cyan";
+    default:
+      return "black";
   }
 };

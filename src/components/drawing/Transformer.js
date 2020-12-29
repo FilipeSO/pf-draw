@@ -3,6 +3,7 @@ import { Circle, Group, Line } from "react-konva";
 import { _SETTINGS } from "../../settings";
 import { useEffect, useRef } from "react";
 import { getAngle } from "./utils";
+import { getBarColor } from "../../utils";
 
 const Transformer = ({
   x,
@@ -15,23 +16,13 @@ const Transformer = ({
   canvasConfig,
 }) => {
   const radius = _SETTINGS.TR.radius || _SETTINGS.default.radius;
-  const stroke = _SETTINGS.TR.stroke || _SETTINGS.default.stroke;
   const strokeWidth = _SETTINGS.TR.strokeWidth || _SETTINGS.default.strokeWidth;
   const strokeWidthLT =
     _SETTINGS.LT.strokeWidth || _SETTINGS.default.strokeWidth;
   let line_opacity = parseInt(canvasConfig.line_opacity) / 100;
 
-  // const draggable = _SETTINGS.TR.draggable || _SETTINGS.default.draggable;
-  // console.log(endPointA, endPointB);
   const refTR = useRef(null);
   useEffect(() => {
-    // console.log(
-    //   "EFFECT",
-    //   endPointB.pos.x,
-    //   endPointA.pos.x,
-    //   endPointB.pos.y,
-    //   endPointA.pos.y
-    // );
     refTR.current.rotation(
       getAngle(
         bars[endPointB].pos.x - bars[endPointA].pos.x,
@@ -39,12 +30,11 @@ const Transformer = ({
       )
     );
   }, [bars, endPointA, endPointB]);
-  // console.log(props.handleDrag);
   return (
     <>
       <Line
         points={[bars[endPointA].pos.x, bars[endPointA].pos.y, x, y]}
-        stroke={"#0F0"}
+        stroke={getBarColor(bars[endPointA].v_base)}
         strokeWidth={strokeWidthLT}
         endPointA={endPointA}
         endPointB={name}
@@ -55,13 +45,12 @@ const Transformer = ({
 
       <Line
         points={[bars[endPointB].pos.x, bars[endPointB].pos.y, x, y]}
-        stroke={"#0F0"}
+        stroke={getBarColor(bars[endPointB].v_base)}
         strokeWidth={strokeWidthLT}
         endPointA={name}
         endPointB={endPointB}
         n={1}
         opacity={line_opacity}
-
         // bezier={n > 1}
       />
 
@@ -76,22 +65,21 @@ const Transformer = ({
         n={n}
         ref={refTR}
       >
-        {/* HIGH SIDE */}
+        {/* ENDPOINTA SIDE */}
         <Circle
           x={-radius + radius / 4}
           y={radius / 4}
           radius={radius}
-          stroke={stroke}
+          stroke={getBarColor(bars[endPointA].v_base)}
           strokeWidth={strokeWidth}
-
           // fill={"#FFF"}
         />
-        {/* LOW SIDE */}
+        {/* ENDPOINTB SIDE */}
         <Circle
           x={radius - radius / 4}
           y={radius / 4}
           radius={radius}
-          stroke={stroke}
+          stroke={getBarColor(bars[endPointB].v_base)}
           strokeWidth={strokeWidth}
           // fill={"#FFF"}
         />
