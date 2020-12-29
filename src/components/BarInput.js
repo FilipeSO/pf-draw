@@ -154,8 +154,10 @@ const BarInput = ({ updateBars, bars }) => {
           <input
             type="button"
             name="use_pu"
-            className={`focus:outline-none w-1/2 text-center cursor-pointer ${
-              bar.use_pu ? "bg-blue-400 font-bold" : "bg-blue-200"
+            className={`focus:outline-none w-1/2 text-center cursor-pointer  ${
+              bar.use_pu
+                ? "bg-blue-400 font-bold"
+                : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleBarChange}
             value={"Per-Unit"}
@@ -164,7 +166,9 @@ const BarInput = ({ updateBars, bars }) => {
             type="button"
             name="use_pu"
             className={`focus:outline-none w-1/2 text-center cursor-pointer ${
-              !bar.use_pu ? "bg-blue-400 font-bold" : "bg-blue-200"
+              !bar.use_pu
+                ? "bg-blue-400 font-bold"
+                : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleBarChange}
             value={"Unit"}

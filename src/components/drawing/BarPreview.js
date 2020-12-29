@@ -69,49 +69,49 @@ export default function BarPreview({ bar }) {
               <Text
                 x={-radius * 6}
                 y={-radius * 12}
-                text={v_polar.length > 1 ? v_polar : ""}
+                text={v_polar}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={-160}
                 y={-radius * 6}
-                text={p_in.length > 6 ? p_in : ""}
+                text={p_in}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={-160}
                 y={radius * 3}
-                text={q_in.length > 6 ? q_in : ""}
+                text={q_in}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={100}
                 y={-radius * 6}
-                text={p_out.length > 7 ? p_out : ""}
+                text={p_out}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={100}
                 y={radius * 3}
-                text={q_out.length > 7 ? q_out : ""}
+                text={q_out}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={-radius * 6}
                 y={radius * 8}
-                text={q_max.length > 7 ? q_max : ""}
+                text={q_max}
                 fontSize={radius * 4}
                 fill={fill}
               />
               <Text
                 x={-radius * 6}
                 y={radius * 12}
-                text={q_min.length > 7 ? q_min : ""}
+                text={q_min}
                 fontSize={radius * 4}
                 fill={fill}
               />

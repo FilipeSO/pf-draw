@@ -155,6 +155,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
   let skipNext = false;
   let title = "";
   let s_base = "";
+  let use_pu = true;
   lines.forEach((line, index) => {
     let row = line.split(";");
     // console.log(row);
@@ -166,6 +167,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
     if (index === 0) {
       title = row[1].trim();
       s_base = parseFloat(row[3].replace(",", "."));
+      use_pu = row[5].trim() === "true" ? true : false;
       skipNext = true;
       return;
     }
@@ -181,11 +183,11 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
         r_pu: parseFloat(row[2].replace(",", ".")),
         x_pu: parseFloat(row[3].replace(",", ".")),
         bsh_pu: parseFloat(row[4].replace(",", ".")),
-        tap: parseFloat(row[5].replace(",", ".")),
-        tap_min: parseFloat(row[6].replace(",", ".")),
-        tap_max: parseFloat(row[7].replace(",", ".")),
-        tap_df_deg: parseFloat(row[8].replace(",", ".")),
-        type: row[9].trim(),
+        type: row[5].trim(),
+        tap: parseFloat(row[6].replace(",", ".")),
+        tap_min: parseFloat(row[7].replace(",", ".")),
+        tap_max: parseFloat(row[8].replace(",", ".")),
+        tap_df_deg: parseFloat(row[9].replace(",", ".")),
       };
       branches.push(newBranch);
     } else {
@@ -205,6 +207,7 @@ export const parseCSVFile = (lines, bar_placement = "circle") => {
           q_c: parseFloat(row[10].replace(",", ".")),
           v_base: parseFloat(row[11].replace(",", ".")),
           s_base: s_base,
+          use_pu: use_pu,
         },
       };
     }
