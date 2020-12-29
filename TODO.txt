@@ -1,13 +1,7 @@
 
-criar exibição exemplo com draw para inserção de ramos
+linkar branchpreview com branch input
 
-corrigir casos em que transformador tem relação 1:1 e é exibido como linhas
-*talvez alterar branch input com opcao de lt ou tr e filtrar campos
-
-adicionar entrada por pu e unidade para ramos
-
-adequar input por arquivo para atender uso de unidades ramo e barras
-*tentar fazer os parses e input passarem pela mesma funcao para converter de texto para numero
+em branchinput tornar from e to dependentes de bars endpointa e endpointb
 
 adicionar forma de editar dados de barras e ramos ja inseridos
 
