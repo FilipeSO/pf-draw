@@ -4,7 +4,7 @@ import { Group, Circle, Rect, Text } from "react-konva";
 import { _SETTINGS } from "../../settings";
 
 export default function BranchPreview({ equip, bars }) {
-  console.log(equip);
+  // console.log(equip);
   const radius = _SETTINGS.BAR.radius || _SETTINGS.default.radius;
   const strokeWidth =
     _SETTINGS.BAR.strokeWidth || _SETTINGS.default.strokeWidth;
@@ -38,7 +38,11 @@ export default function BranchPreview({ equip, bars }) {
               <Text
                 x={-2 * radius}
                 y={-radius * 6}
-                text={"barra 1"}
+                text={
+                  Object.values(bars).filter(
+                    (bar) => bar.name === equip.endPointA
+                  )[0]?.id
+                }
                 fontStyle={"bold"}
                 fontSize={radius * 4}
               />
@@ -301,7 +305,11 @@ export default function BranchPreview({ equip, bars }) {
               <Text
                 x={-2 * radius}
                 y={-radius * 6}
-                text={"barra 2"}
+                text={
+                  Object.values(bars).filter(
+                    (bar) => bar.name === equip.endPointB
+                  )[0]?.id
+                }
                 fontStyle={"bold"}
                 fontSize={radius * 4}
               />

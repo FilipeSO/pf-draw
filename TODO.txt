@@ -1,8 +1,4 @@
 
-linkar branchpreview com branch input
-
-em branchinput tornar from e to dependentes de bars endpointa e endpointb
-
 adicionar forma de editar dados de barras e ramos ja inseridos
 
 adicionar LTs com cor baseado em Vbase

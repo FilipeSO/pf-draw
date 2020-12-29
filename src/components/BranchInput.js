@@ -143,27 +143,49 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
               <label className="text-gray-700 text-sm font-bold mr-2">
                 From:
               </label>
-              <input
+
+              <select
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
                 name="endPointA"
                 onChange={handleEquipChange}
                 value={equip.endPointA}
                 required
-              ></input>
+              >
+                <option disabled value="">
+                  -- select an option --
+                </option>
+                {Object.values(bars)
+                  .filter((bar) => bar.name !== equip.endPointB)
+                  .map((bar, index) => (
+                    <option key={index} value={bar.name}>
+                      {bar.id}
+                    </option>
+                  ))}
+              </select>
             </div>
             <div className="flex items-center md:w-1/2 md:mt-0 mt-2">
               <label className="md:ml-2 text-gray-700 text-sm font-bold mr-2">
                 To:
               </label>
-              <input
+
+              <select
                 className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
-                type="text"
                 name="endPointB"
                 onChange={handleEquipChange}
                 value={equip.endPointB}
                 required
-              ></input>
+              >
+                <option disabled value="">
+                  -- select an option --
+                </option>
+                {Object.values(bars)
+                  .filter((bar) => bar.name !== equip.endPointA)
+                  .map((bar, index) => (
+                    <option key={index} value={bar.name}>
+                      {bar.id}
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
 
