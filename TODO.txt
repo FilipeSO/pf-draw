@@ -1,6 +1,8 @@
 
 adicionar forma de editar dados de barras e ramos ja inseridos
 
+cores dos enrolamentos do TR existe algum bug quanto ao quadrante em que a LT atravessa
+
 **ATENÇÃO
 parseTextFile está descontinuado; formato de entrada confuso será eliminado
 

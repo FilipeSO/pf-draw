@@ -70,7 +70,7 @@ const Transformer = ({
           x={-radius + radius / 4}
           y={radius / 4}
           radius={radius}
-          stroke={getBarColor(bars[endPointA].v_base)}
+          stroke={"#000"}
           strokeWidth={strokeWidth}
           // fill={"#FFF"}
         />
@@ -79,7 +79,7 @@ const Transformer = ({
           x={radius - radius / 4}
           y={radius / 4}
           radius={radius}
-          stroke={getBarColor(bars[endPointB].v_base)}
+          stroke={"#000"}
           strokeWidth={strokeWidth}
           // fill={"#FFF"}
         />

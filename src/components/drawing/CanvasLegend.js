@@ -28,7 +28,7 @@ export default function CanvasLegend() {
               <Text
                 x={radius * 4}
                 y={-1.25 * radius}
-                text={"Barra da Subestação"}
+                text={"Bar"}
                 fontSize={radius * 3}
               />
               <Circle
@@ -43,7 +43,7 @@ export default function CanvasLegend() {
               <Text
                 x={radius * 4}
                 y={-1.25 * radius}
-                text={"Transformador"}
+                text={"Transformer"}
                 fontSize={radius * 3}
               />
               <Circle
