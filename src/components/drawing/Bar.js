@@ -34,7 +34,7 @@ const Bar = ({ bar, handleDrag, handleDragEnd, canvasConfig }) => {
         <Text
           x={-radius * 6}
           y={-radius * 6}
-          text={id}
+          text={`(${name}) ${id}`}
           fontStyle={"bold"}
           fontSize={radius * 4}
         />

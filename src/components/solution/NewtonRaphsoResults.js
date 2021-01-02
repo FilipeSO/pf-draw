@@ -207,7 +207,9 @@ const BarStateTable = (state, bars, NB, roundTo) => {
   for (let i = 0; i < NB; i++) {
     lines.push(
       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
-        <td className="px-2">{i + 1}</td>
+        <td className="px-2">
+          ({i + 1}) {arr_bars[i].id}
+        </td>
         <td className="px-2">{typeNumToStr(arr_bars[i].type)}</td>
         <td className="px-2">{math.round(state["Pcalc"][i], roundTo)}</td>
         <td className="px-2">{math.round(state["Qcalc"][i], roundTo)}</td>
@@ -244,16 +246,20 @@ const BarStateTable = (state, bars, NB, roundTo) => {
   return result;
 };
 
-const PowerFlowStateTable = (state, NR, roundTo) => {
+const PowerFlowStateTable = (state, bars, NR, roundTo) => {
   const pf_data = state.pf_data;
   const totalLoss = state.totalLoss;
   let lines = [];
-
+  let arr_bars = Object.values(bars);
   for (let i = 0; i < NR; i++) {
     lines.push(
       <tr className="text-center hover:bg-blue-400 hover:text-white" key={i}>
-        <td className="px-2">{pf_data[i]["k"] + 1}</td>
-        <td className="px-2">{pf_data[i]["m"] + 1}</td>
+        <td className="px-2">
+          ({pf_data[i]["k"] + 1}) {arr_bars[pf_data[i]["k"]].id}
+        </td>
+        <td className="px-2">
+          ({pf_data[i]["m"] + 1}) {arr_bars[pf_data[i]["m"]].id}
+        </td>
         <td className="px-2">
           {math.round(pf_data[i]["Ikm"].toPolar()["r"], roundTo)}
           {"∠"}
@@ -376,7 +382,7 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
   // console.log("BAR SOL", bars);
   results.push(Iterations(data, roundTo));
   results.push(BarStateTable(solutionState, bars, NB, roundTo));
-  results.push(PowerFlowStateTable(solutionState, NR, roundTo));
+  results.push(PowerFlowStateTable(solutionState, bars, NR, roundTo));
   //   console.log(Object.values(equips));
   return [results, bars];
 };
