@@ -121,7 +121,7 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
             name="type"
             className={`focus:outline-none w-1/2 text-center cursor-pointer  ${
               equip.type === "LT"
-                ? "bg-blue-400 font-bold"
+                ? "bg-blue-500 font-bold"
                 : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleEquipChange}
@@ -132,7 +132,7 @@ const BranchInput = ({ updateEquips, equips, bars }) => {
             name="type"
             className={`focus:outline-none w-1/2 text-center cursor-pointer ${
               equip.type === "TR"
-                ? "bg-blue-400 font-bold"
+                ? "bg-blue-500 font-bold"
                 : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleEquipChange}

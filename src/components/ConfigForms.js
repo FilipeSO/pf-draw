@@ -2,12 +2,13 @@ import React, { useState } from "react";
 
 const ConfigForms = ({ config, updateConfig }) => {
   const [formConfig, setFormConfig] = useState(config);
-  const handleConfigChange = e => {
+  const handleConfigChange = (e) => {
     e.preventDefault();
     let newState = { ...formConfig, [e.target.name]: e.target.value };
     setFormConfig(newState);
+    console.log(newState);
   };
-  const handleConfigSubmit = e => {
+  const handleConfigSubmit = (e) => {
     e.preventDefault();
     updateConfig(formConfig);
   };
@@ -59,6 +60,23 @@ const ConfigForms = ({ config, updateConfig }) => {
               <option value="0.000001">0.000001</option>
             </select>
           </div>
+
+          <div className="flex items-center mt-2">
+            <label className="text-gray-700 text-sm font-bold mr-2">
+              Show Iterations:
+            </label>
+            <select
+              onChange={handleConfigChange}
+              value={formConfig.show_iterations}
+              className="flex-1 shadow border rounded py-1 px-1 text-gray-700 focus:outline-none focus:shadow-outline"
+              name="show_iterations"
+              required
+            >
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
           <div className="flex">
             <input
               className="flex-1 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded-md mt-1 cursor-pointer"

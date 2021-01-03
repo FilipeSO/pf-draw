@@ -156,7 +156,7 @@ const BarInput = ({ updateBars, bars }) => {
             name="use_pu"
             className={`focus:outline-none w-1/2 text-center cursor-pointer  ${
               bar.use_pu
-                ? "bg-blue-400 font-bold"
+                ? "bg-blue-500 font-bold"
                 : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleBarChange}
@@ -167,7 +167,7 @@ const BarInput = ({ updateBars, bars }) => {
             name="use_pu"
             className={`focus:outline-none w-1/2 text-center cursor-pointer ${
               !bar.use_pu
-                ? "bg-blue-400 font-bold"
+                ? "bg-blue-500 font-bold"
                 : "bg-blue-200 hover:bg-blue-300"
             }`}
             onClick={handleBarChange}

@@ -13,7 +13,11 @@ const DisplayMatrix = ({ symbol, matrix, unit, roundTo }) => {
       for (let j = 0; j < n_cols; j++) {
         let value = math.round(matrix._data[i][j], roundTo);
         td.push(
-          <td className="px-2" key={j}>
+          <td
+            className="px-2 hover:bg-blue-400"
+            title={`${i + 1}, ${j + 1}`}
+            key={j}
+          >
             {value.toString()}
           </td>
         );
@@ -30,7 +34,7 @@ const DisplayMatrix = ({ symbol, matrix, unit, roundTo }) => {
       let value = math.round(matrix._data[i], roundTo);
       tr.push(
         <tr className="text-center" key={i}>
-          <td className="px-2" key={i}>
+          <td className="px-2 hover:bg-blue-400" key={i}>
             {value.toString()}
           </td>
         </tr>

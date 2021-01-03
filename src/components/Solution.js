@@ -4,7 +4,14 @@ import NewtonRaphsoResults from "./solution/NewtonRaphsoResults";
 
 // import * as math from "mathjs";
 
-const Solution = ({ bars, equips, solver, err_tolerance, updateBars }) => {
+const Solution = ({
+  bars,
+  equips,
+  solver,
+  err_tolerance,
+  show_iterations,
+  updateBars,
+}) => {
   const [solution, setSolution] = useState([]);
   useEffect(() => {
     console.log("EFFECT", solver, bars, equips);
@@ -19,7 +26,8 @@ const Solution = ({ bars, equips, solver, err_tolerance, updateBars }) => {
           equips,
           NB,
           NR,
-          parseFloat(err_tolerance)
+          parseFloat(err_tolerance),
+          show_iterations
         );
         setSolution(results);
         updateBars(newBarState);

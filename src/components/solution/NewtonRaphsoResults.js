@@ -332,7 +332,14 @@ const PowerFlowStateTable = (state, bars, NR, roundTo) => {
   return result;
 };
 
-const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
+const NewtonRaphsonResults = (
+  bars,
+  equips,
+  NB,
+  NR,
+  err_tolerance,
+  show_iterations
+) => {
   let [Y, data, PQ_PV_index, PQ_index] = NewtonRaphsonMethod(
     bars,
     equips,
@@ -380,7 +387,7 @@ const NewtonRaphsonResults = (bars, equips, NB, NR, err_tolerance) => {
     };
   }
   // console.log("BAR SOL", bars);
-  results.push(Iterations(data, roundTo));
+  if (show_iterations === "true") results.push(Iterations(data, roundTo));
   results.push(BarStateTable(solutionState, bars, NB, roundTo));
   results.push(PowerFlowStateTable(solutionState, bars, NR, roundTo));
   //   console.log(Object.values(equips));

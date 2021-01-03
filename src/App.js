@@ -17,6 +17,7 @@ export const App = () => {
     bar_placement: "",
     solver: "",
     err_tolerance: "",
+    show_iterations: true,
     bars: undefined,
     equips: undefined,
   });
