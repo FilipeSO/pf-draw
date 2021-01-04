@@ -1,8 +1,8 @@
 titulo;TESTE 2;sb;100;use_pu;true;;;;;;
 name;type;id;v;theta_deg;p_g;q_g;q_min;q_max;p_c;q_c;v_base
-1;0;Barra 1;1;0;0;0;;;2;1;138
-2;1;Barra 2;1.015;0;4;0;;;1;0.5;138
-3;2;Barra 3;1.01;10;0;0;;;0;0;138
+1;0;Barra 1;1;0;0;0;;;2;1;230
+2;1;Barra 2;1.015;0;4;0;;;1;0.5;230
+3;2;Barra 3;1.01;10;0;0;;;0;0;230
 9999;;;;;;;;;;;
 endPointA;endPointB;r_pu;x_pu;bsh_pu;type;tap;tap_min;tap_max;tap_df_deg;;
 1;2;0.01;0.05;0.2;LT;;;;;;
